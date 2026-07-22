@@ -1,0 +1,43 @@
+{
+  "name": "42-consultancy-website",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The public website for 42, a senior-led HubSpot consultancy.",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "node scripts/run-tests.mjs",
+    "test:install": "node scripts/playwright.mjs install chromium",
+    "test:ui": "node scripts/run-tests.mjs --ui"
+  },
+  "dependencies": {
+    "motion": "12.42.2",
+    "next": "16.2.11",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.12.1",
+    "@playwright/test": "1.61.1",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "26.1.1",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.2.11",
+    "prettier": "3.9.6",
+    "prettier-plugin-tailwindcss": "0.8.1",
+    "sharp": "0.34.5",
+    "tailwindcss": "4.3.3",
+    "typescript": "6.0.3"
+  }
+}

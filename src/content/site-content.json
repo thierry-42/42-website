@@ -1,0 +1,758 @@
+{
+  "meta": {
+    "brand": "42",
+    "descriptor": "HubSpot consultancy",
+    "tagline": "Your HubSpot answer.",
+    "defaultTitle": "42 | Your HubSpot answer",
+    "defaultDescription": "Senior-led HubSpot strategy, implementation, CRM architecture, automation, integrations, websites, Service Hub, and managed support.",
+    "siteUrl": "",
+    "bookingUrl": "",
+    "contactEmail": "",
+    "linkedinUrl": "",
+    "lastReviewedAt": null
+  },
+  "brand": {
+    "positioning": "A senior-led HubSpot consultancy that helps growing businesses design, build, connect, and improve the systems behind their customer journey.",
+    "promise": "Clear answers for complex HubSpot problems.",
+    "principles": [
+      "Understand before configuring",
+      "Keep it as simple as it can be",
+      "Build for the people using it",
+      "Document the answer",
+      "Prefer reliable systems over clever demos",
+      "State what is known, assumed, and still needs testing"
+    ],
+    "voice": [
+      "Confident, not arrogant",
+      "Expert, not academic",
+      "Direct, not aggressive",
+      "Intelligent, not overcomplicated",
+      "Warm, not overly casual",
+      "Occasionally witty, never gimmicky"
+    ]
+  },
+  "navigation": {
+    "primary": [
+      {
+        "label": "Home",
+        "href": "/"
+      },
+      {
+        "label": "Services",
+        "href": "/services"
+      },
+      {
+        "label": "Approach",
+        "href": "/approach"
+      },
+      {
+        "label": "Industries",
+        "href": "/industries"
+      },
+      {
+        "label": "Work",
+        "href": "/work"
+      },
+      {
+        "label": "About",
+        "href": "/about"
+      },
+      {
+        "label": "Insights",
+        "href": "/insights"
+      }
+    ],
+    "cta": {
+      "label": "Book a consultation",
+      "href": "/contact"
+    },
+    "footer": [
+      {
+        "label": "Who 42 helps",
+        "href": "/audience"
+      },
+      {
+        "label": "Industries",
+        "href": "/industries"
+      },
+      {
+        "label": "HubSpot review",
+        "href": "/hubspot-review"
+      },
+      {
+        "label": "Privacy",
+        "href": "/privacy"
+      },
+      {
+        "label": "Terms",
+        "href": "/terms"
+      }
+    ]
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Senior-led HubSpot consultancy",
+      "headline": "Your HubSpot answer.",
+      "body": "HubSpot should make your business clearer, not more complicated. 42 helps growing teams design, build, connect, and improve HubSpot around the way they actually work.",
+      "primaryCta": {
+        "label": "Book a consultation",
+        "href": "/contact"
+      },
+      "secondaryCta": {
+        "label": "Explore what we solve",
+        "href": "/services"
+      }
+    },
+    "problem": {
+      "eyebrow": "The platform is not the problem",
+      "headline": "HubSpot is powerful. Your setup may not be.",
+      "body": "Most HubSpot problems are not caused by one missing workflow or dashboard. They come from disconnected decisions: unclear ownership, inconsistent data, processes that do not match the business, and tools that were never designed to work together.",
+      "items": [
+        "A CRM the team does not trust",
+        "Manual work hidden between systems",
+        "Reporting that creates more questions",
+        "Workflows nobody wants to touch",
+        "Sales and service operating separately",
+        "An implementation that stopped at setup"
+      ],
+      "closing": "42 finds the real problem, designs the right answer, and builds it into the platform."
+    },
+    "difference": {
+      "eyebrow": "Why 42",
+      "headline": "Advice is useful. A working system is better.",
+      "body": "42 works best with teams that want a thinking partner who can also open the portal, write the code, map the data, test the workflow, and explain what changed.",
+      "items": [
+        "Work directly with senior specialists",
+        "Get strategy and implementation in the same engagement",
+        "Build around the business process, not a generic template",
+        "Solve technical requirements beyond standard onboarding",
+        "Receive documentation, testing, training, and a clear handover",
+        "Keep the system understandable as it grows"
+      ]
+    },
+    "process": {
+      "eyebrow": "How we work",
+      "headline": "From question to working answer.",
+      "steps": [
+        {
+          "number": "01",
+          "title": "Understand",
+          "body": "Map the goals, teams, processes, data, constraints, and current platform."
+        },
+        {
+          "number": "02",
+          "title": "Architect",
+          "body": "Define the CRM model, system design, roadmap, responsibilities, and measures of success."
+        },
+        {
+          "number": "03",
+          "title": "Build",
+          "body": "Configure, develop, integrate, migrate, test, and document."
+        },
+        {
+          "number": "04",
+          "title": "Enable",
+          "body": "Train users, launch the system, monitor adoption, and improve what comes next."
+        }
+      ]
+    },
+    "integration": {
+      "headline": "When HubSpot needs to connect to the rest of the business.",
+      "body": "Native integrations are useful until the process becomes specific. 42 designs and builds the connection between HubSpot and the systems that handle finance, operations, service delivery, scheduling, quoting, commerce, and customer data.",
+      "capabilities": [
+        "REST APIs",
+        "Webhooks",
+        "Middleware",
+        "ERP integrations",
+        "Finance systems",
+        "Custom objects",
+        "Custom-coded workflows",
+        "Data migrations",
+        "CRM extensions",
+        "Custom modules",
+        "Quote experiences",
+        "Reporting architecture"
+      ]
+    },
+    "booking": {
+      "eyebrow": "Start with the right question",
+      "headline": "Book a conversation with a HubSpot consultant.",
+      "body": "Bring the portal problem, integration requirement, process bottleneck, or project idea. You will leave with a clearer view of the problem and the most sensible next step.",
+      "primaryCta": {
+        "label": "Book a consultation",
+        "href": "/contact"
+      },
+      "secondaryCta": {
+        "label": "Prefer email? Send an enquiry.",
+        "href": "/contact"
+      }
+    }
+  },
+  "engagements": [
+    {
+      "name": "Diagnose",
+      "description": "For clients who need clarity.",
+      "items": [
+        "Portal review",
+        "Discovery",
+        "Process mapping",
+        "Technical assessment",
+        "Prioritised roadmap"
+      ]
+    },
+    {
+      "name": "Build",
+      "description": "For clients who know change is required.",
+      "items": [
+        "Implementation",
+        "Reconfiguration",
+        "Migration",
+        "Automation",
+        "Websites",
+        "Service Hub",
+        "Reporting"
+      ]
+    },
+    {
+      "name": "Connect",
+      "description": "For complex technical requirements.",
+      "items": [
+        "API integrations",
+        "Middleware",
+        "ERP and finance systems",
+        "Custom development",
+        "Data architecture",
+        "Custom modules"
+      ]
+    },
+    {
+      "name": "Improve",
+      "description": "For ongoing support.",
+      "items": [
+        "Managed HubSpot",
+        "Backlog delivery",
+        "Optimisation",
+        "Training",
+        "Governance",
+        "Technical support"
+      ]
+    }
+  ],
+  "services": [
+    {
+      "slug": "hubspot-strategy-consulting",
+      "name": "HubSpot strategy and consulting",
+      "shortName": "Strategy and consulting",
+      "image": "/images/services/strategy-consulting.webp",
+      "headline": "Make the right HubSpot decisions before building the wrong system.",
+      "summary": "Map the business process, data, teams, constraints, and commercial goals before committing to configuration or development.",
+      "serviceLine": "Make the right HubSpot decisions before investing in the wrong build.",
+      "capabilities": [
+        "Discovery and process mapping",
+        "Portal audits",
+        "CRM strategy",
+        "Solution architecture",
+        "Roadmap definition",
+        "Subscription guidance",
+        "Governance",
+        "Adoption planning"
+      ],
+      "related": [
+        "implementation-onboarding",
+        "crm-revops",
+        "managed-hubspot-support"
+      ],
+      "isPublished": true
+    },
+    {
+      "slug": "implementation-onboarding",
+      "name": "Implementation and onboarding",
+      "shortName": "Implementation and onboarding",
+      "image": "/images/services/implementation-onboarding.webp",
+      "headline": "HubSpot implementation designed around your business.",
+      "summary": "Move beyond default setup with a portal architecture, process design, migration plan, and launch that your teams can actually use.",
+      "serviceLine": "A HubSpot implementation designed around the way your teams actually operate.",
+      "capabilities": [
+        "Portal setup",
+        "Object and property architecture",
+        "Lifecycle stages",
+        "Pipelines",
+        "Permissions and teams",
+        "Lead management",
+        "Migration planning",
+        "Testing and launch"
+      ],
+      "related": [
+        "hubspot-strategy-consulting",
+        "crm-revops",
+        "automation-operations"
+      ],
+      "isPublished": true
+    },
+    {
+      "slug": "crm-revops",
+      "name": "CRM and revenue operations architecture",
+      "shortName": "CRM and RevOps",
+      "image": "/images/services/crm-revops.webp",
+      "headline": "Turn customer data into a system your teams can trust.",
+      "summary": "Create clear ownership, consistent data, usable pipelines, and reporting that supports decisions across the revenue journey.",
+      "serviceLine": "Clean data, clear ownership, and processes that move revenue forward.",
+      "capabilities": [
+        "CRM cleanup",
+        "Data model design",
+        "Custom objects",
+        "Lead routing",
+        "Pipeline design",
+        "Attribution",
+        "Data quality controls",
+        "Reporting and governance"
+      ],
+      "related": [
+        "hubspot-strategy-consulting",
+        "automation-operations",
+        "integrations-custom-development"
+      ],
+      "isPublished": true
+    },
+    {
+      "slug": "automation-operations",
+      "name": "Automation and operations",
+      "shortName": "Automation and operations",
+      "image": "/images/services/automation-operations.webp",
+      "headline": "Automate the right work without creating a workflow maze.",
+      "summary": "Design dependable automation that removes friction, protects data quality, and remains understandable as the business grows.",
+      "serviceLine": "Automate the right work without creating a workflow maze.",
+      "capabilities": [
+        "Workflow architecture",
+        "Notifications",
+        "Assignment and rotation",
+        "SLA processes",
+        "Lifecycle automation",
+        "Deal and ticket automation",
+        "Data hygiene",
+        "Workflow audits"
+      ],
+      "related": [
+        "crm-revops",
+        "implementation-onboarding",
+        "service-hub-customer-experience"
+      ],
+      "isPublished": true
+    },
+    {
+      "slug": "integrations-custom-development",
+      "name": "Integrations and custom development",
+      "shortName": "Integrations and development",
+      "image": "/images/services/integrations-development.webp",
+      "headline": "Connect HubSpot to the systems that run your business.",
+      "summary": "Design and build reliable integrations, middleware, custom objects, extensions, and modules when the native option does not fit.",
+      "serviceLine": "When the native integration is not enough, build the right connection.",
+      "capabilities": [
+        "API integrations",
+        "ERP and finance connections",
+        "Middleware",
+        "Webhook services",
+        "Custom-coded workflow actions",
+        "Data synchronisation",
+        "Custom objects",
+        "CRM extensions and modules"
+      ],
+      "related": [
+        "crm-revops",
+        "automation-operations",
+        "websites-content-hub"
+      ],
+      "isPublished": true
+    },
+    {
+      "slug": "websites-content-hub",
+      "name": "Websites and Content Hub",
+      "shortName": "Websites and Content Hub",
+      "image": "/images/services/websites-content-hub.webp",
+      "headline": "Build a website that works as part of your HubSpot system.",
+      "summary": "Connect content, conversion, CRM data, reporting, and customer journeys through a fast, flexible, well-designed web experience.",
+      "serviceLine": "Websites built for HubSpot, not simply hosted on it.",
+      "capabilities": [
+        "Website strategy",
+        "HubSpot Content Hub",
+        "Custom themes and modules",
+        "Landing pages",
+        "Quote templates",
+        "Content migration",
+        "Forms and personalisation",
+        "Technical SEO"
+      ],
+      "related": [
+        "integrations-custom-development",
+        "hubspot-strategy-consulting",
+        "managed-hubspot-support"
+      ],
+      "isPublished": true
+    },
+    {
+      "slug": "service-hub-customer-experience",
+      "name": "Service Hub and customer experience",
+      "shortName": "Service Hub",
+      "image": "/images/services/service-hub.webp",
+      "headline": "Give service teams the full customer context.",
+      "summary": "Build ticketing, Help Desk, routing, knowledge, automation, and reporting around the way customers actually need support.",
+      "serviceLine": "Give service teams the context and systems to support customers properly.",
+      "capabilities": [
+        "Ticket pipelines",
+        "Help Desk",
+        "Shared inboxes",
+        "SLAs",
+        "Routing",
+        "Knowledge bases",
+        "Customer portals",
+        "Service automation and reporting"
+      ],
+      "related": [
+        "automation-operations",
+        "implementation-onboarding",
+        "managed-hubspot-support"
+      ],
+      "isPublished": true
+    },
+    {
+      "slug": "managed-hubspot-support",
+      "name": "Managed HubSpot support and optimisation",
+      "shortName": "Managed HubSpot support",
+      "image": "/images/services/managed-support.webp",
+      "headline": "Senior HubSpot capacity without another full-time hire.",
+      "summary": "Keep improving the portal through a clear, prioritised backlog delivered by experienced consultants and technical specialists.",
+      "serviceLine": "An experienced HubSpot team when you need answers, improvements, or extra capacity.",
+      "capabilities": [
+        "Portal administration",
+        "Backlog delivery",
+        "Optimisation",
+        "Troubleshooting",
+        "Reporting improvements",
+        "Workflow maintenance",
+        "Enablement",
+        "Monthly planning"
+      ],
+      "related": [
+        "hubspot-strategy-consulting",
+        "automation-operations",
+        "service-hub-customer-experience"
+      ],
+      "isPublished": true
+    }
+  ],
+  "team": [
+    {
+      "id": "team-01",
+      "name": "Thierry-Luc Denichaud",
+      "role": "Founder / HubSpot Specialist",
+      "bio": "Thierry-Luc leads 42's work across HubSpot strategy, CRM architecture, digital delivery, and hands-on problem solving, keeping complex programmes clear from first question to working system.",
+      "specialisms": [
+        "HubSpot strategy",
+        "CRM architecture",
+        "Digital delivery",
+        "Solution design"
+      ],
+      "image": "/images/team/thierry-luc-placeholder.webp",
+      "imageAlt": "AI-generated placeholder portrait for layout review",
+      "imageIsPlaceholder": true,
+      "linkedinUrl": "",
+      "relationship": "Founder",
+      "isPlaceholder": false,
+      "isPublished": true
+    },
+    {
+      "id": "team-02",
+      "name": "Luca Codevilla",
+      "role": "HubSpot Senior Consultant",
+      "bio": "Luca focuses on turning business requirements into clear HubSpot architecture, practical workflows, and onboarding plans that teams can confidently adopt.",
+      "specialisms": ["HubSpot consulting", "CRM architecture", "Onboarding"],
+      "image": "/images/team/luca-codevilla-placeholder.webp",
+      "imageAlt": "AI-generated placeholder portrait for layout review",
+      "imageIsPlaceholder": true,
+      "linkedinUrl": "",
+      "relationship": "Relationship to confirm",
+      "isPlaceholder": false,
+      "isPublished": true
+    },
+    {
+      "id": "team-03",
+      "name": "Zane Smith",
+      "role": "PHP Developer / Integrations Specialist",
+      "bio": "Zane works across PHP development, APIs, data flows, and custom integrations, connecting HubSpot to the operational systems around it.",
+      "specialisms": ["PHP development", "APIs", "Custom integrations"],
+      "image": "/images/team/zane-smith-placeholder.webp",
+      "imageAlt": "AI-generated placeholder portrait for layout review",
+      "imageIsPlaceholder": true,
+      "linkedinUrl": "",
+      "relationship": "Relationship to confirm",
+      "isPlaceholder": false,
+      "isPublished": true
+    },
+    {
+      "id": "team-04",
+      "name": "Emma Black",
+      "role": "Marketing Consultant / HubSpot Onboarding Specialist",
+      "bio": "Emma connects marketing strategy with practical HubSpot onboarding, helping teams establish clear journeys, campaigns, content processes, and day-to-day ways of working.",
+      "specialisms": ["Marketing strategy", "HubSpot onboarding", "Customer journeys"],
+      "image": "/images/team/emma-black-placeholder.webp",
+      "imageAlt": "AI-generated placeholder portrait for layout review",
+      "imageIsPlaceholder": true,
+      "linkedinUrl": "",
+      "relationship": "Relationship to confirm",
+      "isPlaceholder": false,
+      "isPublished": true
+    }
+  ],
+  "caseStudies": [
+    {
+      "slug": "case-study-placeholder-01",
+      "client": "Case study placeholder 01",
+      "sector": "[Sector]",
+      "summary": "[Approved summary required.]",
+      "challenge": "[Approved problem statement required.]",
+      "solution": "[Approved solution required.]",
+      "outcomes": [],
+      "services": [],
+      "image": "/images/work/case-study-placeholder-01.webp",
+      "isPlaceholder": true,
+      "isVerified": false,
+      "isPublished": false,
+      "approvalStatus": "Not submitted"
+    },
+    {
+      "slug": "case-study-placeholder-02",
+      "client": "Case study placeholder 02",
+      "sector": "[Sector]",
+      "summary": "[Approved summary required.]",
+      "challenge": "[Approved problem statement required.]",
+      "solution": "[Approved solution required.]",
+      "outcomes": [],
+      "services": [],
+      "image": "/images/work/case-study-placeholder-02.webp",
+      "isPlaceholder": true,
+      "isVerified": false,
+      "isPublished": false,
+      "approvalStatus": "Not submitted"
+    },
+    {
+      "slug": "case-study-placeholder-03",
+      "client": "Case study placeholder 03",
+      "sector": "[Sector]",
+      "summary": "[Approved summary required.]",
+      "challenge": "[Approved problem statement required.]",
+      "solution": "[Approved solution required.]",
+      "outcomes": [],
+      "services": [],
+      "image": "/images/work/case-study-placeholder-03.webp",
+      "isPlaceholder": true,
+      "isVerified": false,
+      "isPublished": false,
+      "approvalStatus": "Not submitted"
+    }
+  ],
+  "insights": [
+    {
+      "slug": "signs-your-hubspot-portal-needs-an-audit",
+      "title": "Signs your HubSpot portal needs an audit",
+      "summary": "A practical diagnostic for spotting the data, process, automation, reporting, and governance problems that justify a structured portal review.",
+      "category": "CRM and RevOps",
+      "author": "Thierry-Luc Denichaud",
+      "image": "/images/insights/portal-audit.webp",
+      "imageAlt": "A precision inspection lens reviewing an interconnected CRM data system",
+      "readingTime": "8 min read",
+      "featured": true,
+      "serviceSlugs": ["hubspot-strategy-consulting", "crm-revops"],
+      "publishedAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "isPlaceholder": false,
+      "isPublished": true
+    },
+    {
+      "slug": "prepare-for-hubspot-crm-implementation",
+      "title": "How to prepare for a HubSpot CRM implementation",
+      "summary": "The decisions, data work, process mapping, governance, and rollout planning to complete before configuration begins.",
+      "category": "HubSpot strategy",
+      "author": "Thierry-Luc Denichaud",
+      "image": "/images/insights/crm-implementation.webp",
+      "imageAlt": "CRM modules moving from loose parts into a connected operating system",
+      "readingTime": "10 min read",
+      "featured": true,
+      "serviceSlugs": ["implementation-onboarding", "hubspot-strategy-consulting"],
+      "publishedAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "isPlaceholder": false,
+      "isPublished": true
+    },
+    {
+      "slug": "before-connecting-your-website-to-hubspot",
+      "title": "What to check before connecting your website to HubSpot",
+      "summary": "A pre-launch checklist for tracking, forms, consent, domains, data capture, attribution, and testing on an external website.",
+      "category": "Websites and Content Hub",
+      "author": "Thierry-Luc Denichaud",
+      "image": "/images/insights/website-connection.webp",
+      "imageAlt": "Website and form panels connected through a validated path to a CRM core",
+      "readingTime": "9 min read",
+      "featured": true,
+      "serviceSlugs": ["websites-content-hub", "integrations-custom-development"],
+      "publishedAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "isPlaceholder": false,
+      "isPublished": true
+    },
+    {
+      "slug": "why-your-crm-reports-are-not-reliable",
+      "title": "Why your CRM reports are not reliable",
+      "summary": "How data definitions, associations, lifecycle rules, date fields, filters, and operational behaviour quietly undermine otherwise polished dashboards.",
+      "category": "Reporting and data",
+      "author": "Thierry-Luc Denichaud",
+      "image": "/images/insights/reliable-reporting.webp",
+      "imageAlt": "Misaligned analytical tiles resolving into one coherent reporting system",
+      "readingTime": "9 min read",
+      "featured": true,
+      "serviceSlugs": ["crm-revops", "hubspot-strategy-consulting"],
+      "publishedAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "isPlaceholder": false,
+      "isPublished": true
+    },
+    {
+      "slug": "what-to-include-in-a-custom-integration-brief",
+      "title": "What to include in a custom integration brief",
+      "summary": "A clear integration brief turns a vague request to connect two systems into testable scope, ownership, mappings, controls, and acceptance criteria.",
+      "category": "Integrations",
+      "author": "Thierry-Luc Denichaud",
+      "image": "/images/insights/integration-brief.webp",
+      "imageAlt": "Two technical systems joined by mapped specification cards and connectors",
+      "readingTime": "10 min read",
+      "featured": false,
+      "serviceSlugs": ["integrations-custom-development", "hubspot-strategy-consulting"],
+      "publishedAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "isPlaceholder": false,
+      "isPublished": true
+    },
+    {
+      "slug": "plan-a-website-redesign-around-crm-and-lead-capture",
+      "title": "How to plan a website redesign around CRM and lead capture",
+      "summary": "Plan the content model, conversion paths, forms, consent, lifecycle rules, attribution, and handover before visual design locks in the wrong assumptions.",
+      "category": "Websites and Content Hub",
+      "author": "Thierry-Luc Denichaud",
+      "image": "/images/insights/website-redesign.webp",
+      "imageAlt": "Website wireframe panels organised around a lead capture path and CRM",
+      "readingTime": "10 min read",
+      "featured": false,
+      "serviceSlugs": ["websites-content-hub", "crm-revops"],
+      "publishedAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "isPlaceholder": false,
+      "isPublished": true
+    },
+    {
+      "slug": "basic-website-accessibility-checks",
+      "title": "Basic website accessibility checks every business should do",
+      "summary": "A practical first review covering keyboard access, focus, headings, alternatives, contrast, zoom, forms, motion, and the limits of automated checks.",
+      "category": "Accessibility",
+      "author": "Thierry-Luc Denichaud",
+      "image": "/images/insights/accessibility-checks.webp",
+      "imageAlt": "Website controls being evaluated for focus, contrast, hierarchy, and target size",
+      "readingTime": "9 min read",
+      "featured": false,
+      "serviceSlugs": ["websites-content-hub"],
+      "publishedAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "isPlaceholder": false,
+      "isPublished": true
+    },
+    {
+      "slug": "what-managed-hubspot-support-should-include",
+      "title": "What managed HubSpot support should include",
+      "summary": "A useful managed service combines prioritised delivery with governance, preventative maintenance, documentation, reporting, and accountable senior oversight.",
+      "category": "Managed support",
+      "author": "Thierry-Luc Denichaud",
+      "image": "/images/insights/managed-support.webp",
+      "imageAlt": "A CRM system on a calm, organised maintenance and operations bench",
+      "readingTime": "8 min read",
+      "featured": false,
+      "serviceSlugs": ["managed-hubspot-support", "automation-operations"],
+      "publishedAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "isPlaceholder": false,
+      "isPublished": true
+    },
+    {
+      "slug": "clean-up-duplicate-crm-properties",
+      "title": "How to clean up duplicate CRM properties",
+      "summary": "A safe sequence for identifying overlapping fields, tracing dependencies, choosing a canonical property, migrating values, and retiring the old schema.",
+      "category": "CRM and RevOps",
+      "author": "Thierry-Luc Denichaud",
+      "image": "/images/insights/duplicate-properties.webp",
+      "imageAlt": "Pairs of duplicate data tokens being consolidated into a governed schema",
+      "readingTime": "10 min read",
+      "featured": false,
+      "serviceSlugs": ["crm-revops", "managed-hubspot-support"],
+      "publishedAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "isPlaceholder": false,
+      "isPublished": true
+    },
+    {
+      "slug": "hubspot-pricing-and-ai-credits-explained",
+      "title": "HubSpot pricing and AI credits, made simple",
+      "summary": "A plain-English way to separate products, editions, seats, marketing contacts, onboarding, capacity, and usage-based HubSpot Credits before you compare quotes.",
+      "category": "HubSpot strategy",
+      "author": "Thierry-Luc Denichaud",
+      "image": "/images/insights/hubspot-pricing-credits.webp",
+      "imageAlt": "Tiered software editions, seat tokens, and a finite AI credit ledger",
+      "readingTime": "11 min read",
+      "featured": false,
+      "serviceSlugs": ["hubspot-strategy-consulting", "managed-hubspot-support"],
+      "publishedAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "isPlaceholder": false,
+      "isPublished": true
+    }
+  ],
+  "faqs": [
+    {
+      "question": "What kind of HubSpot work does 42 handle?",
+      "answer": "42 supports strategy, implementation, CRM architecture, automation, integrations, custom development, websites, Service Hub, reporting, enablement, and managed optimisation."
+    },
+    {
+      "question": "Can 42 work with an existing HubSpot portal?",
+      "answer": "Yes. Many engagements begin with an existing portal that needs to be reviewed, cleaned up, restructured, connected, or expanded."
+    },
+    {
+      "question": "Does 42 only provide recommendations?",
+      "answer": "No. The consultancy combines discovery and solution design with hands-on configuration, development, testing, documentation, and enablement."
+    },
+    {
+      "question": "Can 42 build custom integrations?",
+      "answer": "Yes. Integration work can include APIs, webhooks, middleware, custom objects, data synchronisation, custom-coded workflow actions, and architecture documentation."
+    },
+    {
+      "question": "Can 42 provide ongoing support?",
+      "answer": "Yes. Managed support can provide prioritised delivery, portal administration, troubleshooting, optimisation, reporting improvements, and additional senior capacity."
+    }
+  ],
+  "proofGovernance": {
+    "renderUnverifiedProof": false,
+    "requiredFields": [
+      "isPublished",
+      "isPlaceholder",
+      "isVerified",
+      "approvalStatus",
+      "lastReviewedAt"
+    ],
+    "neverInvent": [
+      "HubSpot partner tier",
+      "Awards",
+      "Client logos",
+      "Testimonials",
+      "Review counts",
+      "Certifications",
+      "Commercial metrics",
+      "Employee relationships",
+      "Pricing"
+    ]
+  }
+}
