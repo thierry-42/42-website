@@ -220,6 +220,21 @@ test("homepage answer field and capability explorer respond to selection", async
       name: "Connect customer activity to the operational processes that fulfil it.",
     }),
   ).toBeVisible();
+  await expect(explorer.locator("h3")).toHaveCount(1);
+
+  await page.goto("/services");
+  const servicesExplorer = page.getByTestId("capability-explorer");
+  const platformDesign = servicesExplorer.getByRole("button", {
+    name: /Platform design/,
+  });
+  await platformDesign.click();
+  await expect(platformDesign).toHaveAttribute("aria-pressed", "true");
+  await expect(
+    servicesExplorer.getByRole("heading", {
+      name: "Extend the platform when the standard data model or workflow no longer fits.",
+    }),
+  ).toBeVisible();
+  await expect(servicesExplorer.locator("h3")).toHaveCount(1);
 });
 
 test("Services engagement cards use the stacked scroll treatment", async ({
