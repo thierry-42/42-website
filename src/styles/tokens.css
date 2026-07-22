@@ -1,8 +1,12 @@
-@theme {
-  --font-sans: var(--font-manrope), "Segoe UI", sans-serif;
-  --font-serif: var(--font-instrument-serif), Georgia, serif;
-  --font-mono: var(--font-geist-mono), "SFMono-Regular", Consolas, monospace;
+@theme inline {
+  --font-primary: var(--type-primary);
+  --font-secondary: var(--type-secondary);
+  --font-sans: var(--type-primary);
+  --font-serif: var(--type-primary);
+  --font-mono: var(--type-mono);
+}
 
+@theme {
   --color-ink-950: #090b10;
   --color-ink-900: #11141b;
   --color-ink-800: #1b2029;
@@ -44,9 +48,6 @@
 }
 
 :root {
-  --font-sans: var(--font-manrope), "Segoe UI", sans-serif;
-  --font-serif: var(--font-instrument-serif), Georgia, serif;
-  --font-mono: var(--font-geist-mono), "SFMono-Regular", Consolas, monospace;
   --background: var(--color-paper-50);
   --foreground: var(--color-ink-950);
   --surface: #ffffff;

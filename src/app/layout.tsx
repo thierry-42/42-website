@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { Geist_Mono, Instrument_Serif, Manrope } from "next/font/google";
+import { Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -13,18 +14,20 @@ import { cn } from "@/lib/cn";
 
 import "@/styles/globals.css";
 
-const manrope = Manrope({
+const overusedGrotesk = localFont({
   display: "swap",
-  subsets: ["latin"],
-  variable: "--font-manrope",
+  fallback: ["Arial", "sans-serif"],
+  src: "../assets/fonts/OverusedGrotesk-VF.woff2",
+  variable: "--font-overused-grotesk",
+  weight: "300 900",
 });
 
-const instrumentSerif = Instrument_Serif({
+const inter = localFont({
   display: "swap",
-  style: ["normal", "italic"],
-  subsets: ["latin"],
-  variable: "--font-instrument-serif",
-  weight: "400",
+  fallback: ["Arial", "sans-serif"],
+  src: "../assets/fonts/Inter-VariableFont_opsz,wght.ttf",
+  variable: "--font-inter",
+  weight: "100 900",
 });
 
 const geistMono = Geist_Mono({
@@ -76,8 +79,8 @@ export default function RootLayout({
     <html data-scroll-behavior="smooth" lang="en-GB">
       <body
         className={cn(
-          manrope.variable,
-          instrumentSerif.variable,
+          overusedGrotesk.variable,
+          inter.variable,
           geistMono.variable,
         )}
       >

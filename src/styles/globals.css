@@ -15,13 +15,22 @@
   }
 
   body {
+    --type-primary: var(--font-overused-grotesk);
+    --type-secondary: var(--font-inter);
+    --type-mono: var(--font-geist-mono);
+
     margin: 0;
     background: var(--background);
     color: var(--foreground);
-    font-family: var(--font-manrope), "Segoe UI", sans-serif;
+    font-family: var(--type-primary);
     font-size: 1rem;
+    font-optical-sizing: auto;
     line-height: 1.65;
     -webkit-font-smoothing: antialiased;
+  }
+
+  p {
+    font-family: var(--type-secondary);
   }
 
   a {
@@ -56,11 +65,15 @@
 
 @layer utilities {
   .font-sans {
-    font-family: var(--font-manrope), "Segoe UI", sans-serif;
+    font-family: var(--type-primary);
   }
 
   .font-serif {
-    font-family: var(--font-instrument-serif), Georgia, serif;
+    font-family: var(--type-primary);
+  }
+
+  .font-secondary {
+    font-family: var(--type-secondary);
   }
 
   .font-mono {

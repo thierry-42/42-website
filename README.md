@@ -102,7 +102,8 @@ Repeated navigation, service, CTA, FAQ, and brand content must remain data-drive
 The design tokens live in `src/styles/tokens.css` and include:
 
 - ink, paper, signal green, supporting orbit blue, and HubSpot-context coral;
-- Manrope, Instrument Serif, and Geist Mono font roles;
+- locally hosted Overused Grotesk for primary display and interface typography,
+  Inter for secondary reading text, and Geist Mono for technical notation;
 - fluid type and section scales;
 - container widths, breakpoints, spacing, radii, and shadows;
 - light and dark semantic surfaces;
