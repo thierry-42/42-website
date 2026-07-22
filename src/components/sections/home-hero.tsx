@@ -1,5 +1,6 @@
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
+import { RetroAnswerTerminal } from "@/components/illustrations/retro-answer-terminal";
 import { Reveal } from "@/components/motion/reveal";
 import { HeroAnswerField } from "@/components/sections/hero-answer-field";
 import { Button } from "@/components/ui/button";
@@ -12,13 +13,17 @@ export function HomeHero({ consultationHref }: { consultationHref: string }) {
 
   return (
     <Section
-      className="min-h-[calc(100svh-1px)] pt-[calc(var(--header-height)+3.5rem)] md:pt-[calc(var(--header-height)+5rem)]"
+      className="min-h-[calc(100svh-1px)] border-b border-ink-950/12 pt-[calc(var(--header-height)+3.5rem)] md:pt-[calc(var(--header-height)+5rem)]"
       spacing="compact"
-      surface="dark"
+      surface="paper"
     >
       <div
         aria-hidden="true"
-        className="hairline-grid absolute inset-0 opacity-20"
+        className="hairline-grid absolute inset-0 [mask-image:linear-gradient(to_right,transparent,black_42%,black_88%,transparent)] opacity-35"
+      />
+      <RetroAnswerTerminal
+        aria-hidden="true"
+        className="pointer-events-none absolute top-[calc(var(--header-height)+0.5rem)] -right-[18rem] w-[42rem] text-ink-950 opacity-[0.055] sm:-right-[12rem] sm:w-[52rem] lg:-right-[7rem] lg:w-[60rem]"
       />
       <Container className="relative z-10">
         <div className="grid items-center gap-14 lg:grid-cols-12 lg:gap-12">
@@ -38,9 +43,9 @@ export function HomeHero({ consultationHref }: { consultationHref: string }) {
                 {hero.secondaryCta.label}
               </Button>
             </div>
-            <div className="mt-10 flex items-center gap-4 border-t border-white/14 pt-5 font-mono text-[0.625rem] tracking-[0.12em] text-white/44 uppercase">
-              <span className="h-px w-10 bg-signal-400" />
-              Hover or focus the answer field
+            <div className="mt-10 flex items-center gap-4 border-t border-ink-950/14 pt-5 font-mono text-[0.625rem] tracking-[0.12em] text-ink-950/60 uppercase">
+              <span className="h-px w-10 bg-signal-500" />
+              Select an answer mode
             </div>
           </Reveal>
 

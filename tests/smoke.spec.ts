@@ -204,6 +204,11 @@ test("homepage answer field and capability explorer respond to selection", async
 }) => {
   await page.goto("/");
 
+  await expect(page.locator("main > section").first()).toHaveAttribute(
+    "data-surface",
+    "light",
+  );
+
   const architect = page.getByTestId("hero-mode-architect");
   await architect.click();
   await expect(architect).toHaveAttribute("aria-pressed", "true");
