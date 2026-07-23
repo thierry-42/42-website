@@ -327,7 +327,6 @@ test("About renders approved team identities with environment-safe portraits", a
 
   const members = [
     ["Thierry-Luc Denichaud", "Founder / HubSpot Specialist"],
-    ["Luca Codevilla", "HubSpot Senior Consultant"],
     ["Zane Smith", "PHP Developer / Integrations Specialist"],
     ["Emma Black", "Marketing Consultant / HubSpot Onboarding Specialist"],
   ];
@@ -336,16 +335,15 @@ test("About renders approved team identities with environment-safe portraits", a
     await expect(page.getByRole("heading", { name })).toBeVisible();
     await expect(page.getByText(role)).toBeVisible();
   }
+  await expect(
+    page.getByText("Development portrait / approval required"),
+  ).toHaveCount(0);
+  await expect(page.getByText("Luca Codevilla")).toHaveCount(0);
+
   if (deploymentEnvironment === "production") {
-    await expect(
-      page.getByText("Development portrait / approval required"),
-    ).toHaveCount(0);
     await expect(page.locator('img[src*="/images/team/"]')).toHaveCount(0);
   } else {
-    await expect(
-      page.getByText("Development portrait / approval required"),
-    ).toHaveCount(4);
-    await expect(page.locator('img[src*="/images/team/"]')).toHaveCount(4);
+    await expect(page.locator('img[src*="/images/team/"]')).toHaveCount(3);
   }
 });
 

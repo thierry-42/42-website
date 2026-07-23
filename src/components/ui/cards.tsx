@@ -261,9 +261,6 @@ export function TeamCard({ member }: { member: TeamMember }) {
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               src={member.image}
             />
-            <span className="absolute top-3 left-3 rounded-full border border-white/20 bg-ink-950/88 px-3 py-1 font-mono text-[0.625rem] tracking-[0.1em] text-paper-50 uppercase backdrop-blur-sm">
-              Development portrait / approval required
-            </span>
           </div>
         ) : null}
         <div className="flex flex-1 flex-col p-6">

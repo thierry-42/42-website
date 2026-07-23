@@ -17,7 +17,7 @@ export function TeamSection() {
           index="04"
           title="Senior expertise, without the agency maze."
         />
-        <Stagger className="mt-12 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <Stagger className="mt-12 grid gap-4 sm:grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]">
           {publicContent.team.map((member) => (
             <CardEntrance className="h-full" key={member.id}>
               <TeamCard member={member} />

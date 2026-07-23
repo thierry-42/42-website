@@ -480,23 +480,6 @@
       "isPublished": true
     },
     {
-      "id": "team-02",
-      "name": "Luca Codevilla",
-      "role": "HubSpot Senior Consultant",
-      "bio": "Luca focuses on turning business requirements into clear HubSpot architecture, practical workflows, and onboarding plans that teams can confidently adopt.",
-      "specialisms": ["HubSpot consulting", "CRM architecture", "Onboarding"],
-      "image": "/images/team/luca-codevilla.webp",
-      "imageAlt": "Portrait of Luca Codevilla in a contemporary office",
-      "imageIsPlaceholder": true,
-      "bioApprovalStatus": "owner-review-required",
-      "specialismsApprovalStatus": "owner-review-required",
-      "portraitApprovalStatus": "development-only",
-      "linkedinUrl": "",
-      "relationship": "Team member",
-      "isPlaceholder": false,
-      "isPublished": true
-    },
-    {
       "id": "team-03",
       "name": "Zane Smith",
       "role": "PHP Developer / Integrations Specialist",
