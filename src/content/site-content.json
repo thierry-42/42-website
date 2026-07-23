@@ -31,6 +31,9 @@
       "Occasionally witty, never gimmicky"
     ]
   },
+  "features": {
+    "work": false
+  },
   "navigation": {
     "primary": [
       {

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 
 import { Container } from "@/components/layout/container";
 import { Logo } from "@/components/layout/logo";
-import { siteContent } from "@/content/site-content";
+import { publicPrimaryNavigation, siteContent } from "@/content/site-content";
 import { siteConfig } from "@/lib/config";
 
 export function SiteFooter() {
@@ -36,7 +36,7 @@ export function SiteFooter() {
 
           <div className="grid gap-10 sm:grid-cols-3 lg:col-span-7">
             <FooterGroup label="Navigate">
-              {siteContent.navigation.primary.map((item) => (
+              {publicPrimaryNavigation.map((item) => (
                 <FooterLink href={item.href} key={item.href}>
                   {item.label}
                 </FooterLink>

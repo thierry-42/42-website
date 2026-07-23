@@ -8,7 +8,7 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { CustomCursor } from "@/components/motion/custom-cursor";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
 import { ScrollToTop } from "@/components/motion/scroll-to-top";
-import { siteContent } from "@/content/site-content";
+import { publicPrimaryNavigation, siteContent } from "@/content/site-content";
 import { siteConfig } from "@/lib/config";
 import { cn } from "@/lib/cn";
 
@@ -93,7 +93,7 @@ export default function RootLayout({
         <SiteHeader
           consultationHref={consultationHref}
           consultationLabel={siteContent.navigation.cta.label}
-          navigation={siteContent.navigation.primary}
+          navigation={publicPrimaryNavigation}
           services={serviceNavigation}
         />
         <ScrollProgress />

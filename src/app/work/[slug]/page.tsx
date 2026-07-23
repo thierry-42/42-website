@@ -8,7 +8,11 @@ import { PageIntro } from "@/components/sections/page-intro";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { CapabilityTag } from "@/components/ui/capability-tag";
 import { Surface } from "@/components/ui/surface";
-import { getPublishedCaseStudy, publicContent } from "@/content/site-content";
+import {
+  getPublishedCaseStudy,
+  publicContent,
+  siteContent,
+} from "@/content/site-content";
 import { siteConfig } from "@/lib/config";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -17,12 +21,16 @@ type CaseStudyPageProps = {
 };
 
 export function generateStaticParams() {
+  if (!siteContent.features.work) return [];
+
   return publicContent.caseStudies.map((caseStudy) => ({
     slug: caseStudy.slug,
   }));
 }
 
 export async function generateMetadata({ params }: CaseStudyPageProps) {
+  if (!siteContent.features.work) return {};
+
   const { slug } = await params;
   const caseStudy = getPublishedCaseStudy(slug);
 
@@ -36,6 +44,8 @@ export async function generateMetadata({ params }: CaseStudyPageProps) {
 }
 
 export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
+  if (!siteContent.features.work) notFound();
+
   const { slug } = await params;
   const caseStudy = getPublishedCaseStudy(slug);
 

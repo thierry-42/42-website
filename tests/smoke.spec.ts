@@ -20,7 +20,6 @@ async function mockHubspotForm(page: Page) {
 const primaryRoutes = [
   "/",
   "/services",
-  "/work",
   "/about",
   "/approach",
   "/audience",
@@ -179,6 +178,28 @@ test("primary navigation exposes Approach and Industries", async ({
   await expect(
     primaryNavigation.getByRole("link", { name: "Industries" }),
   ).toHaveAttribute("href", "/industries");
+});
+
+test("Work stays unpublished while the feature is disabled", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/");
+
+  if (testInfo.project.name.includes("mobile")) {
+    await page.getByRole("button", { name: "Open navigation" }).click();
+  }
+
+  await expect(page.locator('a[href="/work"]')).toHaveCount(0);
+
+  const response = await page.goto("/work");
+  expect(response?.status()).toBe(404);
+  await expect(page.getByText("Error 404")).toBeVisible();
+
+  const sitemapResponse = await page.request.get("/sitemap.xml");
+  expect(sitemapResponse.ok()).toBeTruthy();
+  expect(await sitemapResponse.text()).not.toContain(
+    "<loc>http://localhost:3000/work",
+  );
 });
 
 test("Approach and Industries use the reconciled wireframe structures", async ({

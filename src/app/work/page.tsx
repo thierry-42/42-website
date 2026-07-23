@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { ProofIndex } from "@/components/sections/proof-index";
@@ -6,7 +8,7 @@ import { SectionHeading } from "@/components/sections/section-heading";
 import { CaseStudyCard } from "@/components/ui/cards";
 import { Surface } from "@/components/ui/surface";
 import { routeFoundations } from "@/content/page-content";
-import { publicContent } from "@/content/site-content";
+import { publicContent, siteContent } from "@/content/site-content";
 import { siteConfig } from "@/lib/config";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -19,6 +21,8 @@ export const metadata = createPageMetadata({
 });
 
 export default function WorkPage() {
+  if (!siteContent.features.work) notFound();
+
   const hasApprovedWork = publicContent.caseStudies.length > 0;
 
   return (

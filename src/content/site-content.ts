@@ -137,6 +137,9 @@ export const siteContentSchema = z.object({
     principles: z.array(z.string()),
     voice: z.array(z.string()),
   }),
+  features: z.object({
+    work: z.boolean(),
+  }),
   navigation: z.object({
     primary: z.array(linkSchema),
     cta: callToActionSchema,
@@ -182,6 +185,11 @@ export const publicContent = {
   caseStudies: publicRecords(siteContent.caseStudies),
   insights: publicRecords(siteContent.insights),
 } as const;
+
+/** Navigation filtered by explicit publication flags while retaining source records. */
+export const publicPrimaryNavigation = siteContent.navigation.primary.filter(
+  (item) => item.href !== "/work" || siteContent.features.work,
+);
 
 export function getPublishedService(slug: string): Service | undefined {
   return publicContent.services.find((service) => service.slug === slug);
