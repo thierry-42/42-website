@@ -76,6 +76,19 @@ test("live staging HubSpot form audit", async ({ context, page }, testInfo) => {
   const lastName = formFrame.getByRole("textbox", { name: "Last Name" });
   const email = formFrame.getByRole("textbox", { name: /Email/ });
   const company = formFrame.getByRole("textbox", { name: /Company name/ });
+  const employmentRole = formFrame.getByRole("combobox", {
+    name: "Employment Role",
+  });
+  const websiteUrl = formFrame.getByRole("textbox", { name: "Website URL" });
+  const hubspotStatus = formFrame.getByRole("combobox", {
+    name: "HubSpot Status",
+  });
+  const primaryChallenge = formFrame.getByRole("combobox", {
+    name: "Primary challenge",
+  });
+  const projectTiming = formFrame.getByRole("textbox", {
+    name: "Project timing",
+  });
   const submitButton = formFrame.getByRole("button", {
     exact: true,
     name: "Submit",
@@ -92,12 +105,49 @@ test("live staging HubSpot form audit", async ({ context, page }, testInfo) => {
   await expect(lastName).toBeFocused();
   await page.keyboard.press("Tab");
   await expect(email).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(company).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(employmentRole).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(websiteUrl).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(hubspotStatus).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(primaryChallenge).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(projectTiming).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(submitButton).toBeFocused();
+
+  const focusOrder = [
+    "First Name",
+    "Last Name",
+    "Email",
+    "Company name",
+    "Employment Role",
+    "Website URL",
+    "HubSpot Status",
+    "Primary challenge",
+    "Project timing",
+    "Submit",
+  ];
 
   await submitButton.click();
-  await expect(
-    formFrame.getByText("Please complete this required field.").first(),
-  ).toBeVisible();
-  await expect(formFrame.locator('[role="alert"]').first()).toBeVisible();
+  const validationMessages = formFrame.getByText(
+    "Please complete this required field.",
+  );
+  await expect(validationMessages.first()).toBeVisible();
+  const validationDetails = await validationMessages.evaluateAll((elements) =>
+    elements.map((element) => ({
+      ariaLive: element.getAttribute("aria-live"),
+      id: element.id || null,
+      parentRole: element.parentElement?.getAttribute("role") ?? null,
+      role: element.getAttribute("role"),
+      tag: element.tagName,
+      text: element.textContent?.replace(/\s+/gu, " ").trim() ?? "",
+    })),
+  );
 
   const consentNotice =
     "When you submit this form, 42 and HubSpot process the information you provide so that 42 can review and respond to your enquiry. Read the Privacy Policy.";
@@ -116,6 +166,22 @@ test("live staging HubSpot form audit", async ({ context, page }, testInfo) => {
       localStorage: Object.keys(window.localStorage),
       sessionStorage: Object.keys(window.sessionStorage),
     })),
+  };
+  const hubspotContextValue = await formFrame
+    .locator('input[name="hs_context"]')
+    .inputValue();
+  const hubspotContext = JSON.parse(hubspotContextValue) as Record<
+    string,
+    unknown
+  >;
+  const technicalContext = {
+    keys: Object.keys(hubspotContext).sort(),
+    locale: hubspotContext.locale ?? null,
+    pageTitle: hubspotContext.pageTitle ?? null,
+    pageUrl: hubspotContext.pageUrl ?? null,
+    referrer: hubspotContext.referrer ?? null,
+    urlParams: hubspotContext.urlParams ?? null,
+    userAgent: hubspotContext.userAgent ?? null,
   };
 
   let successState = "not submitted";
@@ -169,12 +235,15 @@ test("live staging HubSpot form audit", async ({ context, page }, testInfo) => {
     consentNotice,
     cookies,
     fields,
+    focusOrder,
     hosts,
     storageAfterSubmit,
     storageBeforeSubmit,
     submissionEndpoint,
     submissionFieldNames: Array.from(submissionFieldNames).sort(),
     successState,
+    technicalContext,
+    validationDetails,
   };
   const reportJson = JSON.stringify(report, null, 2);
   console.log(`LIVE_STAGING_AUDIT\n${reportJson}`);

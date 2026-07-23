@@ -96,6 +96,7 @@ export const privacyPolicy: LegalDocumentContent = {
       title: "Service providers and third-party requests",
       paragraphs: [
         "The current staging site is delivered through Render and uses HubSpot for the enquiry form. The form embed makes requests to HubSpot-controlled form, static-asset, submission, and form-branding services.",
+        "The inspected live form also made requests to HubSpot-controlled API and diagnostic services.",
         "The site’s primary and secondary fonts are served locally by the Next.js application. No Google Analytics, Google Tag Manager, Microsoft Clarity, HubSpot website tracking code, LinkedIn Insight Tag, Meta Pixel, newsletter tracking, or advertising pixel is active.",
       ],
       reviewNote:
@@ -105,7 +106,8 @@ export const privacyPolicy: LegalDocumentContent = {
       id: "cookies-storage",
       title: "Cookies and browser storage",
       paragraphs: [
-        "The inspected staging session did not identify any script-accessible cookies or entries in localStorage or sessionStorage before or after a synthetic HubSpot form submission. No cookie banner is active on the current site.",
+        "The inspected live staging session identified cookies named __cf_bm on HubSpot-controlled domains. The observed cookies were Secure, SameSite=None, and HttpOnly, so they were not accessible to the website or form through JavaScript.",
+        "The inspection did not identify any script-accessible cookies or entries in localStorage or sessionStorage before or after a synthetic HubSpot form submission. No cookie banner is active on the current site.",
         "HubSpot controls the form frame and may change its technical implementation. Storage behaviour can also vary with browser settings, location, account configuration, and future HubSpot changes.",
       ],
       reviewNote:
