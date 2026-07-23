@@ -9,6 +9,8 @@ type PageMetadataInput = {
   path: string;
   image?: string;
   imageAlt?: string;
+  imageHeight?: number;
+  imageWidth?: number;
 };
 
 export function createPageMetadata({
@@ -17,6 +19,8 @@ export function createPageMetadata({
   path,
   image = "/images/og/42-hubspot-consultancy.webp",
   imageAlt = "42, a senior-led HubSpot consultancy",
+  imageHeight = 630,
+  imageWidth = 1200,
 }: PageMetadataInput): Metadata {
   const canonical = new URL(path, siteConfig.siteUrl).toString();
   const socialImage = new URL(image, siteConfig.siteUrl).toString();
@@ -37,9 +41,9 @@ export function createPageMetadata({
       images: [
         {
           alt: imageAlt,
-          height: 630,
+          height: imageHeight,
           url: socialImage,
-          width: 1200,
+          width: imageWidth,
         },
       ],
       locale: "en_GB",

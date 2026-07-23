@@ -36,6 +36,10 @@ export async function generateMetadata({
 
   return createPageMetadata({
     description: author.shortBiography,
+    image: author.image,
+    imageAlt: author.imageAlt,
+    imageHeight: 1280,
+    imageWidth: 1024,
     path: `/insights/author/${author.slug}`,
     title: author.name,
   });
@@ -79,13 +83,14 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
             }
           >
             {showPortrait ? (
-              <div className="relative aspect-[4/5] bg-paper-100 lg:aspect-auto">
+              <div className="bg-paper-100">
                 <Image
                   alt={author.imageAlt}
-                  className="object-cover"
-                  fill
+                  className="aspect-[4/5] h-auto w-full object-cover lg:h-full"
+                  height={1280}
                   sizes="(max-width: 1024px) 100vw, 320px"
                   src={author.image}
+                  width={1024}
                 />
               </div>
             ) : null}

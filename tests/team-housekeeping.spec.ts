@@ -27,6 +27,46 @@ test("About renders the current public team without internal portrait labels", a
     ).toBeVisible();
   }
 
+  const approvedPortraits = [
+    "Thierry-Luc Denichaud, founder of 42",
+    "Zane, member of the 42 team",
+    "Emma, member of the 42 team",
+  ];
+
+  for (const altText of approvedPortraits) {
+    const portrait = teamSection.getByRole("img", { name: altText });
+    await expect(portrait).toBeVisible();
+    await expect(portrait).toHaveAttribute("width", "1024");
+    await expect(portrait).toHaveAttribute("height", "1280");
+  }
+
+  for (const biography of [
+    "Thierry-Luc leads 42's work across HubSpot strategy, CRM architecture, digital delivery, and hands-on problem solving, keeping complex programmes clear from first question to working system.",
+    "Zane works across PHP development, APIs, data flows, and custom integrations, connecting HubSpot to the operational systems around it.",
+    "Emma connects marketing strategy with practical HubSpot onboarding, helping teams establish clear journeys, campaigns, content processes, and day-to-day ways of working.",
+  ]) {
+    await expect(
+      teamSection.getByText(biography, { exact: true }),
+    ).toBeVisible();
+  }
+
+  for (const specialism of [
+    "HubSpot strategy",
+    "CRM architecture",
+    "Digital delivery",
+    "Solution design",
+    "PHP development",
+    "APIs",
+    "Custom integrations",
+    "Marketing strategy",
+    "HubSpot onboarding",
+    "Customer journeys",
+  ]) {
+    await expect(
+      teamSection.getByText(specialism, { exact: true }),
+    ).toBeVisible();
+  }
+
   await expect(teamSection.getByText("Luca Codevilla")).toHaveCount(0);
 
   for (const label of portraitApprovalLabels) {

@@ -43,6 +43,14 @@ test("approved author profile publishes the supplied copy and metadata", async (
     "content",
     shortBiography,
   );
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
+    "content",
+    "https://company42.co/images/team/thierry-luc.webp",
+  );
+  await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute(
+    "content",
+    "Thierry-Luc Denichaud, founder of 42",
+  );
 
   for (const text of removedPublicCopy) {
     await expect(page.getByText(text, { exact: false })).toHaveCount(0);
@@ -52,12 +60,18 @@ test("approved author profile publishes the supplied copy and metadata", async (
   const person = records.find((record) => record["@type"] === "Person");
   expect(person).toMatchObject({
     description: fullBiography,
+    image: "https://company42.co/images/team/thierry-luc.webp",
     jobTitle: authorRole,
     name: authorName,
     url: `https://company42.co${authorPath}`,
   });
 
-  await expect(page.locator('img[src*="/images/team/"]')).toHaveCount(0);
+  const portrait = page.getByRole("img", {
+    name: "Thierry-Luc Denichaud, founder of 42",
+  });
+  await expect(portrait).toBeVisible();
+  await expect(portrait).toHaveAttribute("width", "1024");
+  await expect(portrait).toHaveAttribute("height", "1280");
 
   const sitemap = await (await page.request.get("/sitemap.xml")).text();
   expect(sitemap).toContain(`<loc>https://company42.co${authorPath}</loc>`);
@@ -88,6 +102,7 @@ test("articles link to the public profile and expose consistent author data", as
   expect(article?.author).toMatchObject({
     "@type": "Person",
     description: fullBiography,
+    image: "https://company42.co/images/team/thierry-luc.webp",
     jobTitle: authorRole,
     name: authorName,
     url: `https://company42.co${authorPath}`,

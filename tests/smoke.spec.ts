@@ -341,7 +341,7 @@ test("About renders approved team identities with environment-safe portraits", a
   await expect(page.getByText("Luca Codevilla")).toHaveCount(0);
 
   if (deploymentEnvironment === "production") {
-    await expect(page.locator('img[src*="/images/team/"]')).toHaveCount(0);
+    await expect(page.locator('img[src*="/images/team/"]')).toHaveCount(3);
   } else {
     await expect(page.locator('img[src*="/images/team/"]')).toHaveCount(3);
   }

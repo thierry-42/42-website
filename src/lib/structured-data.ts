@@ -71,6 +71,7 @@ export function createArticleStructuredData(insight: Insight, author?: Author) {
       ? {
           "@type": "Person",
           description: author.biography,
+          image: new URL(author.image, siteConfig.siteUrl).toString(),
           jobTitle: author.role,
           name: author.name,
           url: authorUrl,
@@ -99,6 +100,7 @@ export function createPersonStructuredData(author: Author) {
     "@context": "https://schema.org",
     "@type": "Person",
     description: author.biography,
+    image: new URL(author.image, siteConfig.siteUrl).toString(),
     jobTitle: author.role,
     name: author.name,
     url,

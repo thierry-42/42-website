@@ -253,13 +253,14 @@ export function TeamCard({ member }: { member: TeamMember }) {
     <article className="h-full">
       <Surface className="flex h-full flex-col overflow-hidden" interactive>
         {showPortrait ? (
-          <div className="relative aspect-[4/5] bg-paper-100">
+          <div className="bg-paper-100">
             <Image
               alt={member.imageAlt}
-              className="object-cover"
-              fill
+              className="aspect-[4/5] h-auto w-full object-cover"
+              height={1280}
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               src={member.image}
+              width={1024}
             />
           </div>
         ) : null}
