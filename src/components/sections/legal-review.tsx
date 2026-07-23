@@ -19,13 +19,10 @@ export function LegalDocument({ contactEmail, document }: LegalDocumentProps) {
             <Surface className="overflow-hidden">
               <div className="border-b border-[var(--border)] p-6">
                 <p className="font-mono text-[0.6875rem] tracking-[0.12em] text-[var(--text-muted)] uppercase">
-                  Publication status
+                  Last updated
                 </p>
                 <p className="mt-3 text-lg font-semibold tracking-[-0.03em]">
-                  {document.status}
-                </p>
-                <p className="mt-3 text-sm leading-6 text-[var(--text-muted)]">
-                  Last updated {document.effectiveDate}
+                  {document.effectiveDate}
                 </p>
               </div>
               <nav aria-label="On this page" className="p-6">
@@ -62,17 +59,6 @@ export function LegalDocument({ contactEmail, document }: LegalDocumentProps) {
               <p className="max-w-[68ch] text-lg leading-8">
                 {document.introduction}
               </p>
-              <div
-                className="mt-8 rounded-lg border border-hubspot-coral/30 bg-white p-5"
-                role="note"
-              >
-                <p className="font-mono text-[0.6875rem] tracking-[0.12em] text-hubspot-coral uppercase">
-                  Approval required
-                </p>
-                <p className="mt-3 max-w-[70ch] text-sm leading-6 text-[var(--text-muted)]">
-                  {document.reviewSummary}
-                </p>
-              </div>
             </div>
 
             <div className="divide-y divide-ink-950/14">
@@ -121,17 +107,6 @@ export function LegalDocument({ contactEmail, document }: LegalDocumentProps) {
                           ))}
                         </div>
                       ) : null}
-                      {section.reviewNote ? (
-                        <div
-                          className="mt-7 max-w-[70ch] border-l-2 border-hubspot-coral pl-4 text-sm leading-6 text-[var(--text-muted)]"
-                          role="note"
-                        >
-                          <span className="font-semibold text-[var(--foreground)]">
-                            Owner/legal review:
-                          </span>{" "}
-                          {section.reviewNote}
-                        </div>
-                      ) : null}
                     </div>
                   </div>
                 </section>
@@ -139,7 +114,7 @@ export function LegalDocument({ contactEmail, document }: LegalDocumentProps) {
             </div>
 
             <p className="border-t border-ink-950/16 pt-8 text-sm leading-6 text-[var(--text-muted)]">
-              Questions about this draft may be sent to{" "}
+              Questions about this document may be sent to{" "}
               <a
                 className="font-semibold text-[var(--foreground)] underline underline-offset-4"
                 href={`mailto:${contactEmail}`}

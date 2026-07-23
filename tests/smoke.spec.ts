@@ -603,7 +603,7 @@ test("homepage has no serious automated accessibility violations", async ({
   expect(results.violations).toEqual([]);
 });
 
-test("legal drafts use the confirmed operator and expose review status", async ({
+test("legal pages use the confirmed operator without public review status", async ({
   page,
 }) => {
   const operatorStatement =
@@ -611,16 +611,18 @@ test("legal drafts use the confirmed operator and expose review status", async (
 
   await page.goto("/privacy");
   await expect(page.getByText(operatorStatement)).toBeVisible();
-  await expect(
-    page.getByText("Draft for owner and legal review"),
-  ).toBeVisible();
+  await expect(page.getByText("Approval required")).toHaveCount(0);
+  await expect(page.getByText(/owner and legal review/i)).toHaveCount(0);
   await expect(
     page.getByRole("heading", { name: "Cookies and browser storage" }),
   ).toBeVisible();
-  await expect(page.getByText("Draft withheld")).toHaveCount(0);
+  await expect(page.getByText(/draft/i)).toHaveCount(0);
 
   await page.goto("/terms");
   await expect(page.getByText(operatorStatement)).toBeVisible();
+  await expect(page.getByText("Approval required")).toHaveCount(0);
+  await expect(page.getByText(/owner and legal review/i)).toHaveCount(0);
+  await expect(page.getByText(/draft/i)).toHaveCount(0);
   await expect(
     page.getByText("Laws of the State of California."),
   ).toBeVisible();

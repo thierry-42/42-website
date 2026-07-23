@@ -67,14 +67,14 @@ export const routeFoundations = {
     eyebrow: "Legal",
     title: "Privacy Policy",
     description:
-      "How 42 handles information submitted through this website and its HubSpot enquiry form. This draft requires owner and legal approval before production publication.",
+      "How 42 handles information submitted through this website and its HubSpot enquiry form.",
   },
   terms: {
     path: "/terms",
     eyebrow: "Legal",
     title: "Terms of Use",
     description:
-      "The draft terms that apply to use of the public 42 website. Consultancy engagements remain subject to separate written agreements.",
+      "The terms that apply to use of the public 42 website. Consultancy engagements remain subject to separate written agreements.",
   },
 } as const;
 
