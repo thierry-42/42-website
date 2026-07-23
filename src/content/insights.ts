@@ -24,7 +24,7 @@ export type InsightBody = {
 export const insightBodies: Record<string, InsightBody> = {
   "signs-your-hubspot-portal-needs-an-audit": {
     quickAnswer:
-      "Your portal probably needs an audit when teams no longer trust the data, ordinary changes feel risky, reporting needs repeated explanation, or nobody can describe how records, properties, automation, integrations, and permissions fit together. An audit should diagnose the operating system—not simply produce a list of untidy assets.",
+      "Your portal probably needs an audit when teams no longer trust the data, ordinary changes feel risky, reporting needs repeated explanation, or nobody can describe how records, properties, automation, integrations, and permissions fit together. An audit should diagnose the operating system rather than simply produce a list of untidy assets.",
     introduction: [
       "A HubSpot portal rarely becomes difficult because of one dramatic failure. More often, small decisions accumulate: a field created for one campaign, a workflow copied for a new region, a pipeline stage used differently by two teams, or an integration that quietly overwrites values. Each choice may have been reasonable in isolation. Together, they make the system hard to trust.",
       "The right time for an audit is before that uncertainty turns into a failed migration, a broken handover, or a reporting dispute. The signals below help distinguish a local issue from a structural one.",
@@ -79,7 +79,7 @@ export const insightBodies: Record<string, InsightBody> = {
         title: "5. Access and ownership have grown by accident",
         paragraphs: [
           "Permissions, seats, teams, connected apps, and administrative access should reflect current responsibilities. They often do not. Former project users remain administrators, imports are available too widely, or nobody owns a critical integration token.",
-          "HubSpot permissions can control who views, edits, creates, deletes, imports, or exports records. The audit question is whether those controls have been deliberately designed and reviewed—not whether the portal has any permissions at all.",
+          "HubSpot permissions can control who views, edits, creates, deletes, imports, or exports records. The audit question is whether those controls have been deliberately designed and reviewed, not whether the portal has any permissions at all.",
         ],
       },
       {
@@ -131,7 +131,7 @@ export const insightBodies: Record<string, InsightBody> = {
   },
   "prepare-for-hubspot-crm-implementation": {
     quickAnswer:
-      "Prepare for a HubSpot CRM implementation by agreeing the business outcomes, mapping the customer and internal processes, defining the data model and ownership rules, cleaning the migration data, designing permissions, and planning adoption before configuration starts. The build should express those decisions—not be the place where the business first discovers them.",
+      "Prepare for a HubSpot CRM implementation by agreeing the business outcomes, mapping the customer and internal processes, defining the data model and ownership rules, cleaning the migration data, designing permissions, and planning adoption before configuration starts. The build should express those decisions rather than be the place where the business first discovers them.",
     introduction: [
       "Implementation is often described as a software setup. In practice, it is an operating-model project with software at the centre. HubSpot can provide objects, pipelines, lifecycle stages, automation, permissions, and reports; it cannot decide how your teams should qualify demand, hand over work, or govern customer data.",
       "The preparation phase reduces rework because it separates business decisions from button clicks. It also gives the implementation team something testable to build against.",
@@ -163,10 +163,10 @@ export const insightBodies: Record<string, InsightBody> = {
         id: "data",
         title: "3. Design the data model and migration rules",
         paragraphs: [
-          "List the records you need—contacts, companies, deals, tickets, products, activities, and any justified custom objects—then define the associations that make them useful. For each important field, document its purpose, format, allowed values, owner, source, and whether users or automation may update it.",
+          "List the records you need, including contacts, companies, deals, tickets, products, activities, and any justified custom objects, then define the associations that make them useful. For each important field, document its purpose, format, allowed values, owner, source, and whether users or automation may update it.",
           "Clean source data before migration. Decide which identifier updates an existing record, which system wins when values conflict, how duplicates are handled, and how historical activity will be treated. HubSpot imports require the appropriate import and object edit permissions, and record IDs or unique-value properties can be used to update and deduplicate supported records.",
         ],
-        note: "Run a representative test migration before the final cutover. Record counts alone are not enough—validate associations, values, ownership, dates, and downstream automation.",
+        note: "Run a representative test migration before the final cutover. Record counts alone are not enough; validate associations, values, ownership, dates, and downstream automation.",
       },
       {
         id: "access",
@@ -193,7 +193,7 @@ export const insightBodies: Record<string, InsightBody> = {
           },
           {
             title: "Test",
-            body: "Use real scenarios, negative cases, permission checks, integration failures, and reporting reconciliations—not only happy paths.",
+            body: "Use real scenarios, negative cases, permission checks, integration failures, and reporting reconciliations, not only happy paths.",
           },
           {
             title: "Cut over",
@@ -206,7 +206,7 @@ export const insightBodies: Record<string, InsightBody> = {
         title: "6. Plan adoption as part of the implementation",
         paragraphs: [
           "Training should be role-based and close to launch. Sales needs to know how the CRM supports selling; service needs to know how handovers and tickets work; managers need to understand the definitions behind their dashboards.",
-          "Create concise operating guides, office hours, a support route, and a prioritised backlog for post-launch learning. Measure adoption through meaningful behaviours—timely updates, stage quality, completed required data, and successful handovers—not just login counts.",
+          "Create concise operating guides, office hours, a support route, and a prioritised backlog for post-launch learning. Measure adoption through meaningful behaviours such as timely updates, stage quality, completed required data, and successful handovers, not just login counts.",
         ],
       },
     ],
@@ -248,7 +248,7 @@ export const insightBodies: Record<string, InsightBody> = {
         title: "1. Decide what the connection is meant to do",
         paragraphs: [
           "Write down the required outcomes before touching production: traffic analytics, HubSpot forms, non-HubSpot form capture, chat, campaign attribution, behavioural events, consent management, or all of the above. Each outcome has different dependencies.",
-          "The HubSpot tracking code associates an external site with an account and enables page and visitor tracking. It does not create forms by itself. If the code is absent, features that depend on it—including overall site tracking and some embedded experiences—will not work on that page.",
+          "The HubSpot tracking code associates an external site with an account and enables page and visitor tracking. It does not create forms by itself. If the code is absent, features that depend on it, including overall site tracking and some embedded experiences, will not work on that page.",
         ],
       },
       {
@@ -379,7 +379,7 @@ export const insightBodies: Record<string, InsightBody> = {
         id: "operations",
         title: "5. The operating process does not create the data on time",
         paragraphs: [
-          "If teams update stages before a forecast meeting, the dashboard is a periodic survey—not a live operating view. If handovers happen in email, HubSpot cannot report them. Reporting reliability therefore needs process design, required information at the right moment, and managers who use the same system in their routines.",
+          "If teams update stages before a forecast meeting, the dashboard is a periodic survey rather than a live operating view. If handovers happen in email, HubSpot cannot report them. Reporting reliability therefore needs process design, required information at the right moment, and managers who use the same system in their routines.",
         ],
       },
       {
@@ -409,7 +409,7 @@ export const insightBodies: Record<string, InsightBody> = {
       },
     ],
     conclusion:
-      "Trustworthy reporting is a chain of definitions, data, process, and configuration. Strengthen that chain and the dashboard becomes simpler—because it no longer has to disguise uncertainty.",
+      "Trustworthy reporting is a chain of definitions, data, process, and configuration. Strengthen that chain and the dashboard becomes simpler because it no longer has to disguise uncertainty.",
     sources: [
       {
         publisher: "HubSpot",
@@ -475,7 +475,7 @@ export const insightBodies: Record<string, InsightBody> = {
         title: "4. Authentication, access, and data protection",
         paragraphs: [
           "Identify the account owner, app owner, required scopes, secret-storage approach, rotation process, installation method, and people allowed to approve access. Use the smallest set of permissions that supports the design.",
-          "HubSpot's current developer platform uses OAuth for apps installed across multiple accounts, while static authentication is intended for a single authorised account. The right model depends on distribution, support responsibility, and lifecycle—not developer convenience.",
+          "HubSpot's current developer platform uses OAuth for apps installed across multiple accounts, while static authentication is intended for a single authorised account. The right model depends on distribution, support responsibility, and lifecycle rather than developer convenience.",
         ],
       },
       {
@@ -499,7 +499,7 @@ export const insightBodies: Record<string, InsightBody> = {
           "Turn the brief into testable scenarios: create, update, merge, association change, deletion or archive, invalid input, permission failure, timeout, retry, and recovery. State the expected record and audit evidence in each system.",
           "Define operational measures such as success rate, processing delay, queue depth, unresolved exceptions, and reconciliation variance. Name who supports each side, expected response windows, logging retention, deployment ownership, and the change process after launch.",
         ],
-        note: "A diagram is helpful, but it should complement the mapping and behavioural rules—not replace them.",
+        note: "A diagram is helpful, but it should complement the mapping and behavioural rules rather than replace them.",
       },
     ],
     conclusion:
@@ -617,7 +617,7 @@ export const insightBodies: Record<string, InsightBody> = {
   },
   "basic-website-accessibility-checks": {
     quickAnswer:
-      "Every business can check whether a site works by keyboard, shows visible focus, has a sensible heading and reading order, provides useful text alternatives, maintains usable contrast and zoom, labels forms clearly, gives users control of motion, and communicates errors. These checks are a first review—not proof of WCAG conformance.",
+      "Every business can check whether a site works by keyboard, shows visible focus, has a sensible heading and reading order, provides useful text alternatives, maintains usable contrast and zoom, labels forms clearly, gives users control of motion, and communicates errors. These checks are a first review, not proof of WCAG conformance.",
     introduction: [
       "Accessibility quality is experienced in ordinary interactions: finding the main content, understanding a heading, seeing where keyboard focus moved, completing a form, or pausing motion. Many serious barriers can be spotted without specialist software.",
       "The checks below draw on W3C Web Accessibility Initiative guidance and WCAG 2.2. They are useful for triage and ongoing content quality, but a complete evaluation still needs knowledgeable human review and testing with appropriate tools and assistive technologies.",
@@ -718,7 +718,7 @@ export const insightBodies: Record<string, InsightBody> = {
   },
   "what-managed-hubspot-support-should-include": {
     quickAnswer:
-      "Managed HubSpot support should include a prioritised request process, named senior ownership, administration and troubleshooting, preventative portal maintenance, data and automation governance, reporting improvement, controlled releases, documentation, enablement, transparent service measures, and a roadmap—not only a bucket of reactive hours.",
+      "Managed HubSpot support should include a prioritised request process, named senior ownership, administration and troubleshooting, preventative portal maintenance, data and automation governance, reporting improvement, controlled releases, documentation, enablement, transparent service measures, and a roadmap rather than only a bucket of reactive hours.",
     introduction: [
       "Ongoing support is valuable when HubSpot is an operating system that keeps changing with the business. New products, team structures, campaigns, integrations, fields, reports, and regulatory requirements create a steady stream of decisions.",
       "A managed service should make that change safer and more coherent. If it only closes tickets without maintaining context, the portal can become busier and less dependable over time.",
@@ -753,7 +753,7 @@ export const insightBodies: Record<string, InsightBody> = {
         title: "4. Controlled delivery and documentation",
         paragraphs: [
           "Changes should have an owner, rationale, test evidence, deployment record, and rollback consideration proportional to risk. Naming standards and concise architecture notes make later troubleshooting faster.",
-          "High-impact workflows, lifecycle logic, integrations, and reporting definitions deserve peer review or client approval. Managed support should reduce the number of unexplained changes—not become another source of them.",
+          "High-impact workflows, lifecycle logic, integrations, and reporting definitions deserve peer review or client approval. Managed support should reduce the number of unexplained changes rather than become another source of them.",
         ],
       },
       {
@@ -811,7 +811,7 @@ export const insightBodies: Record<string, InsightBody> = {
     quickAnswer:
       "Clean up duplicate CRM properties by freezing new field creation, inventorying similar fields, tracing every dependency, choosing a canonical property, defining value transformations, backing up data, migrating a controlled test set, updating workflows/forms/integrations/reports, validating results, and only then archiving or deleting the old property where the platform allows it.",
     introduction: [
-      "Duplicate properties are different from duplicate records. Duplicate records represent the same person or company more than once. Duplicate properties are multiple fields representing the same or overlapping business concept—such as Industry, Company industry, Sector, and Primary sector.",
+      "Duplicate properties are different from duplicate records. Duplicate records represent the same person or company more than once. Duplicate properties are multiple fields representing the same or overlapping business concept, such as Industry, Company industry, Sector, and Primary sector.",
       "Deleting the obvious duplicate is risky because fields can be referenced by forms, workflows, segments, reports, integrations, personalisation, imports, or users' saved views. The cleanup needs a dependency-first sequence.",
     ],
     sections: [
@@ -893,7 +893,7 @@ export const insightBodies: Record<string, InsightBody> = {
       },
     ],
     conclusion:
-      "The goal is not the smallest possible property count. It is a data model where each field has a clear meaning, owner, source, and purpose—and where removing one does not break work nobody remembered to map.",
+      "The goal is not the smallest possible property count. It is a data model where each field has a clear meaning, owner, source, and purpose, while removing one does not break work nobody remembered to map.",
     sources: [
       {
         publisher: "HubSpot",
@@ -924,8 +924,8 @@ export const insightBodies: Record<string, InsightBody> = {
         id: "products-editions",
         title: "1. Start with products and editions",
         paragraphs: [
-          "HubSpot groups capabilities into products such as Smart CRM, Marketing Hub, Sales Hub, Service Hub, Content Hub, Data Hub, and Revenue Hub. Products are offered in editions—commonly Starter, Professional, and Enterprise—with different features and technical limits.",
-          "Choose the edition from required capabilities, governance, scale, and limits—not from company size alone. Build a short requirements matrix and mark each item must-have, useful, or later. That makes edition trade-offs visible before a quote bundles them together.",
+          "HubSpot groups capabilities into products such as Smart CRM, Marketing Hub, Sales Hub, Service Hub, Content Hub, Data Hub, and Revenue Hub. Products are offered in editions, commonly Starter, Professional, and Enterprise, with different features and technical limits.",
+          "Choose the edition from required capabilities, governance, scale, and limits rather than from company size alone. Build a short requirements matrix and mark each item must-have, useful, or later. That makes edition trade-offs visible before a quote bundles them together.",
         ],
       },
       {
@@ -940,7 +940,7 @@ export const insightBodies: Record<string, InsightBody> = {
         id: "contacts-onboarding",
         title: "3. Add contact capacity, onboarding, and limits",
         paragraphs: [
-          "Marketing Hub pricing is also affected by marketing contacts—the contacts eligible for marketing email and ads. Non-marketing contacts can be stored without counting toward that paid marketing tier, subject to current platform limits, but cannot be targeted in the same way. Define who genuinely needs marketing status and how that status will be governed.",
+          "Marketing Hub pricing is also affected by marketing contacts, which are the contacts eligible for marketing email and ads. Non-marketing contacts can be stored without counting toward that paid marketing tier, subject to current platform limits, but cannot be targeted in the same way. Define who genuinely needs marketing status and how that status will be governed.",
           "Some Professional and Enterprise products include required one-time onboarding charges. Also review email sends, pipelines, reports, automation, API calls, calling, file storage, and other limits relevant to your design. A cheaper edition with an important missing limit can become the expensive choice after implementation.",
         ],
       },

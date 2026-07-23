@@ -66,7 +66,7 @@ export default function ContactPage() {
       <Section surface="muted">
         <Container>
           <SectionHeading
-            body="The first conversation is for understanding the question and deciding whether there is a sensible next step—not forcing the problem into a package."
+            body="The first conversation is for understanding the question and deciding whether there is a sensible next step instead of forcing the problem into a package."
             eyebrow="What happens next"
             index="02"
             title="A clear first step, without the sales theatre."

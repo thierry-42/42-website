@@ -1,85 +1,145 @@
 "use client";
 
-import {
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-} from "motion/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
 const interactiveSelector =
   "a, button, summary, [role='button'], [data-cursor-interactive]";
 const nativeCursorSelector =
-  "input, textarea, select, [contenteditable='true']";
+  "iframe, [data-native-cursor], input, textarea, select, [contenteditable='true']";
 
 export function CustomCursor() {
-  const reduceMotion = useReducedMotion();
-  const pointerX = useMotionValue(-100);
-  const pointerY = useMotionValue(-100);
-  const ringX = useSpring(pointerX, { damping: 26, stiffness: 260 });
-  const ringY = useSpring(pointerY, { damping: 26, stiffness: 260 });
-  const [active, setActive] = useState(false);
-  const [enabled, setEnabled] = useState(false);
-  const [hidden, setHidden] = useState(true);
+  const ringRef = useRef<HTMLSpanElement>(null);
+  const dotRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    const finePointer = window.matchMedia("(pointer: fine)");
+    const ring = ringRef.current;
+    const dot = dotRef.current;
+    if (!ring || !dot) return;
+
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+    let animationFrame = 0;
+    let enabled = false;
+    let visible = false;
+    let interactive = false;
+    let pointerX = -100;
+    let pointerY = -100;
+    let ringX = -100;
+    let ringY = -100;
+
+    const setVisible = (next: boolean) => {
+      if (visible === next) return;
+      visible = next;
+      const opacity = next ? "1" : "0";
+      ring.style.opacity = opacity;
+      dot.style.opacity = opacity;
+    };
+
+    const setInteractive = (next: boolean) => {
+      if (interactive === next) return;
+      interactive = next;
+      ring.dataset.active = String(next);
+      dot.dataset.active = String(next);
+    };
+
+    const renderRing = () => {
+      ringX += (pointerX - ringX) * 0.32;
+      ringY += (pointerY - ringY) * 0.32;
+      ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
+      animationFrame = window.requestAnimationFrame(renderRing);
+    };
+
+    const enable = () => {
+      if (enabled) return;
+      enabled = true;
+      document.documentElement.dataset.customCursor = "active";
+      animationFrame = window.requestAnimationFrame(renderRing);
+    };
+
+    const disable = () => {
+      if (!enabled) return;
+      enabled = false;
+      window.cancelAnimationFrame(animationFrame);
+      document.documentElement.removeAttribute("data-custom-cursor");
+      setVisible(false);
+      setInteractive(false);
+      ring.style.transform =
+        "translate3d(-100px, -100px, 0) translate(-50%, -50%)";
+      dot.style.transform =
+        "translate3d(-100px, -100px, 0) translate(-50%, -50%)";
+    };
 
     const updateEnabled = () => {
-      const next = finePointer.matches && !reduceMotion;
-      setEnabled(next);
-      document.documentElement.classList.toggle("cursor-enhanced", next);
+      if (finePointer.matches && !reducedMotion.matches) enable();
+      else disable();
     };
 
     const handleMove = (event: PointerEvent) => {
-      pointerX.set(event.clientX);
-      pointerY.set(event.clientY);
-      setHidden(false);
-      const target = event.target as Element | null;
-      setActive(Boolean(target?.closest(interactiveSelector)));
-      if (target?.closest(nativeCursorSelector)) setHidden(true);
+      if (!enabled) return;
+
+      pointerX = event.clientX;
+      pointerY = event.clientY;
+      dot.style.transform = `translate3d(${pointerX}px, ${pointerY}px, 0) translate(-50%, -50%)`;
+
+      const target = event.target instanceof Element ? event.target : null;
+      if (target?.closest(nativeCursorSelector)) {
+        setVisible(false);
+        setInteractive(false);
+        return;
+      }
+
+      setInteractive(Boolean(target?.closest(interactiveSelector)));
+      setVisible(true);
     };
 
-    const handleLeave = () => setHidden(true);
+    const handlePointerOver = (event: PointerEvent) => {
+      if (!enabled) return;
+      const target = event.target instanceof Element ? event.target : null;
+      if (target?.closest(nativeCursorSelector)) setVisible(false);
+    };
+
+    const handleLeave = () => setVisible(false);
 
     updateEnabled();
     finePointer.addEventListener("change", updateEnabled);
+    reducedMotion.addEventListener("change", updateEnabled);
     window.addEventListener("pointermove", handleMove, { passive: true });
+    document.addEventListener("pointerover", handlePointerOver, {
+      passive: true,
+    });
     document.documentElement.addEventListener("mouseleave", handleLeave);
 
     return () => {
-      document.documentElement.classList.remove("cursor-enhanced");
+      disable();
       finePointer.removeEventListener("change", updateEnabled);
+      reducedMotion.removeEventListener("change", updateEnabled);
       window.removeEventListener("pointermove", handleMove);
+      document.removeEventListener("pointerover", handlePointerOver);
       document.documentElement.removeEventListener("mouseleave", handleLeave);
     };
-  }, [pointerX, pointerY, reduceMotion]);
-
-  if (!enabled) return null;
+  }, []);
 
   return (
     <>
-      <motion.span
+      <span
         aria-hidden="true"
-        className="pointer-events-none fixed top-0 left-0 z-[120] size-9 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white mix-blend-difference"
-        style={{
-          opacity: hidden ? 0 : 1,
-          scale: active ? 1.55 : 1,
-          x: ringX,
-          y: ringY,
-        }}
-      />
-      <motion.span
+        className="group pointer-events-none fixed top-0 left-0 z-[120] opacity-0 will-change-transform"
+        data-active="false"
+        data-testid="custom-cursor-ring"
+        ref={ringRef}
+      >
+        <span className="block size-9 rounded-full border border-white mix-blend-difference transition-transform duration-100 group-data-[active=true]:scale-150" />
+      </span>
+      <span
         aria-hidden="true"
-        className="pointer-events-none fixed top-0 left-0 z-[121] size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white mix-blend-difference"
-        style={{
-          opacity: hidden ? 0 : 1,
-          scale: active ? 0.65 : 1,
-          x: pointerX,
-          y: pointerY,
-        }}
-      />
+        className="group pointer-events-none fixed top-0 left-0 z-[121] opacity-0 will-change-transform"
+        data-active="false"
+        data-testid="custom-cursor-dot"
+        ref={dotRef}
+      >
+        <span className="block size-1.5 rounded-full bg-white mix-blend-difference transition-transform duration-75 group-data-[active=true]:scale-75" />
+      </span>
     </>
   );
 }

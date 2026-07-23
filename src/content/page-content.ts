@@ -317,7 +317,7 @@ export const serviceNarratives = {
     problemTitle:
       "A default setup cannot represent a specific operating model.",
     problemBody:
-      "Implementation needs to connect customer journeys, data, ownership, permissions, automation, migration, testing, and adoption—not simply switch HubSpot features on.",
+      "Implementation needs to connect customer journeys, data, ownership, permissions, automation, migration, testing, and adoption rather than simply switch HubSpot features on.",
     expectedOutcomes: [
       "A portal structured around real teams and processes",
       "A controlled migration and launch plan",

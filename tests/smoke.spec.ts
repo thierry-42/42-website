@@ -381,6 +381,76 @@ test("How 42 thinks cards reveal a pointer-local inversion", async ({
   await expect(overlay).toHaveCSS("opacity", "1");
 });
 
+test("custom cursor stays responsive and yields to native interaction zones", async ({
+  page,
+}, testInfo) => {
+  test.skip(testInfo.project.name.includes("mobile"), "Fine pointer only");
+  await page.goto("/");
+
+  const html = page.locator("html");
+  const dot = page.getByTestId("custom-cursor-dot");
+  const ring = page.getByTestId("custom-cursor-ring");
+
+  await expect(html).toHaveAttribute("data-custom-cursor", "active");
+  await page.mouse.move(120, 140);
+  await expect(dot).toHaveCSS("opacity", "1");
+  await expect(dot).toHaveAttribute(
+    "style",
+    /translate3d\(120px, 140px, 0px\)/,
+  );
+  await expect(ring).toHaveCSS("opacity", "1");
+
+  const consultationLink = page
+    .getByRole("link", { name: "Book a consultation" })
+    .first();
+  await consultationLink.hover();
+  await expect(dot).toHaveAttribute("data-active", "true");
+
+  await page.goto("/contact");
+  const formShell = page.getByTestId("hubspot-form-shell");
+  await expect(formShell).toHaveAttribute("data-native-cursor", "true");
+  await formShell.hover();
+  await expect(page.getByTestId("custom-cursor-dot")).toHaveCSS("opacity", "0");
+  await expect(formShell).toHaveCSS("cursor", "auto");
+
+  await page.evaluate(() => {
+    const frame = document.createElement("iframe");
+    frame.title = "Cross-origin cursor test";
+    frame.src = "about:blank";
+    frame.style.cssText =
+      "position:fixed;left:16px;bottom:16px;width:120px;height:80px;z-index:200";
+    document.body.appendChild(frame);
+  });
+  await page.locator('iframe[title="Cross-origin cursor test"]').hover();
+  await expect(page.getByTestId("custom-cursor-dot")).toHaveCSS("opacity", "0");
+});
+
+test("custom cursor stays disabled for touch and reduced-motion contexts", async ({
+  page,
+}, testInfo) => {
+  if (testInfo.project.name.includes("mobile")) {
+    await page.goto("/");
+    await expect(page.locator("html")).not.toHaveAttribute(
+      "data-custom-cursor",
+      "active",
+    );
+    await expect(page.getByTestId("custom-cursor-dot")).toHaveCSS(
+      "opacity",
+      "0",
+    );
+    await expect(page.locator("body")).toHaveCSS("cursor", "auto");
+    return;
+  }
+
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await expect(page.locator("html")).not.toHaveAttribute(
+    "data-custom-cursor",
+    "active",
+  );
+  await expect(page.locator("body")).toHaveCSS("cursor", "auto");
+});
+
 test("homepage answer field and capability explorer respond to selection", async ({
   page,
 }) => {

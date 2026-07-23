@@ -58,7 +58,7 @@ export default function HubSpotReviewPage() {
             body="The review is designed to turn a broad sense that something is wrong into a clear, prioritised view of what deserves attention."
             eyebrow="What the review produces"
             index="02"
-            title="A clearer view of the portal—and what to do next."
+            title="A clearer view of the portal and what to do next."
           />
           <Stagger className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[

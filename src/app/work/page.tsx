@@ -57,7 +57,7 @@ export default function WorkPage() {
             "The final record is marked published and non-placeholder",
           ]}
           eyebrow="Selected work"
-          title="Proof should be specific—and approved."
+          title="Proof should be specific and approved."
         />
       )}
 

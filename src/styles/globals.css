@@ -278,7 +278,7 @@
   }
 }
 
-@media (pointer: fine) {
+@media (hover: hover) and (pointer: fine) {
   .spotlight-card:hover .spotlight-card__overlay {
     opacity: 1;
   }
@@ -287,20 +287,35 @@
     opacity: 1;
   }
 
-  html.cursor-enhanced,
-  html.cursor-enhanced body,
-  html.cursor-enhanced a,
-  html.cursor-enhanced button,
-  html.cursor-enhanced summary,
-  html.cursor-enhanced [role="button"] {
+  html[data-custom-cursor="active"],
+  html[data-custom-cursor="active"] body,
+  html[data-custom-cursor="active"] a,
+  html[data-custom-cursor="active"] button,
+  html[data-custom-cursor="active"] summary,
+  html[data-custom-cursor="active"] [role="button"] {
     cursor: none !important;
   }
 
-  html.cursor-enhanced input,
-  html.cursor-enhanced textarea,
-  html.cursor-enhanced select,
-  html.cursor-enhanced [contenteditable="true"] {
+  html[data-custom-cursor="active"] iframe,
+  html[data-custom-cursor="active"] [data-native-cursor],
+  html[data-custom-cursor="active"] [data-native-cursor] * {
     cursor: auto !important;
+  }
+
+  html[data-custom-cursor="active"]
+    input:not([type="checkbox"]):not([type="radio"]),
+  html[data-custom-cursor="active"] textarea,
+  html[data-custom-cursor="active"] [contenteditable="true"] {
+    cursor: text !important;
+  }
+
+  html[data-custom-cursor="active"] select,
+  html[data-custom-cursor="active"] input[type="checkbox"],
+  html[data-custom-cursor="active"] input[type="radio"],
+  html[data-custom-cursor="active"] [data-native-cursor] a,
+  html[data-custom-cursor="active"] [data-native-cursor] button,
+  html[data-custom-cursor="active"] [data-native-cursor] label {
+    cursor: pointer !important;
   }
 }
 

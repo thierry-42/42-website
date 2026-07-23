@@ -12,6 +12,7 @@
     "start": "next start",
     "lint": "eslint . --max-warnings=0",
     "typecheck": "tsc --noEmit",
+    "check:public-copy": "node scripts/check-public-copy.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "node scripts/run-tests.mjs",

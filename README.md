@@ -1,4 +1,4 @@
-# 42 — Your HubSpot Answer
+# 42: Your HubSpot Answer
 
 Production foundation for the public website of **42**, the public-facing brand of Company42. The application uses Next.js App Router, React, strict TypeScript, Tailwind CSS, Motion for React, and a bespoke component system.
 
@@ -6,16 +6,16 @@ Production foundation for the public website of **42**, the public-facing brand 
 
 ## Public routes
 
-- `/` — homepage
-- `/services` and `/services/[slug]` — overview and eight published service lines
-- `/about` — positioning, team identities, audience, and principles
-- `/approach` — the Understand, Architect, Build, Enable process
-- `/insights` — editorial index
-- `/insights/category/[slug]` — four populated launch categories
-- `/insights/[slug]` — ten published, sourced articles
-- `/hubspot-review` — genuine portal-review service and conversion page
-- `/contact` — environment-aware HubSpot form and email fallback
-- `/privacy` and `/terms` — complete Batch 3 drafts, visibly marked for owner and legal review before production publication
+- `/`: homepage
+- `/services` and `/services/[slug]`: overview and eight published service lines
+- `/about`: positioning, team identities, audience, and principles
+- `/approach`: the Understand, Architect, Build, Enable process
+- `/insights`: editorial index
+- `/insights/category/[slug]`: four populated launch categories
+- `/insights/[slug]`: ten published, sourced articles
+- `/hubspot-review`: genuine portal-review service and conversion page
+- `/contact`: environment-aware HubSpot form and email fallback
+- `/privacy` and `/terms`: complete Batch 3 drafts, visibly marked for owner and legal review before production publication
 
 `/audience`, `/industries`, `/work`, and `/work/[slug]` remain in source but are unpublished for Version 1. They are omitted from public navigation and sitemap output and return 404 while their feature flags are disabled.
 

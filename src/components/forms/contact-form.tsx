@@ -113,6 +113,7 @@ export function ContactForm({
   return (
     <div
       className="surface-texture relative overflow-hidden rounded-xl border border-ink-950/16 bg-white shadow-[0_1.5rem_5rem_rgb(9_11_16/0.09)]"
+      data-native-cursor
       data-testid="hubspot-form-shell"
     >
       <div className="flex items-center justify-between gap-4 border-b border-ink-950/12 px-5 py-4 font-mono text-[0.625rem] tracking-[0.12em] text-ink-950/60 uppercase sm:px-8">

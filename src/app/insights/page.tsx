@@ -60,7 +60,7 @@ export default function InsightsPage() {
         <Container>
           <div className="grid gap-8 border-b border-[var(--border)] pb-10 lg:grid-cols-[1fr_auto] lg:items-end">
             <SectionHeading
-              body="Original, source-checked guidance written to be applied—not padded for search."
+              body="Original, source-checked guidance written to be applied rather than padded for search."
               eyebrow="The library"
               index="02"
               title="Browse every practical guide."
