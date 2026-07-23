@@ -17,8 +17,8 @@ import { Heading } from "@/components/ui/typography";
 import { getInsightBody } from "@/content/insights";
 import {
   getPublishedInsight,
+  getPublishedAuthor,
   getPublishedService,
-  getAuthor,
   publicContent,
 } from "@/content/site-content";
 import { isSearchIndexable, siteConfig } from "@/lib/config";
@@ -103,10 +103,10 @@ export default async function InsightPage({ params }: InsightPageProps) {
   const relatedInsights = insight.relatedInsightSlugs
     .map((relatedSlug) => getPublishedInsight(relatedSlug))
     .filter((related) => related !== undefined);
-  const author = getAuthor(insight.authorSlug);
+  const author = getPublishedAuthor(insight.authorSlug);
   return (
     <>
-      <StructuredData data={createArticleStructuredData(insight)} />
+      <StructuredData data={createArticleStructuredData(insight, author)} />
 
       <Section
         className="pt-[calc(var(--header-height)+3rem)] md:pt-[calc(var(--header-height)+5rem)]"
@@ -145,7 +145,17 @@ export default async function InsightPage({ params }: InsightPageProps) {
                 {insight.summary}
               </p>
               <div className="mt-9 flex flex-wrap gap-x-7 gap-y-2 font-mono text-xs tracking-[0.08em] text-paper-50/60 uppercase">
-                <span>By {insight.author}</span>
+                {author ? (
+                  <Link
+                    className="underline decoration-paper-50/30 underline-offset-4 transition-colors hover:text-paper-50"
+                    href={`/insights/author/${author.slug}`}
+                    prefetch={false}
+                  >
+                    By {author.name}
+                  </Link>
+                ) : (
+                  <span>By {insight.author}</span>
+                )}
                 <time dateTime={insight.publishedAt ?? undefined}>
                   {formatDate(insight.publishedAt)}
                 </time>
@@ -287,23 +297,26 @@ export default async function InsightPage({ params }: InsightPageProps) {
                   </p>
                 </div>
 
-                {author && siteConfig.deploymentEnvironment !== "production" ? (
+                {author ? (
                   <Surface className="mt-14 p-6 md:p-8" tone="dark">
                     <p className="font-mono text-xs tracking-[0.12em] text-signal-400 uppercase">
-                      Author preview / owner review required
+                      About the author
                     </p>
                     <h2 className="mt-4 text-2xl font-semibold tracking-[-0.04em]">
                       {author.name}
                     </h2>
+                    <p className="mt-2 text-sm font-medium text-paper-50/72">
+                      {author.role}
+                    </p>
                     <p className="mt-4 max-w-[60ch] text-sm leading-7 text-paper-50/68">
-                      {author.biography}
+                      {author.shortBiography}
                     </p>
                     <Link
                       className="mt-6 inline-flex text-sm font-semibold underline underline-offset-4"
                       href={`/insights/author/${author.slug}`}
                       prefetch={false}
                     >
-                      Preview author page
+                      View author profile
                     </Link>
                   </Surface>
                 ) : null}

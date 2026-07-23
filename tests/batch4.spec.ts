@@ -43,12 +43,14 @@ const insightRoutes = [
   "/insights/clean-up-duplicate-crm-properties",
   "/insights/hubspot-pricing-and-ai-credits-explained",
 ];
+const authorRoutes = ["/insights/author/thierry-luc-denichaud"];
 
 const publicRoutes = [
   ...primaryRoutes,
   ...categoryRoutes,
   ...serviceRoutes,
   ...insightRoutes,
+  ...authorRoutes,
 ];
 const unpublishedRoutes = ["/audience", "/industries", "/work"];
 const deploymentEnvironment = process.env.SITE_ENVIRONMENT ?? "production";
@@ -185,11 +187,7 @@ test("production robots and sitemap expose only approved public routes", async (
       new URL(route, "https://company42.co").toString(),
     );
   }
-  for (const route of [
-    ...unpublishedRoutes,
-    "/dev/design-system",
-    "/insights/author/thierry-luc-denichaud",
-  ]) {
+  for (const route of [...unpublishedRoutes, "/dev/design-system"]) {
     expect(sitemap).not.toContain(route);
   }
   expect(sitemap).not.toMatch(/localhost|127\.0\.0\.1|onrender\.com/);

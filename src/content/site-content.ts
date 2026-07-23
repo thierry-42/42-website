@@ -136,6 +136,7 @@ const authorSchema = z.object({
   name: z.string(),
   role: z.string(),
   biography: z.string(),
+  shortBiography: z.string(),
   image: z.string(),
   imageAlt: z.string(),
   bioApprovalStatus: z.enum(["approved", "owner-review-required"]),

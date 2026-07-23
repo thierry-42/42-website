@@ -326,7 +326,7 @@ test("About renders approved team identities with environment-safe portraits", a
   await page.goto("/about");
 
   const members = [
-    ["Thierry-Luc Denichaud", "Founder / HubSpot Specialist"],
+    ["Thierry-Luc Denichaud", "Founder & Senior HubSpot Consultant"],
     ["Zane Smith", "PHP Developer / Integrations Specialist"],
     ["Emma Black", "Marketing Consultant / HubSpot Onboarding Specialist"],
   ];
@@ -347,13 +347,14 @@ test("About renders approved team identities with environment-safe portraits", a
   }
 });
 
-test("draft author architecture is withheld from production", async ({
-  page,
-}) => {
+test("approved author profile is public", async ({ page }) => {
   const response = await page.goto("/insights/author/thierry-luc-denichaud");
-  expect(response?.status()).toBe(404);
+  expect(response?.status()).toBe(200);
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Thierry-Luc Denichaud" }),
+  ).toBeVisible();
   const sitemap = await (await page.request.get("/sitemap.xml")).text();
-  expect(sitemap).not.toContain("/insights/author/thierry-luc-denichaud");
+  expect(sitemap).toContain("/insights/author/thierry-luc-denichaud");
 });
 
 test("homepage includes selected published insights", async ({ page }) => {

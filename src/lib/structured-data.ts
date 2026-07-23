@@ -55,16 +55,28 @@ export function createServiceStructuredData(service: Service) {
   };
 }
 
-export function createArticleStructuredData(insight: Insight) {
+export function createArticleStructuredData(insight: Insight, author?: Author) {
   const url = new URL(
     `/insights/${insight.slug}`,
     siteConfig.siteUrl,
   ).toString();
+  const authorUrl = author
+    ? new URL(`/insights/author/${author.slug}`, siteConfig.siteUrl).toString()
+    : undefined;
 
   return {
     "@context": "https://schema.org",
     "@type": "Article",
-    author: { "@type": "Person", name: insight.author },
+    author: author
+      ? {
+          "@type": "Person",
+          description: author.biography,
+          jobTitle: author.role,
+          name: author.name,
+          url: authorUrl,
+          worksFor: { "@id": organizationId },
+        }
+      : { "@type": "Person", name: insight.author },
     dateModified: insight.updatedAt ?? undefined,
     datePublished: insight.publishedAt ?? undefined,
     description: insight.summary,
@@ -87,6 +99,7 @@ export function createPersonStructuredData(author: Author) {
     "@context": "https://schema.org",
     "@type": "Person",
     description: author.biography,
+    jobTitle: author.role,
     name: author.name,
     url,
     worksFor: { "@id": organizationId },

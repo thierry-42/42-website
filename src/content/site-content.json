@@ -460,7 +460,7 @@
     {
       "id": "team-01",
       "name": "Thierry-Luc Denichaud",
-      "role": "Founder / HubSpot Specialist",
+      "role": "Founder & Senior HubSpot Consultant",
       "bio": "Thierry-Luc leads 42's work across HubSpot strategy, CRM architecture, digital delivery, and hands-on problem solving, keeping complex programmes clear from first question to working system.",
       "specialisms": [
         "HubSpot strategy",
@@ -591,13 +591,14 @@
     {
       "slug": "thierry-luc-denichaud",
       "name": "Thierry-Luc Denichaud",
-      "role": "Founder and senior HubSpot consultant",
-      "biography": "Thierry-Luc Denichaud is the founder of 42 and a senior HubSpot consultant specialising in CRM architecture, automation, integrations, websites and operational system design. He has led website and engineering teams and works with mid-market organisations to translate complex business processes into clear, maintainable HubSpot solutions.",
+      "role": "Founder & Senior HubSpot Consultant",
+      "biography": "Thierry-Luc Denichaud is the founder of 42 and a senior HubSpot consultant with more than a decade of experience across CRM, CMS, platform architecture, systems integration and digital delivery. He has led website and engineering teams, designed enterprise-scale digital platforms, and delivered HubSpot programmes spanning CRM architecture, automation, RevOps, Service Hub, websites and custom integrations. His work focuses on turning complex business processes into clear, scalable and maintainable systems that teams can adopt and leaders can trust.",
+      "shortBiography": "Thierry-Luc Denichaud is the founder of 42 and a senior HubSpot consultant specialising in CRM architecture, automation, integrations, websites and enterprise digital platforms.",
       "image": "/images/team/thierry-luc.webp",
-      "imageAlt": "Development portrait of Thierry-Luc Denichaud",
-      "bioApprovalStatus": "owner-review-required",
+      "imageAlt": "Portrait of Thierry-Luc Denichaud in a contemporary office",
+      "bioApprovalStatus": "approved",
       "portraitApprovalStatus": "development-only",
-      "isPublished": false
+      "isPublished": true
     }
   ],
   "insights": [
