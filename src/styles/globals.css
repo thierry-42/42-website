@@ -375,16 +375,6 @@
   }
 }
 
-@keyframes statement-word-enter {
-  from {
-    opacity: 0.55;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
 @keyframes status-pulse {
   from {
     opacity: 0.72;
@@ -437,10 +427,6 @@
 
 .scroll-progress {
   transform: scaleX(1);
-}
-
-.scroll-statement-word {
-  opacity: 0.55;
 }
 
 .hero-status-pulse {
@@ -499,12 +485,6 @@
       animation-timeline: view();
     }
 
-    .scroll-statement-word {
-      animation: statement-word-enter linear both;
-      animation-range: entry var(--word-start) cover var(--word-end);
-      animation-timeline: view();
-    }
-
     [data-scroll-image] img {
       animation: image-settle linear both;
       animation-range: entry 0% cover 32%;
@@ -534,7 +514,7 @@
   }
 
   .scroll-statement-word {
-    opacity: 1;
+    opacity: 1 !important;
   }
 
   .spotlight-card__overlay {
