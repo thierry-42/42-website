@@ -156,6 +156,7 @@ export function InsightCard({
         <Link
           className="grid min-h-36 grid-cols-[7rem_1fr] items-center gap-5 py-5 sm:grid-cols-[9rem_1fr]"
           href={`/insights/${insight.slug}`}
+          prefetch={false}
         >
           <div className="relative aspect-[4/3] overflow-hidden rounded-md bg-paper-100">
             <Image

@@ -29,6 +29,7 @@ export default function ContactPage() {
     <RouteFoundation
       consultationHref={siteConfig.bookingUrl ?? "/contact"}
       route="contact"
+      showGlobalCta={false}
     >
       <Section surface="paper">
         <Container>

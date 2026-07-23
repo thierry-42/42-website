@@ -44,6 +44,7 @@ const environment = parsedEnvironment.data;
 const deploymentEnvironment =
   environment.SITE_ENVIRONMENT ??
   (process.env.NODE_ENV === "development" ? "development" : "staging");
+const productionSiteUrl = "https://company42.co";
 
 type HubspotFormConfig = {
   formId: string;
@@ -90,7 +91,7 @@ const productionForm = resolveHubspotForm("PRODUCTION", {
 });
 
 export const siteConfig = {
-  siteUrl: "https://company42.co",
+  siteUrl: productionSiteUrl,
   bookingUrl: null,
   contactEmail: "hello@company42.co",
   linkedinUrl: environment.NEXT_PUBLIC_LINKEDIN_URL,
@@ -101,7 +102,9 @@ export const siteConfig = {
 } as const;
 
 export const localSiteOrigin = "http://localhost:3000";
+export const isProductionEnvironment = deploymentEnvironment === "production";
+export const isSearchIndexable = isProductionEnvironment;
 
 export function getSiteOrigin(): string {
-  return siteConfig.siteUrl;
+  return productionSiteUrl;
 }

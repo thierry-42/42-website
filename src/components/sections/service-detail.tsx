@@ -2,6 +2,7 @@ import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { GlobalCta } from "@/components/sections/global-cta";
 import { PageIntro } from "@/components/sections/page-intro";
+import { StructuredData } from "@/components/seo/structured-data";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { CapabilityTag } from "@/components/ui/capability-tag";
 import { InsightCard, ServiceCard } from "@/components/ui/cards";
@@ -9,6 +10,7 @@ import { Surface } from "@/components/ui/surface";
 import { TextLink } from "@/components/ui/text-link";
 import { serviceNarratives } from "@/content/page-content";
 import { publicContent, type Service } from "@/content/site-content";
+import { createServiceStructuredData } from "@/lib/structured-data";
 
 export function ServiceDetail({
   consultationHref,
@@ -28,11 +30,18 @@ export function ServiceDetail({
 
   return (
     <>
+      <StructuredData data={createServiceStructuredData(service)} />
       <PageIntro
         body={service.summary}
         breadcrumb={service.name}
+        breadcrumbItems={[
+          { href: "/", label: "Home" },
+          { href: "/services", label: "Services" },
+          { label: service.name },
+        ]}
         eyebrow={service.serviceLine}
         imageSrc={service.image}
+        path={`/services/${service.slug}`}
         title={service.headline}
         visual
       />

@@ -29,10 +29,6 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  p {
-    font-family: var(--type-secondary);
-  }
-
   a {
     color: inherit;
     text-decoration: none;
@@ -250,6 +246,14 @@
     transition: opacity 240ms ease-out;
   }
 
+  .custom-cursor-ring {
+    border-color: var(--custom-cursor-color);
+  }
+
+  .custom-cursor-dot {
+    background-color: var(--custom-cursor-color);
+  }
+
   .sr-only-focusable:not(:focus) {
     position: absolute;
     width: 1px;
@@ -341,6 +345,121 @@
   }
 }
 
+@keyframes view-reveal-enter {
+  from {
+    transform: translateY(1.625rem) scale(0.992);
+  }
+
+  to {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes image-reveal-enter {
+  from {
+    transform: translateY(1.25rem) scale(1.035);
+  }
+
+  to {
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes connector-enter {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes statement-word-enter {
+  from {
+    opacity: 0.55;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes status-pulse {
+  from {
+    opacity: 0.72;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(1.9);
+  }
+}
+
+@keyframes connection-pulse {
+  to {
+    stroke-dashoffset: -1;
+  }
+}
+
+@keyframes capability-marker-enter {
+  from {
+    opacity: 0;
+    transform: scaleX(0.25);
+  }
+
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes capability-flow-vertical {
+  from {
+    top: 0;
+  }
+
+  to {
+    top: 100%;
+  }
+}
+
+@keyframes capability-flow-horizontal {
+  from {
+    left: 0;
+  }
+
+  to {
+    left: 100%;
+  }
+}
+
+.scroll-progress {
+  transform: scaleX(1);
+}
+
+.scroll-statement-word {
+  opacity: 0.55;
+}
+
+.hero-status-pulse {
+  animation: status-pulse 1.35s ease-out infinite;
+}
+
+.hero-connection-pulse {
+  animation: connection-pulse 1.6s linear infinite;
+}
+
+.capability-active-marker {
+  animation: capability-marker-enter 160ms ease-out both;
+  transform-origin: left center;
+}
+
+.capability-flow-pulse {
+  animation: capability-flow-vertical 1.8s ease-in-out infinite alternate;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   details[open] > [data-testid="services-menu"] {
     animation: mega-menu-enter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -348,11 +467,77 @@
   }
 
   @supports (animation-timeline: view()) {
+    .view-reveal,
+    .view-card-entrance,
+    .view-engagement-card {
+      animation: view-reveal-enter linear both;
+      animation-range: entry 0% cover 28%;
+      animation-timeline: view();
+    }
+
+    .view-stagger > .view-card-entrance:nth-child(2) {
+      animation-range: entry 4% cover 32%;
+    }
+
+    .view-stagger > .view-card-entrance:nth-child(3) {
+      animation-range: entry 8% cover 36%;
+    }
+
+    .view-stagger > .view-card-entrance:nth-child(4) {
+      animation-range: entry 12% cover 40%;
+    }
+
+    .view-image-reveal {
+      animation: image-reveal-enter linear both;
+      animation-range: entry 0% cover 32%;
+      animation-timeline: view();
+    }
+
+    .view-connector {
+      animation: connector-enter linear both;
+      animation-range: entry 8% cover 38%;
+      animation-timeline: view();
+    }
+
+    .scroll-statement-word {
+      animation: statement-word-enter linear both;
+      animation-range: entry var(--word-start) cover var(--word-end);
+      animation-timeline: view();
+    }
+
     [data-scroll-image] img {
       animation: image-settle linear both;
       animation-range: entry 0% cover 32%;
       animation-timeline: view();
       will-change: transform;
     }
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .scroll-progress {
+      animation: connector-enter linear both;
+      animation-timeline: scroll(root);
+    }
+  }
+}
+
+@media (min-width: 40rem) {
+  .capability-flow-pulse {
+    animation-name: capability-flow-horizontal;
+    top: 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-progress {
+    display: none;
+  }
+
+  .scroll-statement-word {
+    opacity: 1;
+  }
+
+  .spotlight-card__overlay {
+    display: none;
   }
 }

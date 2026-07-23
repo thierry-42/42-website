@@ -15,6 +15,16 @@ import { Accordion } from "@/components/ui/accordion";
 import { homeScrollStatement } from "@/content/experience-content";
 import { siteContent } from "@/content/site-content";
 import { siteConfig } from "@/lib/config";
+import { createPageMetadata } from "@/lib/metadata";
+
+export const metadata = {
+  ...createPageMetadata({
+    description: siteContent.meta.defaultDescription,
+    path: "/",
+    title: siteContent.meta.defaultTitle,
+  }),
+  title: { absolute: siteContent.meta.defaultTitle },
+};
 
 export default function HomePage() {
   const hero = siteContent.home.hero;
@@ -36,7 +46,7 @@ export default function HomePage() {
       <ProblemSection />
 
       <ServiceGrid />
-      <SystemCapabilities />
+      <SystemCapabilities content={siteContent.home.integration} />
       <DifferenceSection />
       <EngagementsSection />
       <ProcessSection />

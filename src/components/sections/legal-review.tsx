@@ -114,6 +114,7 @@ export function LegalDocument({ contactEmail, document }: LegalDocumentProps) {
                               className="text-sm font-semibold underline underline-offset-4"
                               href={link.href}
                               key={link.href}
+                              prefetch={false}
                             >
                               {link.label}
                             </Link>

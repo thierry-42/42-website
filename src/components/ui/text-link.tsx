@@ -25,6 +25,7 @@ export function TextLink({
         className,
       )}
       href={href}
+      prefetch={false}
       {...props}
     >
       {children}

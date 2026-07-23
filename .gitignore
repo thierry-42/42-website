@@ -15,6 +15,7 @@
 /test-results/
 /blob-report/
 /.playwright/
+/.lighthouse/
 
 # local tooling
 /.npm-cache/

@@ -55,7 +55,13 @@ export default async function InsightCategoryPage({
       <PageIntro
         body={category.introduction}
         breadcrumb={category.name}
+        breadcrumbItems={[
+          { href: "/", label: "Home" },
+          { href: "/insights", label: "Insights" },
+          { label: category.name },
+        ]}
         eyebrow="Insight category"
+        path={`/insights/category/${category.slug}`}
         title={category.name}
       />
       <Section surface="paper">

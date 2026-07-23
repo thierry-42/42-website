@@ -14,6 +14,7 @@ export function CtaPanel({ body, eyebrow, href, label, title }: CtaPanelProps) {
   return (
     <div
       className="relative overflow-hidden rounded-xl border border-white/15 bg-ink-900 p-7 text-paper-50 shadow-lift md:p-12 lg:p-16"
+      data-cursor-color="light"
       data-surface="dark"
     >
       <div

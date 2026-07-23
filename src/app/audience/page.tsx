@@ -15,11 +15,13 @@ import { createPageMetadata } from "@/lib/metadata";
 
 const content = routeFoundations.audience;
 
-export const metadata = createPageMetadata({
-  description: content.description,
-  path: content.path,
-  title: "Who 42 helps",
-});
+export const metadata = siteContent.features.audience
+  ? createPageMetadata({
+      description: content.description,
+      path: content.path,
+      title: "Who 42 helps",
+    })
+  : { robots: { follow: false, index: false } };
 
 export default function AudiencePage() {
   if (!siteContent.features.audience) notFound();

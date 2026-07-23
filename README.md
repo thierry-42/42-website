@@ -48,19 +48,23 @@ Open `http://localhost:3000`. In development only, `/dev/design-system` provides
 
 ## Scripts
 
-| Command                | Purpose                                             |
-| ---------------------- | --------------------------------------------------- |
-| `npm run dev`          | Start the local development server                  |
-| `npm run build`        | Create the optimized production build               |
-| `npm run start`        | Serve a completed production build                  |
-| `npm run lint`         | Run ESLint with zero warnings allowed               |
-| `npm run typecheck`    | Run strict TypeScript checks without emitting files |
-| `npm run format`       | Format source and configuration files               |
-| `npm run format:check` | Verify formatting without changing files            |
-| `npm run test:install` | Install Chromium for smoke tests                    |
-| `npm test`             | Run desktop and mobile Playwright smoke tests       |
-| `npm run test:staging` | Run the approved staging-form integration checks    |
-| `npm run test:ui`      | Open Playwright's interactive runner                |
+| Command                           | Purpose                                              |
+| --------------------------------- | ---------------------------------------------------- |
+| `npm run dev`                     | Start the local development server                   |
+| `npm run build`                   | Create the optimized production build                |
+| `npm run start`                   | Serve a completed production build                   |
+| `npm run lint`                    | Run ESLint with zero warnings allowed                |
+| `npm run typecheck`               | Run strict TypeScript checks without emitting files  |
+| `npm run format`                  | Format source and configuration files                |
+| `npm run format:check`            | Verify formatting without changing files             |
+| `npm run test:install`            | Install Chromium for smoke tests                     |
+| `npm test`                        | Run desktop and mobile Playwright smoke tests        |
+| `npm run test:cross-browser`      | Run Batch 4 checks in WebKit                         |
+| `npm run test:firefox`            | Run Batch 4 checks in Firefox                        |
+| `npm run test:lighthouse`         | Run the throttled mobile Lighthouse baseline         |
+| `npm run test:lighthouse:desktop` | Enforce the Lighthouse release thresholds on desktop |
+| `npm run test:staging`            | Run the approved staging-form integration checks     |
+| `npm run test:ui`                 | Open Playwright's interactive runner                 |
 
 ## Project structure
 
@@ -131,7 +135,9 @@ Copy `.env.example` to `.env.local` and set only approved values:
 | `HUBSPOT_PRODUCTION_PORTAL_ID` | Future production form; leave unset until separately approved   |
 | `HUBSPOT_PRODUCTION_FORM_ID`   | Future production form; leave unset until separately approved   |
 
-The production canonical is `https://company42.co`, the visible fallback is `hello@company42.co`, and all consultation links remain on `/contact`.
+The production canonical is always `https://company42.co`; staging and local hosts are never emitted as canonical URLs. `SITE_ENVIRONMENT=production` is the only indexable mode. Staging and development emit `noindex, nofollow`, disallow crawling in `robots.txt`, return an empty sitemap, and omit canonical, Open Graph, and structured-data output. If `SITE_ENVIRONMENT` is omitted from a non-development build, the safe default is staging.
+
+The visible fallback is `hello@company42.co`, and all consultation links remain on `/contact`.
 
 The existing HubSpot form is approved for development and staging testing only. It loads only when all three staging variables are present and `SITE_ENVIRONMENT` is not `production`. Production uses only the three production variables and never falls back to staging values. Until the separate production form is created, the production Contact page shows the visible `hello@company42.co` fallback.
 
@@ -149,7 +155,7 @@ Repository content remains canonical and Figma remains the design-review surface
 
 ## Testing
 
-Install Chromium once, then run:
+Install the supported Playwright browsers once, then run:
 
 ```bash
 npm run format:check
@@ -157,14 +163,29 @@ npm run lint
 npm run typecheck
 npm run test:install
 npm test
+npm run test:cross-browser
+npm run test:staging
+npm run test:lighthouse
+npm run test:lighthouse:desktop
 npm run build
 ```
 
-Playwright builds and serves the app with `SITE_ENVIRONMENT=production`. Tests cover public and unpublished routes, the category taxonomy, service requirements, production portrait safeguards, production form isolation, visible email fallback, legal draft safeguards, navigation, menu interactions, scroll-to-top, keyboard skip navigation, mobile navigation, console errors, and automated WCAG checks.
+Playwright builds and serves the app with `SITE_ENVIRONMENT=production`. Tests cover the complete public route graph, broken and orphan links, metadata, sitemap and robots behavior, structured data, public and unpublished routes, the category taxonomy, service requirements, production portrait safeguards, production form isolation, visible email fallback, legal draft safeguards, navigation and focus containment, adaptive cursor boundaries, 200% reflow, console errors, security headers, and automated WCAG checks.
 
-`npm run test:staging` builds the application with the approved staging form variables and runs the HubSpot embed, success-state, failure-state, Privacy-link, and fallback checks without submitting a real form.
+`npm run test:staging` builds the application with the approved staging form variables and runs the HubSpot embed, success-state, failure-state, Privacy-link, email fallback, and non-indexing checks without submitting a real form.
 
-Manual review should still cover keyboard navigation, 200% zoom, reduced motion, and the viewport list in the master brief.
+Both Lighthouse commands write ignored JSON reports to `.lighthouse/`. They apply the same release thresholds of 95 Performance and 100 Accessibility, Best Practices, and SEO to the homepage, Services index, one service detail, About, Insights index, one Insight article, and Contact. The desktop command is the release baseline. The throttled mobile command intentionally exits non-zero when any route misses a target so a regression cannot be overlooked; its measured result and any gap must be reported rather than hidden. Manual review still covers representative real-device behavior and visual quality at the viewport list in the master brief.
+
+## Security headers
+
+Every route receives a restrictive Content Security Policy, `DENY` framing protection, MIME sniffing protection, strict-origin referrer handling, a limited permissions policy, and HSTS. HTTPS redirection remains the responsibility of the deployment platform so local HTTP development stays functional across browsers. The CSP permits the application's own assets plus the HubSpot form hosts required for scripts, frames, submissions, images, and form requests:
+
+- `*.hsforms.net`
+- `*.hsforms.com`
+- `*.hubspot.com`
+- `*.hsappstatic.net`
+
+The HubSpot allowances are intentionally limited to the Contact form. No analytics, advertising, session-replay, social-pixel, or generic third-party script origin is permitted.
 
 ## Deployment
 
@@ -185,4 +206,4 @@ HUBSPOT_STAGING_PORTAL_ID=148811132
 HUBSPOT_STAGING_FORM_ID=da5e2637-3fc8-4ab0-96b1-4764ecd0f16e
 ```
 
-Do not configure the production form variables on staging. Production hosting is still to be confirmed, and its three production form variables must remain unset until the separate production form is created and approved. Search-engine environment policy and final canonical, sitemap, and robots work belong to Batch 4.
+Do not configure the production form variables on staging. Production hosting is still to be confirmed, and its three production form variables must remain unset until the separate production form is created and approved. Render remains staging-only, is blocked from indexing, and must never be used as the canonical host.

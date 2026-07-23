@@ -75,7 +75,7 @@ export function Button(props: LinkButtonProps | NativeButtonProps) {
     }
 
     return (
-      <Link className={classes} href={href} {...linkProps}>
+      <Link className={classes} href={href} prefetch={false} {...linkProps}>
         {content}
       </Link>
     );

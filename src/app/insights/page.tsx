@@ -28,6 +28,7 @@ export default function InsightsPage() {
         body="Clear guides, checklists, and explanations for people making decisions about CRM, websites, integrations, data, and digital operations."
         breadcrumb="Insights"
         eyebrow="Practical thinking"
+        path="/insights"
         title="Practical guides for better HubSpot systems."
       />
 
@@ -71,6 +72,7 @@ export default function InsightsPage() {
                   className="rounded-full border border-[var(--border)] bg-white px-4 py-2 font-mono text-[0.6875rem] tracking-[0.08em] transition-colors hover:border-ink-950 hover:bg-ink-950 hover:text-paper-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal-500"
                   href={`/insights/category/${category.slug}`}
                   key={category.slug}
+                  prefetch={false}
                 >
                   {category.name}
                 </Link>

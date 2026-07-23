@@ -14,11 +14,13 @@ import { createPageMetadata } from "@/lib/metadata";
 
 const content = routeFoundations.industries;
 
-export const metadata = createPageMetadata({
-  description: content.description,
-  path: content.path,
-  title: "Industries",
-});
+export const metadata = siteContent.features.industries
+  ? createPageMetadata({
+      description: content.description,
+      path: content.path,
+      title: "Industries",
+    })
+  : { robots: { follow: false, index: false } };
 
 export default function IndustriesPage() {
   if (!siteContent.features.industries) notFound();

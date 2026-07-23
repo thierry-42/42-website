@@ -126,6 +126,7 @@ export function IndustrySectors() {
           <Link
             className="font-mono text-xs tracking-[0.1em] text-signal-400 uppercase hover:text-white"
             href="/contact"
+            prefetch={false}
           >
             Talk through the context <span aria-hidden="true">→</span>
           </Link>

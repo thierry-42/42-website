@@ -218,7 +218,7 @@ for (const route of insightRoutes) {
     ).toBeVisible();
     await expect(
       page.locator('script[type="application/ld+json"]'),
-    ).toHaveCount(1);
+    ).not.toHaveCount(0);
   });
 }
 

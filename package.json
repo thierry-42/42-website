@@ -16,8 +16,12 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "node scripts/run-tests.mjs",
+    "test:cross-browser": "node scripts/run-tests.mjs --config=playwright.cross-browser.config.ts --project=webkit-desktop",
+    "test:firefox": "node scripts/run-tests.mjs --config=playwright.cross-browser.config.ts --project=firefox-desktop",
+    "test:lighthouse": "node scripts/run-lighthouse.mjs",
+    "test:lighthouse:desktop": "node scripts/run-lighthouse.mjs --desktop",
     "test:staging": "node scripts/run-staging-tests.mjs",
-    "test:install": "node scripts/playwright.mjs install chromium",
+    "test:install": "node scripts/playwright.mjs install chromium firefox webkit",
     "test:ui": "node scripts/run-tests.mjs --ui"
   },
   "dependencies": {
@@ -36,6 +40,7 @@
     "@types/react-dom": "19.2.3",
     "eslint": "9.39.5",
     "eslint-config-next": "16.2.11",
+    "lighthouse": "12.8.2",
     "prettier": "3.9.6",
     "prettier-plugin-tailwindcss": "0.8.1",
     "sharp": "0.34.5",

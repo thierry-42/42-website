@@ -67,7 +67,16 @@
   --transition-fast: 160ms;
   --transition-base: 220ms;
   --transition-reveal: 420ms;
+  --custom-cursor-color: var(--color-ink-950);
   color-scheme: light;
+}
+
+html[data-cursor-color="light"] {
+  --custom-cursor-color: var(--color-paper-50);
+}
+
+html[data-cursor-color="dark"] {
+  --custom-cursor-color: var(--color-ink-950);
 }
 
 [data-surface="dark"] {

@@ -36,7 +36,7 @@ export default function ServicesPage() {
         eyebrow="What 42 can help with"
       />
       <EngagementsSection variant="stacked" />
-      <SystemCapabilities />
+      <SystemCapabilities content={siteContent.home.integration} />
       <Section surface="paper">
         <Container>
           <SectionHeading

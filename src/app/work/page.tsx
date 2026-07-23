@@ -14,11 +14,13 @@ import { createPageMetadata } from "@/lib/metadata";
 
 const content = routeFoundations.work;
 
-export const metadata = createPageMetadata({
-  description: content.description,
-  path: content.path,
-  title: "Work",
-});
+export const metadata = siteContent.features.work
+  ? createPageMetadata({
+      description: content.description,
+      path: content.path,
+      title: "Work",
+    })
+  : { robots: { follow: false, index: false } };
 
 export default function WorkPage() {
   if (!siteContent.features.work) notFound();

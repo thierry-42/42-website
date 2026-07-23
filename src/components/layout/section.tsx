@@ -45,6 +45,7 @@ export function Section({
         spacingClasses[spacing],
         className,
       )}
+      data-cursor-color={surface === "dark" ? "light" : "dark"}
       data-surface={surface === "dark" ? "dark" : "light"}
       {...props}
     >

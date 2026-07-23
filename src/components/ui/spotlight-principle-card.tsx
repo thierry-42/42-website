@@ -1,10 +1,8 @@
 "use client";
 
 import type { PointerEvent as ReactPointerEvent } from "react";
-import { useReducedMotion } from "motion/react";
 
 import { SystemIcon, type SystemIconName } from "@/components/ui/system-icons";
-import { cn } from "@/lib/cn";
 
 type SpotlightPrincipleCardProps = {
   icon: SystemIconName;
@@ -17,10 +15,8 @@ export function SpotlightPrincipleCard({
   index,
   principle,
 }: SpotlightPrincipleCardProps) {
-  const reduceMotion = useReducedMotion();
-
   function updateSpotlight(event: ReactPointerEvent<HTMLElement>) {
-    if (reduceMotion) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     const bounds = event.currentTarget.getBoundingClientRect();
     event.currentTarget.style.setProperty(
@@ -54,10 +50,7 @@ export function SpotlightPrincipleCard({
 
       <div
         aria-hidden="true"
-        className={cn(
-          "spotlight-card__overlay surface-texture-dark pointer-events-none absolute inset-0 z-20 flex min-h-44 flex-col justify-between bg-ink-950 p-5 text-paper-50 opacity-0",
-          reduceMotion && "hidden",
-        )}
+        className="spotlight-card__overlay surface-texture-dark pointer-events-none absolute inset-0 z-20 flex min-h-44 flex-col justify-between bg-ink-950 p-5 text-paper-50 opacity-0"
       >
         <div className="flex items-start justify-between gap-4">
           <span className="font-mono text-xs text-signal-400">{number}</span>

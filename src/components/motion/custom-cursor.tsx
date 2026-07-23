@@ -6,6 +6,7 @@ const interactiveSelector =
   "a, button, summary, [role='button'], [data-cursor-interactive]";
 const nativeCursorSelector =
   "iframe, [data-native-cursor], input, textarea, select, [contenteditable='true']";
+const cursorColorSelector = "[data-cursor-color]";
 
 export function CustomCursor() {
   const ringRef = useRef<HTMLSpanElement>(null);
@@ -27,6 +28,7 @@ export function CustomCursor() {
     let pointerY = -100;
     let ringX = -100;
     let ringY = -100;
+    let cursorColor: "dark" | "light" = "dark";
 
     const setVisible = (next: boolean) => {
       if (visible === next) return;
@@ -43,6 +45,12 @@ export function CustomCursor() {
       dot.dataset.active = String(next);
     };
 
+    const setCursorColor = (next: "dark" | "light") => {
+      if (cursorColor === next) return;
+      cursorColor = next;
+      document.documentElement.dataset.cursorColor = next;
+    };
+
     const renderRing = () => {
       ringX += (pointerX - ringX) * 0.32;
       ringY += (pointerY - ringY) * 0.32;
@@ -54,6 +62,7 @@ export function CustomCursor() {
       if (enabled) return;
       enabled = true;
       document.documentElement.dataset.customCursor = "active";
+      document.documentElement.dataset.cursorColor = cursorColor;
       animationFrame = window.requestAnimationFrame(renderRing);
     };
 
@@ -62,6 +71,7 @@ export function CustomCursor() {
       enabled = false;
       window.cancelAnimationFrame(animationFrame);
       document.documentElement.removeAttribute("data-custom-cursor");
+      document.documentElement.removeAttribute("data-cursor-color");
       setVisible(false);
       setInteractive(false);
       ring.style.transform =
@@ -89,6 +99,10 @@ export function CustomCursor() {
         return;
       }
 
+      const declaredColor = target
+        ?.closest(cursorColorSelector)
+        ?.getAttribute("data-cursor-color");
+      setCursorColor(declaredColor === "light" ? "light" : "dark");
       setInteractive(Boolean(target?.closest(interactiveSelector)));
       setVisible(true);
     };
@@ -129,7 +143,7 @@ export function CustomCursor() {
         data-testid="custom-cursor-ring"
         ref={ringRef}
       >
-        <span className="block size-9 rounded-full border border-white mix-blend-difference transition-transform duration-100 group-data-[active=true]:scale-150" />
+        <span className="custom-cursor-ring block size-9 rounded-full border transition-[border-color,transform] duration-[120ms] group-data-[active=true]:scale-150" />
       </span>
       <span
         aria-hidden="true"
@@ -138,7 +152,7 @@ export function CustomCursor() {
         data-testid="custom-cursor-dot"
         ref={dotRef}
       >
-        <span className="block size-1.5 rounded-full bg-white mix-blend-difference transition-transform duration-75 group-data-[active=true]:scale-75" />
+        <span className="custom-cursor-dot block size-1.5 rounded-full transition-[background-color,transform] duration-[120ms] group-data-[active=true]:scale-75" />
       </span>
     </>
   );

@@ -56,7 +56,13 @@ export default async function CaseStudyPage({ params }: CaseStudyPageProps) {
       <PageIntro
         body={caseStudy.summary}
         breadcrumb={caseStudy.client}
+        breadcrumbItems={[
+          { href: "/", label: "Home" },
+          { href: "/work", label: "Work" },
+          { label: caseStudy.client },
+        ]}
         eyebrow={caseStudy.sector}
+        path={`/work/${caseStudy.slug}`}
         title={caseStudy.client}
       />
       <Section surface="paper">

@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 
 import { Container } from "@/components/layout/container";
@@ -8,20 +7,18 @@ import { Section } from "@/components/layout/section";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { CapabilityTag } from "@/components/ui/capability-tag";
 import { connectedCapabilityGroups } from "@/content/experience-content";
-import { siteContent } from "@/content/site-content";
 import { cn } from "@/lib/cn";
 
 type CapabilityGroup = (typeof connectedCapabilityGroups)[number];
 
-const activeTransition = {
-  damping: 30,
-  stiffness: 360,
-  type: "spring" as const,
+type SystemCapabilitiesProps = {
+  content: {
+    body: string;
+    headline: string;
+  };
 };
 
-export function SystemCapabilities() {
-  const content = siteContent.home.integration;
-  const reduceMotion = Boolean(useReducedMotion());
+export function SystemCapabilities({ content }: SystemCapabilitiesProps) {
   const [activeId, setActiveId] = useState<CapabilityGroup["id"]>(
     connectedCapabilityGroups[0].id,
   );
@@ -50,15 +47,10 @@ export function SystemCapabilities() {
           className="mt-14 overflow-hidden rounded-xl border border-ink-950/20 bg-paper-50 shadow-[0_1.5rem_5rem_rgb(9_11_16/0.09)] lg:grid lg:grid-cols-[16rem_minmax(0,1fr)]"
           data-testid="capability-explorer"
         >
-          <CapabilityNavigation
-            activeId={activeId}
-            onSelect={setActiveId}
-            reduceMotion={reduceMotion}
-          />
+          <CapabilityNavigation activeId={activeId} onSelect={setActiveId} />
           <CapabilityDetail
             activeGroup={activeGroup}
             activeIndex={activeIndex}
-            reduceMotion={reduceMotion}
           />
         </div>
       </Container>
@@ -69,15 +61,14 @@ export function SystemCapabilities() {
 function CapabilityNavigation({
   activeId,
   onSelect,
-  reduceMotion,
 }: {
   activeId: CapabilityGroup["id"];
   onSelect: (id: CapabilityGroup["id"]) => void;
-  reduceMotion: boolean;
 }) {
   return (
     <div
       className="surface-texture-dark bg-ink-950 text-paper-50"
+      data-cursor-color="light"
       data-surface="dark"
     >
       <div className="hidden border-b border-white/12 px-6 py-5 font-mono text-[0.625rem] tracking-[0.13em] text-white/45 uppercase lg:block">
@@ -106,11 +97,7 @@ function CapabilityNavigation({
               type="button"
             >
               {active ? (
-                <motion.span
-                  className="absolute inset-x-0 bottom-0 h-0.5 bg-signal-400 lg:inset-y-0 lg:right-auto lg:h-auto lg:w-0.5"
-                  layoutId="capability-active-marker"
-                  transition={reduceMotion ? { duration: 0 } : activeTransition}
-                />
+                <span className="capability-active-marker absolute inset-x-0 bottom-0 h-0.5 bg-signal-400 lg:inset-y-0 lg:right-auto lg:h-auto lg:w-0.5" />
               ) : null}
               <span className="flex items-center gap-3">
                 <span
@@ -140,11 +127,9 @@ function CapabilityNavigation({
 function CapabilityDetail({
   activeGroup,
   activeIndex,
-  reduceMotion,
 }: {
   activeGroup: CapabilityGroup;
   activeIndex: number;
-  reduceMotion: boolean;
 }) {
   return (
     <div className="surface-texture relative bg-paper-50 p-5 sm:p-8 lg:p-10">
@@ -191,11 +176,7 @@ function CapabilityDetail({
           </div>
         </div>
 
-        <CapabilityFlow
-          activeGroup={activeGroup}
-          activeIndex={activeIndex}
-          reduceMotion={reduceMotion}
-        />
+        <CapabilityFlow activeGroup={activeGroup} activeIndex={activeIndex} />
       </div>
     </div>
   );
@@ -204,11 +185,9 @@ function CapabilityDetail({
 function CapabilityFlow({
   activeGroup,
   activeIndex,
-  reduceMotion,
 }: {
   activeGroup: CapabilityGroup;
   activeIndex: number;
-  reduceMotion: boolean;
 }) {
   const middleLabel =
     activeGroup.nodes[1].toLowerCase() === "hubspot"
@@ -229,14 +208,14 @@ function CapabilityFlow({
 
         <div className="my-auto grid gap-3 py-8 sm:grid-cols-[minmax(0,1fr)_2.5rem_minmax(0,1.1fr)_2.5rem_minmax(0,1fr)] sm:items-center sm:gap-2">
           <FlowNode index="01" label={activeGroup.nodes[0]} tone="light" />
-          <FlowConnector reduceMotion={reduceMotion} />
+          <FlowConnector />
           <FlowNode
             caption={middleLabel}
             index="02"
             label="HubSpot"
             tone="dark"
           />
-          <FlowConnector reduceMotion={reduceMotion} />
+          <FlowConnector />
           <FlowNode index="03" label={activeGroup.nodes[2]} tone="light" />
         </div>
 
@@ -268,6 +247,7 @@ function FlowNode({
           ? "border-ink-950 bg-ink-950 text-paper-50 shadow-[0_1rem_3rem_rgb(9_11_16/0.15)]"
           : "border-ink-950/14 bg-paper-50 text-ink-950",
       )}
+      data-cursor-color={tone === "dark" ? "light" : "dark"}
     >
       <div
         className={cn(
@@ -301,28 +281,13 @@ function FlowNode({
   );
 }
 
-function FlowConnector({ reduceMotion }: { reduceMotion: boolean }) {
+function FlowConnector() {
   return (
     <div
       aria-hidden="true"
       className="relative mx-auto h-7 w-px bg-ink-950/18 sm:h-px sm:w-full"
     >
-      <motion.span
-        animate={
-          reduceMotion
-            ? undefined
-            : {
-                x: ["-50%", "calc(100% - 50%)"],
-              }
-        }
-        className="absolute top-0 left-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-signal-500 sm:left-0"
-        transition={{
-          duration: 1.8,
-          ease: "easeInOut",
-          repeat: Infinity,
-          repeatDelay: 0.6,
-        }}
-      />
+      <span className="capability-flow-pulse absolute top-0 left-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-signal-500 sm:left-0" />
     </div>
   );
 }

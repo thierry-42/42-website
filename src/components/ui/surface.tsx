@@ -30,6 +30,7 @@ export function Surface({
           "group transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-[var(--border-strong)] hover:shadow-soft",
         className,
       )}
+      data-cursor-color={tone === "dark" ? "light" : "dark"}
       data-surface={tone === "dark" ? "dark" : undefined}
       {...props}
     >

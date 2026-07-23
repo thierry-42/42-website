@@ -1,7 +1,6 @@
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { RetroAnswerTerminal } from "@/components/illustrations/retro-answer-terminal";
-import { Reveal } from "@/components/motion/reveal";
 import { HeroAnswerField } from "@/components/sections/hero-answer-field";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -27,7 +26,7 @@ export function HomeHero({ consultationHref }: { consultationHref: string }) {
       />
       <Container className="relative z-10">
         <div className="grid items-center gap-14 lg:grid-cols-12 lg:gap-12">
-          <Reveal className="lg:col-span-5">
+          <div className="lg:col-span-5">
             <Eyebrow index="42">{hero.eyebrow}</Eyebrow>
             <Heading as="h1" className="max-w-[7ch]" size="display">
               {hero.headline}
@@ -47,11 +46,11 @@ export function HomeHero({ consultationHref }: { consultationHref: string }) {
               <span className="h-px w-10 bg-signal-500" />
               Select an answer mode
             </div>
-          </Reveal>
+          </div>
 
-          <Reveal className="lg:col-span-7">
+          <div className="lg:col-span-7">
             <HeroAnswerField />
-          </Reveal>
+          </div>
         </div>
       </Container>
     </Section>

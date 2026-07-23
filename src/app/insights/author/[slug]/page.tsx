@@ -6,12 +6,14 @@ import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { GlobalCta } from "@/components/sections/global-cta";
 import { PageIntro } from "@/components/sections/page-intro";
+import { StructuredData } from "@/components/seo/structured-data";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { InsightCard } from "@/components/ui/cards";
 import { Surface } from "@/components/ui/surface";
 import { getAuthor, publicContent, siteContent } from "@/content/site-content";
 import { siteConfig } from "@/lib/config";
 import { createPageMetadata } from "@/lib/metadata";
+import { createPersonStructuredData } from "@/lib/structured-data";
 
 type AuthorPageProps = {
   params: Promise<{ slug: string }>;
@@ -57,10 +59,21 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
 
   return (
     <>
+      {author.isPublished &&
+      author.bioApprovalStatus === "approved" &&
+      author.portraitApprovalStatus === "approved" ? (
+        <StructuredData data={createPersonStructuredData(author)} />
+      ) : null}
       <PageIntro
         body="Development preview of the author-page structure. This page is excluded from production until the biography and portrait are approved."
         breadcrumb={author.name}
+        breadcrumbItems={[
+          { href: "/", label: "Home" },
+          { href: "/insights", label: "Insights" },
+          { label: author.name },
+        ]}
         eyebrow="Owner review required"
+        path={`/insights/author/${author.slug}`}
         title={author.name}
       />
       <Section surface="paper">

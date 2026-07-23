@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { GlobalCta } from "@/components/sections/global-cta";
 import { PageIntro } from "@/components/sections/page-intro";
 import type { RouteFoundationKey } from "@/content/page-content";
@@ -7,6 +9,7 @@ type RouteFoundationProps = {
   children?: ReactNode;
   consultationHref: string;
   route: RouteFoundationKey;
+  showGlobalCta?: boolean;
 };
 
 const routeVisuals: Partial<Record<RouteFoundationKey, string>> = {
@@ -21,6 +24,7 @@ export function RouteFoundation({
   children,
   consultationHref,
   route,
+  showGlobalCta = true,
 }: RouteFoundationProps) {
   const content = routeFoundations[route];
   const imageSrc = routeVisuals[route];
@@ -32,12 +36,12 @@ export function RouteFoundation({
         breadcrumb={content.title}
         eyebrow={content.eyebrow}
         imageSrc={imageSrc}
+        path={content.path}
         title={content.title}
         visual={Boolean(imageSrc)}
       />
       {children}
-      <GlobalCta href={consultationHref} />
+      {showGlobalCta ? <GlobalCta href={consultationHref} /> : null}
     </>
   );
 }
-import type { ReactNode } from "react";

@@ -8,14 +8,16 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { CustomCursor } from "@/components/motion/custom-cursor";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
 import { ScrollToTop } from "@/components/motion/scroll-to-top";
+import { StructuredData } from "@/components/seo/structured-data";
 import { publicPrimaryNavigation, siteContent } from "@/content/site-content";
-import { siteConfig } from "@/lib/config";
+import { isSearchIndexable, siteConfig } from "@/lib/config";
 import { cn } from "@/lib/cn";
+import { createGlobalStructuredData } from "@/lib/structured-data";
 
 import "@/styles/globals.css";
 
 const overusedGrotesk = localFont({
-  display: "swap",
+  display: "optional",
   fallback: ["Arial", "sans-serif"],
   src: "../assets/fonts/OverusedGrotesk-VF.woff2",
   variable: "--font-overused-grotesk",
@@ -23,15 +25,17 @@ const overusedGrotesk = localFont({
 });
 
 const inter = localFont({
-  display: "swap",
+  display: "optional",
   fallback: ["Arial", "sans-serif"],
-  src: "../assets/fonts/Inter-VariableFont_opsz,wght.ttf",
+  preload: false,
+  src: "../assets/fonts/Inter-Variable-Latin.woff2",
   variable: "--font-inter",
   weight: "100 900",
 });
 
 const geistMono = Geist_Mono({
-  display: "swap",
+  display: "optional",
+  preload: false,
   subsets: ["latin"],
   variable: "--font-geist-mono",
 });
@@ -45,7 +49,24 @@ export const metadata: Metadata = {
   description: siteContent.meta.defaultDescription,
   metadataBase: siteConfig.siteUrl ? new URL(siteConfig.siteUrl) : undefined,
   category: "business",
-  referrer: "origin-when-cross-origin",
+  referrer: "strict-origin-when-cross-origin",
+  robots: isSearchIndexable
+    ? {
+        follow: true,
+        index: true,
+      }
+    : {
+        follow: false,
+        index: false,
+        nocache: true,
+        googleBot: {
+          follow: false,
+          index: false,
+          noarchive: true,
+          noimageindex: true,
+          nosnippet: true,
+        },
+      },
   formatDetection: {
     address: false,
     email: false,
@@ -90,6 +111,7 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
+        <StructuredData data={createGlobalStructuredData()} />
         <SiteHeader
           consultationHref={consultationHref}
           consultationLabel={siteContent.navigation.cta.label}

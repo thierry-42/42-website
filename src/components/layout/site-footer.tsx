@@ -23,6 +23,7 @@ export function SiteFooter() {
   return (
     <footer
       className="border-t border-white/12 bg-ink-950 py-16 text-paper-50"
+      data-cursor-color="light"
       data-surface="dark"
     >
       <Container>
@@ -103,6 +104,7 @@ function FooterLink({ children, href }: { children: ReactNode; href: string }) {
       <Link
         className="inline-block py-1 text-sm text-white/78 hover:text-white"
         href={href}
+        prefetch={false}
       >
         {children}
       </Link>

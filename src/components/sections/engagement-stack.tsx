@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
 import type { PointerEvent as ReactPointerEvent } from "react";
 
 import { CapabilityTag } from "@/components/ui/capability-tag";
@@ -59,11 +58,10 @@ function EngagementStackCard({
   engagement: Engagement;
   index: number;
 }) {
-  const reduceMotion = useReducedMotion();
   const dark = index === 1;
 
   function updateGlow(event: ReactPointerEvent<HTMLElement>) {
-    if (reduceMotion) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const bounds = event.currentTarget.getBoundingClientRect();
     event.currentTarget.style.setProperty(
       "--engagement-x",
@@ -76,21 +74,18 @@ function EngagementStackCard({
   }
 
   return (
-    <motion.article
+    <article
       className={cn(
-        "group surface-texture relative mb-5 min-h-[32rem] overflow-hidden rounded-xl border p-6 shadow-[0_1.5rem_5rem_rgb(9_11_16/0.13)] md:p-10 lg:sticky lg:mb-[18vh] lg:min-h-[34rem] lg:last:mb-0",
+        "view-engagement-card group surface-texture relative mb-5 min-h-[32rem] overflow-hidden rounded-xl border p-6 shadow-[0_1.5rem_5rem_rgb(9_11_16/0.13)] md:p-10 lg:sticky lg:mb-[18vh] lg:min-h-[34rem] lg:last:mb-0",
         engagementTones[index],
         stackTopClasses[index],
       )}
+      data-cursor-color={dark ? "light" : "dark"}
       data-surface={dark ? "dark" : "light"}
       data-testid={`engagement-stack-card-${index + 1}`}
       onPointerEnter={updateGlow}
       onPointerMove={updateGlow}
-      initial={reduceMotion ? false : { scale: 0.985, y: 32 }}
       style={{ zIndex: index + 1 }}
-      transition={{ damping: 30, stiffness: 240, type: "spring" }}
-      viewport={{ amount: 0.12, once: true }}
-      whileInView={{ scale: 1, y: 0 }}
     >
       <div
         aria-hidden="true"
@@ -162,6 +157,6 @@ function EngagementStackCard({
           </div>
         </div>
       </div>
-    </motion.article>
+    </article>
   );
 }

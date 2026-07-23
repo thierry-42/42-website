@@ -1,6 +1,5 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 
 import { heroAnswerModes } from "@/content/experience-content";
@@ -13,7 +12,6 @@ const nodePositions = [
 ] as const;
 
 export function HeroAnswerField() {
-  const reduceMotion = Boolean(useReducedMotion());
   const [activeIndex, setActiveIndex] = useState(0);
   const activeMode = heroAnswerModes[activeIndex];
 
@@ -32,17 +30,7 @@ export function HeroAnswerField() {
           <span>Answer field / live</span>
           <span className="inline-flex items-center gap-2">
             <span className="relative size-2 rounded-full bg-signal-500">
-              {!reduceMotion ? (
-                <motion.span
-                  animate={{ opacity: [0.72, 0], scale: [1, 1.9] }}
-                  className="absolute inset-0 rounded-full border border-signal-500"
-                  transition={{
-                    duration: 1.35,
-                    ease: "easeOut",
-                    repeat: Infinity,
-                  }}
-                />
-              ) : null}
+              <span className="hero-status-pulse absolute inset-0 rounded-full border border-signal-500" />
             </span>
             System connected
           </span>
@@ -68,24 +56,15 @@ export function HeroAnswerField() {
             strokeWidth="0.7"
             vectorEffect="non-scaling-stroke"
           />
-          <motion.path
-            animate={{ pathLength: 0.22, pathOffset: [0, 0.78] }}
+          <path
+            className="hero-connection-pulse"
             d="M11 20 L50 50 L88 14 M50 50 L89 80"
             fill="none"
-            initial={reduceMotion ? false : { pathLength: 0.22, pathOffset: 0 }}
+            pathLength="1"
             stroke="var(--color-signal-500)"
+            strokeDasharray="0.22 0.78"
             strokeLinecap="round"
             strokeWidth="1.5"
-            transition={
-              reduceMotion
-                ? { duration: 0 }
-                : {
-                    duration: 1.35,
-                    ease: "linear",
-                    repeat: Infinity,
-                    repeatDelay: 0.25,
-                  }
-            }
             vectorEffect="non-scaling-stroke"
           />
         </svg>

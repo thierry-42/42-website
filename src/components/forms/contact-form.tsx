@@ -165,7 +165,11 @@ export function ContactForm({
             When you submit this form, 42 and HubSpot process the information
             you provide so that 42 can review and respond to your enquiry. Read
             the{" "}
-            <Link className="font-semibold underline" href="/privacy">
+            <Link
+              className="font-semibold underline"
+              href="/privacy"
+              prefetch={false}
+            >
               Privacy Policy
             </Link>
             .

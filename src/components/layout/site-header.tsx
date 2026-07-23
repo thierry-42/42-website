@@ -38,6 +38,8 @@ export function SiteHeader({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
   const servicesMenuRef = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {
@@ -50,8 +52,34 @@ export function SiteHeader({
   useEffect(() => {
     if (!isMenuOpen) return;
 
+    const focusableSelector =
+      "a[href], button:not([disabled]), summary, [tabindex]:not([tabindex='-1'])";
+    const getFocusable = () =>
+      Array.from(
+        mobileMenuRef.current?.querySelectorAll<HTMLElement>(
+          focusableSelector,
+        ) ?? [],
+      );
+    const focusTimer = window.setTimeout(() => getFocusable()[0]?.focus(), 40);
+
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsMenuOpen(false);
+      const focusable = getFocusable();
+      if (event.key === "Escape") {
+        setIsMenuOpen(false);
+        menuButtonRef.current?.focus();
+        return;
+      }
+      if (event.key !== "Tab" || focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
 
     const previousOverflow = document.body.style.overflow;
@@ -59,6 +87,7 @@ export function SiteHeader({
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
+      window.clearTimeout(focusTimer);
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
@@ -98,6 +127,7 @@ export function SiteHeader({
         isScrolled &&
           "bg-ink-950/94 shadow-[0_0.5rem_2rem_rgb(9_11_16/0.16)] backdrop-blur-md",
       )}
+      data-cursor-color="light"
       data-testid="site-header"
     >
       <div className="mx-auto flex h-full max-w-[var(--container-wide)] items-center justify-between gap-6 px-[var(--gutter)]">
@@ -141,6 +171,7 @@ export function SiteHeader({
                           href={service.href}
                           key={service.href}
                           onClick={() => setIsServicesOpen(false)}
+                          prefetch={false}
                         >
                           <span className="grid size-10 place-items-center rounded-sm border border-ink-950/10 text-ink-950 transition-colors group-hover/item:border-signal-500 group-hover/item:bg-signal-400 group-hover/item:text-signal-900 group-hover/item:[&_circle.text-signal-400]:text-ink-950">
                             <SystemIcon
@@ -166,6 +197,7 @@ export function SiteHeader({
                       className="mt-2 flex min-h-11 items-center justify-between rounded-md bg-ink-950 px-4 text-sm font-semibold text-paper-50"
                       href="/services"
                       onClick={() => setIsServicesOpen(false)}
+                      prefetch={false}
                     >
                       View all services <span aria-hidden="true">→</span>
                     </Link>
@@ -184,6 +216,7 @@ export function SiteHeader({
                 )}
                 href={item.href}
                 key={item.href}
+                prefetch={false}
               >
                 {item.label}
               </Link>
@@ -206,6 +239,7 @@ export function SiteHeader({
             "border-white/25 bg-white/5 text-paper-50 hover:bg-white/10",
           )}
           onClick={() => setIsMenuOpen((current) => !current)}
+          ref={menuButtonRef}
         >
           {isMenuOpen ? (
             <CloseIcon className="size-5" />
@@ -224,6 +258,7 @@ export function SiteHeader({
             : "invisible -translate-y-2 opacity-0",
         )}
         id="mobile-navigation"
+        ref={mobileMenuRef}
       >
         <nav
           aria-label="Mobile navigation"
@@ -237,6 +272,7 @@ export function SiteHeader({
                   className="flex min-h-16 items-center justify-between py-3 text-xl font-semibold tracking-[-0.03em]"
                   href={item.href}
                   onClick={() => setIsMenuOpen(false)}
+                  prefetch={false}
                   tabIndex={isMenuOpen ? 0 : -1}
                 >
                   {item.label}

@@ -8,6 +8,7 @@ import { Section } from "@/components/layout/section";
 import { Reveal } from "@/components/motion/reveal";
 import { GlobalCta } from "@/components/sections/global-cta";
 import { SectionHeading } from "@/components/sections/section-heading";
+import { StructuredData } from "@/components/seo/structured-data";
 import { Breadcrumb } from "@/components/ui/breadcrumb";
 import { InsightCard, ServiceCard } from "@/components/ui/cards";
 import { Eyebrow } from "@/components/ui/eyebrow";
@@ -19,9 +20,9 @@ import {
   getPublishedService,
   getAuthor,
   publicContent,
-  siteContent,
 } from "@/content/site-content";
-import { getSiteOrigin, siteConfig } from "@/lib/config";
+import { isSearchIndexable, siteConfig } from "@/lib/config";
+import { createArticleStructuredData } from "@/lib/structured-data";
 
 type InsightPageProps = {
   params: Promise<{ slug: string }>;
@@ -52,8 +53,16 @@ export async function generateMetadata({
 
   if (!insight) return {};
 
-  const canonical = new URL(`/insights/${insight.slug}`, getSiteOrigin());
-  const image = new URL(insight.image, getSiteOrigin()).toString();
+  if (!isSearchIndexable) {
+    return {
+      authors: [{ name: insight.author }],
+      description: insight.summary,
+      title: insight.title,
+    };
+  }
+
+  const canonical = new URL(`/insights/${insight.slug}`, siteConfig.siteUrl);
+  const image = new URL(insight.image, siteConfig.siteUrl).toString();
 
   return {
     title: insight.title,
@@ -61,15 +70,16 @@ export async function generateMetadata({
     authors: [{ name: insight.author }],
     alternates: { canonical },
     openGraph: {
-      type: "article",
-      siteName: siteContent.meta.brand,
-      title: insight.title,
       description: insight.summary,
-      url: canonical,
+      locale: "en_GB",
       images: [{ alt: insight.imageAlt, height: 960, url: image, width: 1440 }],
-      publishedTime: insight.publishedAt ?? undefined,
-      modifiedTime: insight.updatedAt ?? undefined,
       authors: [insight.author],
+      modifiedTime: insight.updatedAt ?? undefined,
+      publishedTime: insight.publishedAt ?? undefined,
+      siteName: "42",
+      title: insight.title,
+      type: "article",
+      url: canonical,
     },
     twitter: {
       card: "summary_large_image",
@@ -94,31 +104,9 @@ export default async function InsightPage({ params }: InsightPageProps) {
     .map((relatedSlug) => getPublishedInsight(relatedSlug))
     .filter((related) => related !== undefined);
   const author = getAuthor(insight.authorSlug);
-  const canonical = new URL(
-    `/insights/${insight.slug}`,
-    getSiteOrigin(),
-  ).toString();
-  const articleSchema = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    author: { "@type": "Person", name: insight.author },
-    dateModified: insight.updatedAt,
-    datePublished: insight.publishedAt,
-    description: insight.summary,
-    headline: insight.title,
-    image: new URL(insight.image, getSiteOrigin()).toString(),
-    mainEntityOfPage: canonical,
-    publisher: { "@type": "Organization", name: siteContent.meta.brand },
-  };
-
   return (
     <>
-      <script
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(articleSchema).replace(/</g, "\\u003c"),
-        }}
-        type="application/ld+json"
-      />
+      <StructuredData data={createArticleStructuredData(insight)} />
 
       <Section
         className="pt-[calc(var(--header-height)+3rem)] md:pt-[calc(var(--header-height)+5rem)]"
@@ -131,6 +119,7 @@ export default async function InsightPage({ params }: InsightPageProps) {
         />
         <Container className="relative z-10">
           <Breadcrumb
+            currentPath={`/insights/${insight.slug}`}
             items={[
               { href: "/", label: "Home" },
               { href: "/insights", label: "Insights" },
@@ -143,7 +132,10 @@ export default async function InsightPage({ params }: InsightPageProps) {
           />
           <div className="mt-12 grid items-end gap-12 lg:grid-cols-12">
             <div className="lg:col-span-7">
-              <Link href={`/insights/category/${insight.categorySlug}`}>
+              <Link
+                href={`/insights/category/${insight.categorySlug}`}
+                prefetch={false}
+              >
                 <Eyebrow>{insight.category}</Eyebrow>
               </Link>
               <Heading as="h1" className="max-w-[14ch]" size="h1">
@@ -309,6 +301,7 @@ export default async function InsightPage({ params }: InsightPageProps) {
                     <Link
                       className="mt-6 inline-flex text-sm font-semibold underline underline-offset-4"
                       href={`/insights/author/${author.slug}`}
+                      prefetch={false}
                     >
                       Preview author page
                     </Link>
@@ -381,6 +374,7 @@ export default async function InsightPage({ params }: InsightPageProps) {
             <Link
               className="text-sm font-semibold underline decoration-[var(--border-strong)] underline-offset-4"
               href="/insights"
+              prefetch={false}
             >
               View all insights
             </Link>

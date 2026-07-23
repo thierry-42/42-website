@@ -1,6 +1,5 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useId, useState } from "react";
 
 import { PlusIcon } from "@/components/ui/icons";
@@ -12,7 +11,6 @@ type AccordionItem = {
 
 export function Accordion({ items }: { items: AccordionItem[] }) {
   const id = useId();
-  const reduceMotion = useReducedMotion();
   const [openItems, setOpenItems] = useState<Set<number>>(() => new Set());
 
   const toggleItem = (index: number) => {
@@ -50,28 +48,23 @@ export function Accordion({ items }: { items: AccordionItem[] }) {
                 </span>
               </button>
             </h3>
-            <AnimatePresence initial={false}>
-              {open ? (
-                <motion.div
-                  animate={{ height: "auto", opacity: 1 }}
-                  aria-labelledby={triggerId}
-                  exit={reduceMotion ? undefined : { height: 0, opacity: 0 }}
-                  id={panelId}
-                  initial={reduceMotion ? false : { height: 0, opacity: 0 }}
-                  role="region"
-                  transition={{
-                    duration: 0.36,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                >
-                  <div className="overflow-hidden">
-                    <p className="max-w-[68ch] pb-7 text-base leading-7 text-[var(--text-muted)]">
-                      {item.answer}
-                    </p>
-                  </div>
-                </motion.div>
-              ) : null}
-            </AnimatePresence>
+            <div
+              aria-hidden={!open}
+              aria-labelledby={triggerId}
+              className={`grid transition-[grid-template-rows,opacity] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                open
+                  ? "grid-rows-[1fr] opacity-100"
+                  : "grid-rows-[0fr] opacity-0"
+              }`}
+              id={panelId}
+              role="region"
+            >
+              <div className="overflow-hidden">
+                <p className="max-w-[68ch] pb-7 text-base leading-7 text-[var(--text-muted)]">
+                  {item.answer}
+                </p>
+              </div>
+            </div>
           </div>
         );
       })}

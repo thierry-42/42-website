@@ -1,8 +1,17 @@
 import type { MetadataRoute } from "next";
 
-import { siteConfig } from "@/lib/config";
+import { isSearchIndexable, siteConfig } from "@/lib/config";
 
 export default function robots(): MetadataRoute.Robots {
+  if (!isSearchIndexable) {
+    return {
+      rules: {
+        disallow: "/",
+        userAgent: "*",
+      },
+    };
+  }
+
   return {
     rules: {
       allow: "/",
@@ -10,8 +19,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
     },
     host: siteConfig.siteUrl,
-    sitemap: siteConfig.siteUrl
-      ? new URL("/sitemap.xml", siteConfig.siteUrl).toString()
-      : undefined,
+    sitemap: new URL("/sitemap.xml", siteConfig.siteUrl).toString(),
   };
 }
