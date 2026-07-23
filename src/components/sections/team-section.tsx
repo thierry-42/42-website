@@ -17,12 +17,6 @@ export function TeamSection() {
           index="04"
           title="Senior expertise, without the agency maze."
         />
-        <p className="mt-6 max-w-[68ch] font-mono text-xs leading-5 text-slate-500">
-          Portraits shown below are AI-generated layout placeholders and are not
-          likenesses. Names, roles, biographies, and working relationships
-          remain subject to final approval.
-        </p>
-
         <Stagger className="mt-12 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {publicContent.team.map((member) => (
             <CardEntrance className="h-full" key={member.id}>

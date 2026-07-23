@@ -206,20 +206,37 @@ test("Approach and Industries use the reconciled wireframe structures", async ({
   }
 });
 
-test("About renders approved team records with labelled portrait placeholders", async ({
+test("About renders approved team records with final team portraits", async ({
   page,
 }) => {
   await page.goto("/about");
 
-  for (const member of [
-    "Thierry-Luc Denichaud",
-    "Luca Codevilla",
-    "Zane Smith",
-    "Emma Black",
-  ]) {
-    await expect(page.getByRole("heading", { name: member })).toBeVisible();
+  const members = [
+    {
+      name: "Thierry-Luc Denichaud",
+      image: "Portrait of Thierry-Luc Denichaud in a contemporary office",
+    },
+    {
+      name: "Luca Codevilla",
+      image: "Portrait of Luca Codevilla in a contemporary office",
+    },
+    {
+      name: "Zane Smith",
+      image: "Portrait of Zane Smith in a contemporary office",
+    },
+    {
+      name: "Emma Black",
+      image: "Portrait of Emma Black in a contemporary office",
+    },
+  ];
+
+  for (const member of members) {
+    await expect(
+      page.getByRole("heading", { name: member.name }),
+    ).toBeVisible();
+    await expect(page.getByRole("img", { name: member.image })).toBeVisible();
   }
-  await expect(page.getByText("AI portrait placeholder")).toHaveCount(4);
+  await expect(page.getByText("AI portrait placeholder")).toHaveCount(0);
 });
 
 test("How 42 thinks cards reveal a pointer-local inversion", async ({
