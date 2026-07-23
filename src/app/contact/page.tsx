@@ -37,15 +37,17 @@ export default function ContactPage() {
               <p className="font-serif text-4xl leading-tight tracking-[-0.04em]">
                 Start with the problem. The form can handle the rest.
               </p>
-              {!siteConfig.contactFormEndpoint ? (
-                <p className="mt-6 max-w-[42ch] text-sm leading-6 text-[var(--text-muted)]">
-                  Review mode: the form is visible and testable, but no details
-                  are sent or stored until an approved endpoint is configured.
-                </p>
-              ) : null}
+              <p className="mt-6 max-w-[42ch] text-sm leading-6 text-[var(--text-muted)]">
+                Share enough context for a useful first response. You do not
+                need to arrive with a finished brief.
+              </p>
             </div>
             <div className="lg:col-span-7 lg:col-start-6">
-              <ContactForm endpoint={siteConfig.contactFormEndpoint} />
+              <ContactForm
+                formId={siteConfig.hubspotFormId}
+                portalId={siteConfig.hubspotPortalId}
+                region={siteConfig.hubspotRegion}
+              />
             </div>
           </div>
         </Container>

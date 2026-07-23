@@ -96,6 +96,94 @@
     display: none;
   }
 
+  .hs-form-frame {
+    width: 100%;
+    min-height: 44rem;
+  }
+
+  .hs-form-frame iframe {
+    width: 100% !important;
+    min-height: 44rem;
+    border: 0 !important;
+    background: transparent;
+  }
+
+  .hs-form-frame .hs-form-field {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .hs-form-frame .hs-form-field > label {
+    display: block;
+    margin-bottom: 0.625rem;
+    color: var(--color-ink-950) !important;
+    font-family: var(--type-primary) !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+  }
+
+  .hs-form-frame input:not([type="checkbox"]):not([type="radio"]),
+  .hs-form-frame select,
+  .hs-form-frame textarea {
+    width: 100% !important;
+    min-height: 3.25rem;
+    border: 1px solid var(--border-strong) !important;
+    border-radius: var(--radius-sm) !important;
+    background: white !important;
+    color: var(--color-ink-950) !important;
+    font-family: var(--type-secondary) !important;
+    font-size: 1rem !important;
+    box-shadow: none !important;
+  }
+
+  .hs-form-frame input:not([type="checkbox"]):not([type="radio"]),
+  .hs-form-frame select {
+    padding: 0 0.875rem !important;
+  }
+
+  .hs-form-frame textarea {
+    min-height: 9rem;
+    padding: 0.875rem !important;
+    resize: vertical;
+  }
+
+  .hs-form-frame input:focus-visible,
+  .hs-form-frame select:focus-visible,
+  .hs-form-frame textarea:focus-visible {
+    border-color: var(--color-ink-950) !important;
+    outline: 0.125rem solid var(--color-signal-500) !important;
+    outline-offset: 0.125rem;
+  }
+
+  .hs-form-frame .hs-button {
+    min-height: 3rem !important;
+    border: 1px solid var(--color-signal-400) !important;
+    border-radius: var(--radius-sm) !important;
+    background: var(--color-signal-400) !important;
+    color: var(--color-signal-900) !important;
+    font-family: var(--type-primary) !important;
+    font-size: 0.875rem !important;
+    font-weight: 700 !important;
+    box-shadow: none !important;
+    cursor: pointer;
+    padding: 0.75rem 1.25rem !important;
+    transition:
+      background-color var(--transition-fast),
+      border-color var(--transition-fast),
+      transform var(--transition-fast);
+  }
+
+  .hs-form-frame .hs-button:hover {
+    border-color: var(--color-signal-500) !important;
+    background: var(--color-signal-500) !important;
+  }
+
+  .hs-form-frame .hs-error-msg,
+  .hs-form-frame .hs-error-msgs label {
+    color: #a53c24 !important;
+    font-family: var(--type-secondary) !important;
+    font-size: 0.8125rem !important;
+  }
+
   .hairline-grid {
     pointer-events: none;
     background-image:

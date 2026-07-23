@@ -1,198 +1,146 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 
-import {
-  CheckboxField,
-  FormField,
-  SelectField,
-  TextareaField,
-} from "@/components/forms/fields";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/cn";
 
-type SubmissionState =
-  "idle" | "submitting" | "success" | "error" | "unconfigured";
+type EmbedState = "loading" | "ready" | "error";
 
-const hubspotStatuses = [
-  "We already use HubSpot",
-  "We are implementing HubSpot",
-  "We are considering HubSpot",
-  "We are migrating from another CRM",
-  "We need a custom integration",
-  "Not sure yet",
-];
+type ContactFormProps = {
+  formId: string;
+  portalId: string;
+  region: string;
+};
 
-const challenges = [
-  "Strategy or portal review",
-  "Implementation",
-  "CRM cleanup or RevOps",
-  "Automation",
-  "Integration or custom development",
-  "Website or Content Hub",
-  "Service Hub",
-  "Managed support",
-  "Other",
-];
+export function ContactForm({ formId, portalId, region }: ContactFormProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [embedState, setEmbedState] = useState<EmbedState>("loading");
+  const scriptUrl = `https://js-${region}.hsforms.net/forms/embed/${portalId}.js`;
 
-export function ContactForm({ endpoint }: { endpoint?: string }) {
-  const [submissionState, setSubmissionState] =
-    useState<SubmissionState>("idle");
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const formData = new FormData(form);
+    const markReady = () => {
+      if (container.querySelector("iframe, form")) setEmbedState("ready");
+    };
 
-    if (formData.get("website-check")) {
-      setSubmissionState("success");
-      form.reset();
-      return;
-    }
+    const observer = new MutationObserver(markReady);
+    observer.observe(container, { childList: true, subtree: true });
 
-    if (!endpoint) {
-      setSubmissionState("unconfigured");
-      return;
-    }
+    const script = document.createElement("script");
+    script.defer = true;
+    script.src = scriptUrl;
+    script.dataset.company42HubspotForm = portalId;
+    script.addEventListener("load", markReady);
+    script.addEventListener("error", () => setEmbedState("error"));
+    document.body.appendChild(script);
 
-    setSubmissionState("submitting");
+    markReady();
 
-    try {
-      const response = await fetch(endpoint, {
-        body: formData,
-        headers: { Accept: "application/json" },
-        method: "POST",
-      });
+    const timeout = window.setTimeout(() => {
+      if (!container.querySelector("iframe, form")) setEmbedState("error");
+    }, 15_000);
 
-      if (!response.ok) throw new Error("Submission failed");
-
-      form.reset();
-      setSubmissionState("success");
-    } catch {
-      setSubmissionState("error");
-    }
-  }
+    return () => {
+      window.clearTimeout(timeout);
+      observer.disconnect();
+      script.remove();
+    };
+  }, [portalId, scriptUrl]);
 
   return (
-    <form className="grid gap-6" noValidate={false} onSubmit={handleSubmit}>
-      <div aria-hidden="true" className="absolute -left-[9999px]" tabIndex={-1}>
-        <label htmlFor="website-check">Leave this field empty</label>
-        <input
-          autoComplete="off"
-          id="website-check"
-          name="website-check"
-          tabIndex={-1}
-        />
+    <div
+      className="surface-texture relative overflow-hidden rounded-xl border border-ink-950/16 bg-white shadow-[0_1.5rem_5rem_rgb(9_11_16/0.09)]"
+      data-testid="hubspot-form-shell"
+    >
+      <div className="flex items-center justify-between gap-4 border-b border-ink-950/12 px-5 py-4 font-mono text-[0.625rem] tracking-[0.12em] text-ink-950/60 uppercase sm:px-8">
+        <span>Enquiry form / 01</span>
+        <span className="inline-flex items-center gap-2">
+          <span className="size-1.5 rounded-full bg-signal-500" />
+          HubSpot connected
+        </span>
       </div>
 
-      <div className="grid gap-6 sm:grid-cols-2">
-        <FormField
-          autoComplete="given-name"
-          id="first-name"
-          label="First name"
-          name="firstName"
-          required
-        />
-        <FormField
-          autoComplete="family-name"
-          id="last-name"
-          label="Last name"
-          name="lastName"
-          required
-        />
-      </div>
-      <FormField
-        autoComplete="email"
-        id="work-email"
-        label="Work email"
-        name="email"
-        required
-        type="email"
-      />
-      <div className="grid gap-6 sm:grid-cols-2">
-        <FormField
-          autoComplete="organization"
-          id="company"
-          label="Company"
-          name="company"
-          required
-        />
-        <FormField
-          autoComplete="organization-title"
-          id="role"
-          label="Role"
-          name="role"
-        />
-      </div>
-      <FormField
-        autoComplete="url"
-        id="website"
-        label="Website"
-        name="website"
-        type="url"
-      />
-      <SelectField
-        id="hubspot-status"
-        label="HubSpot status"
-        name="hubspotStatus"
-        required
-      >
-        <option value="">Select your current status</option>
-        {hubspotStatuses.map((status) => (
-          <option key={status}>{status}</option>
-        ))}
-      </SelectField>
-      <SelectField
-        id="primary-challenge"
-        label="Primary challenge"
-        name="primaryChallenge"
-        required
-      >
-        <option value="">Select the closest fit</option>
-        {challenges.map((challenge) => (
-          <option key={challenge}>{challenge}</option>
-        ))}
-      </SelectField>
-      <FormField
-        id="project-timing"
-        label="Project timing"
-        name="projectTiming"
-        placeholder="For example, this quarter"
-      />
-      <TextareaField
-        id="message"
-        label="What is happening?"
-        name="message"
-        placeholder="Share the problem, current setup, or outcome you are working towards."
-        required
-      />
-      <CheckboxField
-        description="The approved privacy notice will define the final consent wording before launch."
-        id="consent"
-        label="I agree that 42 may use these details to respond to this enquiry."
-        name="consent"
-        required
-      />
+      <div className="relative p-5 sm:p-8">
+        {embedState === "loading" ? <FormLoadingState /> : null}
+        {embedState === "error" ? <FormErrorState /> : null}
 
-      <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-        <Button
-          disabled={submissionState === "submitting"}
-          showArrow
-          type="submit"
-        >
-          {submissionState === "submitting" ? "Sending…" : "Send enquiry"}
-        </Button>
-        <div aria-live="polite" className="text-sm" role="status">
-          {submissionState === "success"
-            ? "Thank you. Your enquiry has been sent."
-            : null}
-          {submissionState === "error"
-            ? "The enquiry could not be sent. Please try again later."
-            : null}
-          {submissionState === "unconfigured"
-            ? "This review form is not connected yet. No information has been sent or stored."
-            : null}
+        <div
+          className={cn(
+            "hs-form-frame transition-opacity duration-200",
+            embedState === "ready"
+              ? "opacity-100"
+              : "pointer-events-none absolute inset-0 opacity-0",
+          )}
+          data-form-id={formId}
+          data-portal-id={portalId}
+          data-region={region}
+          ref={containerRef}
+        />
+
+        <noscript>
+          <p className="text-sm leading-6 text-ink-950/70">
+            JavaScript is required to load the enquiry form.
+          </p>
+        </noscript>
+      </div>
+    </div>
+  );
+}
+
+function FormLoadingState() {
+  return (
+    <div
+      aria-live="polite"
+      className="hubspot-form-loading min-h-[44rem]"
+      data-testid="hubspot-form-loading"
+      role="status"
+    >
+      <p className="font-mono text-[0.625rem] tracking-[0.12em] text-ink-950/55 uppercase">
+        Loading secure form
+      </p>
+      <div
+        aria-hidden="true"
+        className="mt-8 grid gap-6 motion-safe:animate-pulse"
+      >
+        <div className="grid gap-6 sm:grid-cols-2">
+          <span className="h-14 rounded-sm bg-paper-100" />
+          <span className="h-14 rounded-sm bg-paper-100" />
         </div>
+        <span className="h-14 rounded-sm bg-paper-100" />
+        <div className="grid gap-6 sm:grid-cols-2">
+          <span className="h-14 rounded-sm bg-paper-100" />
+          <span className="h-14 rounded-sm bg-paper-100" />
+        </div>
+        <span className="h-14 rounded-sm bg-paper-100" />
+        <span className="h-36 rounded-sm bg-paper-100" />
+        <span className="h-12 w-44 rounded-sm bg-paper-100" />
       </div>
-    </form>
+    </div>
+  );
+}
+
+function FormErrorState() {
+  return (
+    <div
+      className="flex min-h-80 flex-col items-start justify-center rounded-lg border border-ink-950/12 bg-paper-100 p-6 sm:p-8"
+      role="alert"
+    >
+      <p className="font-mono text-[0.625rem] tracking-[0.12em] text-hubspot-coral uppercase">
+        Form unavailable
+      </p>
+      <h2 className="mt-4 max-w-[18ch] text-3xl leading-tight font-semibold tracking-[-0.04em]">
+        The enquiry form could not be loaded.
+      </h2>
+      <p className="mt-4 max-w-[48ch] text-sm leading-6 text-[var(--text-muted)]">
+        A content blocker or temporary connection problem may be preventing
+        HubSpot from loading. Refresh the page to try again.
+      </p>
+      <Button className="mt-7" onClick={() => window.location.reload()}>
+        Refresh form
+      </Button>
+    </div>
   );
 }

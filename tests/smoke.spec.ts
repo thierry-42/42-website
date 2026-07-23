@@ -1,5 +1,21 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+
+async function mockHubspotForm(page: Page) {
+  await page.route("https://js-eu1.hsforms.net/**", async (route) => {
+    await route.fulfill({
+      body: `
+        document.querySelectorAll(".hs-form-frame").forEach(function (frame) {
+          var iframe = document.createElement("iframe");
+          iframe.title = "HubSpot enquiry form";
+          frame.appendChild(iframe);
+        });
+      `,
+      contentType: "application/javascript",
+      status: 200,
+    });
+  });
+}
 
 const primaryRoutes = [
   "/",
@@ -42,6 +58,8 @@ const insightRoutes = [
 
 for (const route of primaryRoutes) {
   test(`${route} loads without browser errors`, async ({ page }) => {
+    if (route === "/contact") await mockHubspotForm(page);
+
     const browserErrors: string[] = [];
     page.on("console", (message) => {
       if (message.type() === "error") browserErrors.push(message.text());
@@ -56,6 +74,24 @@ for (const route of primaryRoutes) {
     expect(browserErrors).toEqual([]);
   });
 }
+
+test("contact uses the approved HubSpot form embed", async ({ page }) => {
+  await mockHubspotForm(page);
+  await page.goto("/contact");
+
+  const form = page.locator(".hs-form-frame");
+  await expect(form).toHaveAttribute("data-region", "eu1");
+  await expect(form).toHaveAttribute("data-portal-id", "148811132");
+  await expect(form).toHaveAttribute(
+    "data-form-id",
+    "da5e2637-3fc8-4ab0-96b1-4764ecd0f16e",
+  );
+  await expect(form.locator("iframe")).toHaveAttribute(
+    "title",
+    "HubSpot enquiry form",
+  );
+  await expect(page.getByTestId("hubspot-form-loading")).toBeHidden();
+});
 
 for (const route of serviceRoutes) {
   test(`${route} renders the shared service template`, async ({ page }) => {
