@@ -22,13 +22,18 @@ const primaryRoutes = [
   "/services",
   "/about",
   "/approach",
-  "/audience",
-  "/industries",
   "/insights",
   "/hubspot-review",
   "/contact",
   "/privacy",
   "/terms",
+];
+
+const categoryRoutes = [
+  "/insights/category/hubspot-strategy-implementation",
+  "/insights/category/crm-data-revops",
+  "/insights/category/integrations-development",
+  "/insights/category/websites-content-hub-accessibility",
 ];
 
 const serviceRoutes = [
@@ -74,6 +79,15 @@ for (const route of primaryRoutes) {
   });
 }
 
+for (const route of categoryRoutes) {
+  test(`${route} loads a useful, populated category`, async ({ page }) => {
+    const response = await page.goto(route);
+    expect(response?.ok()).toBeTruthy();
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.locator('a[href^="/insights/"]').first()).toBeVisible();
+  });
+}
+
 test("contact uses the approved HubSpot form embed", async ({ page }) => {
   await mockHubspotForm(page);
   await page.goto("/contact");
@@ -90,6 +104,9 @@ test("contact uses the approved HubSpot form embed", async ({ page }) => {
     "HubSpot enquiry form",
   );
   await expect(page.getByTestId("hubspot-form-loading")).toBeHidden();
+  await expect(
+    page.getByRole("link", { name: "hello@company42.co" }).first(),
+  ).toHaveAttribute("href", "mailto:hello@company42.co");
 });
 
 for (const route of serviceRoutes) {
@@ -100,9 +117,12 @@ for (const route of serviceRoutes) {
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(
       page.getByRole("heading", {
-        name: "A focused scope, built from the right capabilities.",
+        name: "A focused scope, made tangible.",
       }),
     ).toBeVisible();
+    await expect(page.getByText("Who this service is for")).toBeVisible();
+    await expect(page.getByText("Typical problems")).toBeVisible();
+    await expect(page.getByText("Related insights")).toBeVisible();
   });
 }
 
@@ -129,6 +149,9 @@ test("insights index exposes every published guide", async ({ page }) => {
 
   for (const route of insightRoutes) {
     await expect(page.locator(`a[href="${route}"]`).first()).toBeVisible();
+  }
+  for (const route of categoryRoutes) {
+    await expect(page.locator(`a[href="${route}"]`)).toBeVisible();
   }
 });
 
@@ -160,7 +183,7 @@ test("desktop navigation exposes the Services treatment", async ({
   ).toBeLessThan(2);
 });
 
-test("primary navigation exposes Approach and Industries", async ({
+test("primary navigation exposes Approach and withholds unpublished routes", async ({
   page,
 }, testInfo) => {
   await page.goto("/");
@@ -175,12 +198,13 @@ test("primary navigation exposes Approach and Industries", async ({
   await expect(
     primaryNavigation.getByRole("link", { name: "Approach" }),
   ).toHaveAttribute("href", "/approach");
-  await expect(
-    primaryNavigation.getByRole("link", { name: "Industries" }),
-  ).toHaveAttribute("href", "/industries");
+  await expect(primaryNavigation.locator('a[href="/industries"]')).toHaveCount(
+    0,
+  );
+  await expect(primaryNavigation.locator('a[href="/work"]')).toHaveCount(0);
 });
 
-test("Work stays unpublished while the feature is disabled", async ({
+test("unfinished routes stay unpublished while their features are disabled", async ({
   page,
 }, testInfo) => {
   await page.goto("/");
@@ -189,22 +213,25 @@ test("Work stays unpublished while the feature is disabled", async ({
     await page.getByRole("button", { name: "Open navigation" }).click();
   }
 
-  await expect(page.locator('a[href="/work"]')).toHaveCount(0);
-
-  const response = await page.goto("/work");
-  expect(response?.status()).toBe(404);
-  await expect(page.getByText("Error 404")).toBeVisible();
+  for (const route of ["/work", "/audience", "/industries"]) {
+    await expect(page.locator(`a[href="${route}"]`)).toHaveCount(0);
+    const response = await page.goto(route);
+    expect(response?.status()).toBe(404);
+    await expect(page.getByText("Error 404")).toBeVisible();
+  }
 
   const sitemapResponse = await page.request.get("/sitemap.xml");
   expect(sitemapResponse.ok()).toBeTruthy();
-  expect(await sitemapResponse.text()).not.toContain(
-    "<loc>http://localhost:3000/work",
-  );
+  const sitemap = await sitemapResponse.text();
+  for (const route of ["/work", "/audience", "/industries"]) {
+    expect(sitemap).not.toContain(`<loc>https://company42.co${route}`);
+  }
+  for (const route of categoryRoutes) {
+    expect(sitemap).toContain(`<loc>https://company42.co${route}`);
+  }
 });
 
-test("Approach and Industries use the reconciled wireframe structures", async ({
-  page,
-}) => {
+test("Approach uses the reconciled four-step structure", async ({ page }) => {
   await page.goto("/approach");
   for (const stage of ["Understand", "Architect", "Build", "Enable"]) {
     await expect(
@@ -213,51 +240,47 @@ test("Approach and Industries use the reconciled wireframe structures", async ({
       ),
     ).toBeVisible();
   }
-
-  await page.goto("/industries");
-  for (const industry of [
-    "Manufacturing and distribution",
-    "SaaS and technology",
-    "Professional services",
-    "Education and training",
-    "Energy and technical services",
-    "E-commerce and product businesses",
-  ]) {
-    await expect(page.getByRole("heading", { name: industry })).toBeVisible();
-  }
 });
 
-test("About renders approved team records with final team portraits", async ({
+test("About renders approved team identities without development portraits in production", async ({
   page,
 }) => {
   await page.goto("/about");
 
   const members = [
-    {
-      name: "Thierry-Luc Denichaud",
-      image: "Portrait of Thierry-Luc Denichaud in a contemporary office",
-    },
-    {
-      name: "Luca Codevilla",
-      image: "Portrait of Luca Codevilla in a contemporary office",
-    },
-    {
-      name: "Zane Smith",
-      image: "Portrait of Zane Smith in a contemporary office",
-    },
-    {
-      name: "Emma Black",
-      image: "Portrait of Emma Black in a contemporary office",
-    },
+    ["Thierry-Luc Denichaud", "Founder / HubSpot Specialist"],
+    ["Luca Codevilla", "HubSpot Senior Consultant"],
+    ["Zane Smith", "PHP Developer / Integrations Specialist"],
+    ["Emma Black", "Marketing Consultant / HubSpot Onboarding Specialist"],
   ];
 
-  for (const member of members) {
-    await expect(
-      page.getByRole("heading", { name: member.name }),
-    ).toBeVisible();
-    await expect(page.getByRole("img", { name: member.image })).toBeVisible();
+  for (const [name, role] of members) {
+    await expect(page.getByRole("heading", { name })).toBeVisible();
+    await expect(page.getByText(role)).toBeVisible();
   }
-  await expect(page.getByText("AI portrait placeholder")).toHaveCount(0);
+  await expect(
+    page.getByText("Development portrait / approval required"),
+  ).toHaveCount(0);
+  await expect(page.locator('img[src*="/images/team/"]')).toHaveCount(0);
+});
+
+test("draft author architecture is withheld from production", async ({
+  page,
+}) => {
+  const response = await page.goto("/insights/author/thierry-luc-denichaud");
+  expect(response?.status()).toBe(404);
+  const sitemap = await (await page.request.get("/sitemap.xml")).text();
+  expect(sitemap).not.toContain("/insights/author/thierry-luc-denichaud");
+});
+
+test("homepage includes selected published insights", async ({ page }) => {
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", {
+      name: "Useful thinking before the next decision.",
+    }),
+  ).toBeVisible();
+  await expect(page.locator('a[href^="/insights/"]')).not.toHaveCount(0);
 });
 
 test("How 42 thinks cards reveal a pointer-local inversion", async ({
@@ -349,45 +372,6 @@ test("Services engagement cards use the stacked scroll treatment", async ({
   );
 });
 
-test("Industry rows preserve a paired content and visual column", async ({
-  page,
-}, testInfo) => {
-  test.skip(testInfo.project.name.includes("mobile"), "Desktop grid only");
-  await page.goto("/industries");
-
-  const rows = page.getByTestId("industry-row");
-  await expect(rows).toHaveCount(6);
-  const firstRow = rows.first();
-  await firstRow.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(800);
-  const columns = firstRow.locator(":scope > div");
-  const contentBox = await columns.nth(0).boundingBox();
-  const visualBox = await columns.nth(1).boundingBox();
-
-  expect(contentBox).not.toBeNull();
-  expect(visualBox).not.toBeNull();
-  expect(Math.abs((contentBox?.y ?? 0) - (visualBox?.y ?? 0))).toBeLessThan(2);
-  expect((contentBox?.x ?? 0) + (contentBox?.width ?? 0)).toBeLessThan(
-    visualBox?.x ?? 0,
-  );
-
-  const secondRow = rows.nth(1);
-  await secondRow.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(800);
-  const reversedColumns = secondRow.locator(":scope > div");
-  const reversedContentBox = await reversedColumns.nth(0).boundingBox();
-  const reversedVisualBox = await reversedColumns.nth(1).boundingBox();
-
-  expect(reversedContentBox).not.toBeNull();
-  expect(reversedVisualBox).not.toBeNull();
-  expect(
-    Math.abs((reversedContentBox?.y ?? 0) - (reversedVisualBox?.y ?? 0)),
-  ).toBeLessThan(2);
-  expect(
-    (reversedVisualBox?.x ?? 0) + (reversedVisualBox?.width ?? 0),
-  ).toBeLessThan(reversedContentBox?.x ?? 0);
-});
-
 test("desktop Services menu closes when clicking outside it", async ({
   page,
 }, testInfo) => {
@@ -404,7 +388,7 @@ test("desktop Services menu closes when clicking outside it", async ({
 test("FAQ disclosures expose an animated accessible region", async ({
   page,
 }) => {
-  await page.goto("/hubspot-review");
+  await page.goto("/");
 
   const trigger = page.locator("button[aria-controls*='panel']").first();
   await trigger.click();

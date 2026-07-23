@@ -4,9 +4,8 @@ import { CardEntrance, Stagger } from "@/components/motion/reveal";
 import { GlobalCta } from "@/components/sections/global-cta";
 import { PageIntro } from "@/components/sections/page-intro";
 import { SectionHeading } from "@/components/sections/section-heading";
-import { CapabilityTag } from "@/components/ui/capability-tag";
 import { InsightCard } from "@/components/ui/cards";
-import { publicContent } from "@/content/site-content";
+import { publicContent, publicInsightCategories } from "@/content/site-content";
 import { siteConfig } from "@/lib/config";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -22,7 +21,6 @@ export default function InsightsPage() {
   const featured = insights[0];
   const supporting = insights.slice(1, 4);
   const remaining = insights.slice(4);
-  const categories = [...new Set(insights.map((insight) => insight.category))];
 
   return (
     <>
@@ -68,8 +66,14 @@ export default function InsightsPage() {
               title="Browse every practical guide."
             />
             <div className="flex max-w-2xl flex-wrap gap-2 lg:justify-end">
-              {categories.map((category) => (
-                <CapabilityTag key={category}>{category}</CapabilityTag>
+              {publicInsightCategories.map((category) => (
+                <Link
+                  className="rounded-full border border-[var(--border)] bg-white px-4 py-2 font-mono text-[0.6875rem] tracking-[0.08em] transition-colors hover:border-ink-950 hover:bg-ink-950 hover:text-paper-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal-500"
+                  href={`/insights/category/${category.slug}`}
+                  key={category.slug}
+                >
+                  {category.name}
+                </Link>
               ))}
             </div>
           </div>
@@ -87,3 +91,4 @@ export default function InsightsPage() {
     </>
   );
 }
+import Link from "next/link";

@@ -5,22 +5,29 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 
-type EmbedState = "loading" | "ready" | "error";
+type EmbedState = "disabled" | "loading" | "ready" | "error";
 
 type ContactFormProps = {
-  formId: string;
-  portalId: string;
-  region: string;
+  contactEmail: string;
+  form: {
+    formId: string;
+    portalId: string;
+    region: string;
+  } | null;
 };
 
-export function ContactForm({ formId, portalId, region }: ContactFormProps) {
+export function ContactForm({ contactEmail, form }: ContactFormProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [embedState, setEmbedState] = useState<EmbedState>("loading");
-  const scriptUrl = `https://js-${region}.hsforms.net/forms/embed/${portalId}.js`;
+  const [embedState, setEmbedState] = useState<EmbedState>(
+    form ? "loading" : "disabled",
+  );
 
   useEffect(() => {
+    if (!form) return;
+
     const container = containerRef.current;
     if (!container) return;
+    const scriptUrl = `https://js-${form.region}.hsforms.net/forms/embed/${form.portalId}.js`;
 
     const markReady = () => {
       if (container.querySelector("iframe, form")) setEmbedState("ready");
@@ -32,7 +39,7 @@ export function ContactForm({ formId, portalId, region }: ContactFormProps) {
     const script = document.createElement("script");
     script.defer = true;
     script.src = scriptUrl;
-    script.dataset.company42HubspotForm = portalId;
+    script.dataset.company42HubspotForm = form.portalId;
     script.addEventListener("load", markReady);
     script.addEventListener("error", () => setEmbedState("error"));
     document.body.appendChild(script);
@@ -48,7 +55,7 @@ export function ContactForm({ formId, portalId, region }: ContactFormProps) {
       observer.disconnect();
       script.remove();
     };
-  }, [portalId, scriptUrl]);
+  }, [form]);
 
   return (
     <div
@@ -59,30 +66,41 @@ export function ContactForm({ formId, portalId, region }: ContactFormProps) {
         <span>Enquiry form / 01</span>
         <span className="inline-flex items-center gap-2">
           <span className="size-1.5 rounded-full bg-signal-500" />
-          HubSpot connected
+          {form ? "Secure HubSpot form" : "Email fallback active"}
         </span>
       </div>
 
       <div className="relative p-5 sm:p-8">
         {embedState === "loading" ? <FormLoadingState /> : null}
-        {embedState === "error" ? <FormErrorState /> : null}
+        {embedState === "error" ? (
+          <FormErrorState contactEmail={contactEmail} />
+        ) : null}
+        {embedState === "disabled" ? (
+          <FormDisabledState contactEmail={contactEmail} />
+        ) : null}
 
-        <div
-          className={cn(
-            "hs-form-frame transition-opacity duration-200",
-            embedState === "ready"
-              ? "opacity-100"
-              : "pointer-events-none absolute inset-0 opacity-0",
-          )}
-          data-form-id={formId}
-          data-portal-id={portalId}
-          data-region={region}
-          ref={containerRef}
-        />
+        {form ? (
+          <div
+            className={cn(
+              "hs-form-frame transition-opacity duration-200",
+              embedState === "ready"
+                ? "opacity-100"
+                : "pointer-events-none absolute inset-0 opacity-0",
+            )}
+            data-form-id={form.formId}
+            data-portal-id={form.portalId}
+            data-region={form.region}
+            ref={containerRef}
+          />
+        ) : null}
 
         <noscript>
           <p className="text-sm leading-6 text-ink-950/70">
-            JavaScript is required to load the enquiry form.
+            JavaScript is required to load the enquiry form. Email{" "}
+            <a className="underline" href={`mailto:${contactEmail}`}>
+              {contactEmail}
+            </a>{" "}
+            instead.
           </p>
         </noscript>
       </div>
@@ -122,7 +140,7 @@ function FormLoadingState() {
   );
 }
 
-function FormErrorState() {
+function FormErrorState({ contactEmail }: { contactEmail: string }) {
   return (
     <div
       className="flex min-h-80 flex-col items-start justify-center rounded-lg border border-ink-950/12 bg-paper-100 p-6 sm:p-8"
@@ -136,11 +154,36 @@ function FormErrorState() {
       </h2>
       <p className="mt-4 max-w-[48ch] text-sm leading-6 text-[var(--text-muted)]">
         A content blocker or temporary connection problem may be preventing
-        HubSpot from loading. Refresh the page to try again.
+        HubSpot from loading. Refresh the page to try again, or email{" "}
+        <a className="font-semibold underline" href={`mailto:${contactEmail}`}>
+          {contactEmail}
+        </a>
+        .
       </p>
       <Button className="mt-7" onClick={() => window.location.reload()}>
         Refresh form
       </Button>
+    </div>
+  );
+}
+
+function FormDisabledState({ contactEmail }: { contactEmail: string }) {
+  return (
+    <div className="flex min-h-80 flex-col items-start justify-center rounded-lg border border-ink-950/12 bg-paper-100 p-6 sm:p-8">
+      <p className="font-mono text-[0.625rem] tracking-[0.12em] text-ink-950/60 uppercase">
+        Non-production environment
+      </p>
+      <h2 className="mt-4 max-w-[20ch] text-3xl leading-tight font-semibold tracking-[-0.04em]">
+        The live enquiry form is intentionally disabled here.
+      </h2>
+      <p className="mt-4 max-w-[52ch] text-sm leading-6 text-[var(--text-muted)]">
+        This prevents staging and development tests from entering the live
+        HubSpot process. You can still contact 42 at{" "}
+        <a className="font-semibold underline" href={`mailto:${contactEmail}`}>
+          {contactEmail}
+        </a>
+        .
+      </p>
     </div>
   );
 }

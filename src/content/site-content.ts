@@ -79,6 +79,9 @@ const teamMemberSchema = z.object({
   image: z.string(),
   imageAlt: z.string(),
   imageIsPlaceholder: z.boolean(),
+  bioApprovalStatus: z.enum(["approved", "owner-review-required"]),
+  specialismsApprovalStatus: z.enum(["approved", "owner-review-required"]),
+  portraitApprovalStatus: z.enum(["approved", "development-only"]),
   linkedinUrl: z.string(),
   relationship: z.string(),
   isPlaceholder: z.boolean(),
@@ -106,21 +109,44 @@ const insightSchema = z.object({
   title: z.string(),
   summary: z.string(),
   category: z.string(),
+  categorySlug: z.string(),
   author: z.string(),
+  authorSlug: z.string(),
   image: z.string().min(1),
   imageAlt: z.string(),
   readingTime: z.string().min(1),
   featured: z.boolean(),
   serviceSlugs: z.array(z.string()),
+  relatedInsightSlugs: z.array(z.string()),
   publishedAt: z.string().nullable(),
   updatedAt: z.string().nullable(),
   isPlaceholder: z.boolean(),
   isPublished: z.boolean(),
 });
 
+const insightCategorySchema = z.object({
+  slug: z.string(),
+  name: z.string(),
+  introduction: z.string(),
+  isPublished: z.boolean(),
+});
+
+const authorSchema = z.object({
+  slug: z.string(),
+  name: z.string(),
+  role: z.string(),
+  biography: z.string(),
+  image: z.string(),
+  imageAlt: z.string(),
+  bioApprovalStatus: z.enum(["approved", "owner-review-required"]),
+  portraitApprovalStatus: z.enum(["approved", "development-only"]),
+  isPublished: z.boolean(),
+});
+
 export const siteContentSchema = z.object({
   meta: z.object({
     brand: z.string(),
+    tradingName: z.string(),
     descriptor: z.string(),
     tagline: z.string(),
     defaultTitle: z.string(),
@@ -129,6 +155,8 @@ export const siteContentSchema = z.object({
     bookingUrl: z.string(),
     contactEmail: z.string(),
     linkedinUrl: z.string(),
+    primaryAudience: z.string(),
+    serviceAreas: z.array(z.string()),
     lastReviewedAt: z.string().nullable(),
   }),
   brand: z.object({
@@ -138,7 +166,17 @@ export const siteContentSchema = z.object({
     voice: z.array(z.string()),
   }),
   features: z.object({
+    audience: z.boolean(),
+    industries: z.boolean(),
     work: z.boolean(),
+  }),
+  legal: z.object({
+    legalEntity: z.string(),
+    entityType: z.string(),
+    countryOfRegistration: z.string(),
+    stateOfRegistration: z.string(),
+    governingLaw: z.string(),
+    operatorStatement: z.string(),
   }),
   navigation: z.object({
     primary: z.array(linkSchema),
@@ -156,6 +194,8 @@ export const siteContentSchema = z.object({
   services: z.array(serviceSchema),
   team: z.array(teamMemberSchema),
   caseStudies: z.array(caseStudySchema),
+  insightCategories: z.array(insightCategorySchema),
+  authors: z.array(authorSchema),
   insights: z.array(insightSchema),
   faqs: z.array(
     z.object({
@@ -175,6 +215,8 @@ export type Service = z.infer<typeof serviceSchema>;
 export type TeamMember = z.infer<typeof teamMemberSchema>;
 export type CaseStudy = z.infer<typeof caseStudySchema>;
 export type Insight = z.infer<typeof insightSchema>;
+export type InsightCategory = z.infer<typeof insightCategorySchema>;
+export type Author = z.infer<typeof authorSchema>;
 
 export const siteContent = siteContentSchema.parse(rawSiteContent);
 
@@ -186,9 +228,36 @@ export const publicContent = {
   insights: publicRecords(siteContent.insights),
 } as const;
 
+const publicationByRoute = {
+  "/audience": siteContent.features.audience,
+  "/industries": siteContent.features.industries,
+  "/work": siteContent.features.work,
+} as const;
+
+export function isRoutePublished(href: string): boolean {
+  return publicationByRoute[href as keyof typeof publicationByRoute] ?? true;
+}
+
 /** Navigation filtered by explicit publication flags while retaining source records. */
 export const publicPrimaryNavigation = siteContent.navigation.primary.filter(
-  (item) => item.href !== "/work" || siteContent.features.work,
+  (item) => isRoutePublished(item.href),
+);
+export const publicFooterNavigation = siteContent.navigation.footer.filter(
+  (item) => isRoutePublished(item.href),
+);
+export const publicInsightCategories = siteContent.insightCategories.filter(
+  (category) =>
+    category.isPublished &&
+    publicContent.insights.some(
+      (insight) => insight.categorySlug === category.slug,
+    ),
+);
+export const publicAuthors = siteContent.authors.filter(
+  (author) =>
+    author.isPublished &&
+    publicContent.insights.some(
+      (insight) => insight.authorSlug === author.slug,
+    ),
 );
 
 export function getPublishedService(slug: string): Service | undefined {
@@ -201,4 +270,18 @@ export function getPublishedCaseStudy(slug: string): CaseStudy | undefined {
 
 export function getPublishedInsight(slug: string): Insight | undefined {
   return publicContent.insights.find((insight) => insight.slug === slug);
+}
+
+export function getPublishedInsightCategory(
+  slug: string,
+): InsightCategory | undefined {
+  return publicInsightCategories.find((category) => category.slug === slug);
+}
+
+export function getAuthor(slug: string): Author | undefined {
+  return siteContent.authors.find((author) => author.slug === slug);
+}
+
+export function getPublishedAuthor(slug: string): Author | undefined {
+  return publicAuthors.find((author) => author.slug === slug);
 }

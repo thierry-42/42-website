@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { CardEntrance, Stagger } from "@/components/motion/reveal";
@@ -20,6 +22,8 @@ export const metadata = createPageMetadata({
 });
 
 export default function AudiencePage() {
+  if (!siteContent.features.audience) notFound();
+
   return (
     <RouteFoundation
       consultationHref={siteConfig.bookingUrl ?? "/contact"}

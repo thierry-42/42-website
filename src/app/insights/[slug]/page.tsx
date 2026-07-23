@@ -17,6 +17,7 @@ import { getInsightBody } from "@/content/insights";
 import {
   getPublishedInsight,
   getPublishedService,
+  getAuthor,
   publicContent,
   siteContent,
 } from "@/content/site-content";
@@ -26,7 +27,7 @@ type InsightPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-const dateFormatter = new Intl.DateTimeFormat("en-ZA", {
+const dateFormatter = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",
   month: "long",
   timeZone: "UTC",
@@ -89,14 +90,10 @@ export default async function InsightPage({ params }: InsightPageProps) {
   const relatedServices = insight.serviceSlugs
     .map((serviceSlug) => getPublishedService(serviceSlug))
     .filter((service) => service !== undefined);
-  const relatedInsights = publicContent.insights
-    .filter((candidate) => candidate.slug !== insight.slug)
-    .sort(
-      (a, b) =>
-        Number(b.category === insight.category) -
-        Number(a.category === insight.category),
-    )
-    .slice(0, 3);
+  const relatedInsights = insight.relatedInsightSlugs
+    .map((relatedSlug) => getPublishedInsight(relatedSlug))
+    .filter((related) => related !== undefined);
+  const author = getAuthor(insight.authorSlug);
   const canonical = new URL(
     `/insights/${insight.slug}`,
     getSiteOrigin(),
@@ -137,12 +134,18 @@ export default async function InsightPage({ params }: InsightPageProps) {
             items={[
               { href: "/", label: "Home" },
               { href: "/insights", label: "Insights" },
+              {
+                href: `/insights/category/${insight.categorySlug}`,
+                label: insight.category,
+              },
               { label: insight.title },
             ]}
           />
           <div className="mt-12 grid items-end gap-12 lg:grid-cols-12">
             <div className="lg:col-span-7">
-              <Eyebrow>{insight.category}</Eyebrow>
+              <Link href={`/insights/category/${insight.categorySlug}`}>
+                <Eyebrow>{insight.category}</Eyebrow>
+              </Link>
               <Heading as="h1" className="max-w-[14ch]" size="h1">
                 {insight.title}
               </Heading>
@@ -292,19 +295,25 @@ export default async function InsightPage({ params }: InsightPageProps) {
                   </p>
                 </div>
 
-                <Surface className="mt-14 p-6 md:p-8" tone="dark">
-                  <p className="font-mono text-xs tracking-[0.12em] text-signal-400 uppercase">
-                    About the author
-                  </p>
-                  <h2 className="mt-4 text-2xl font-semibold tracking-[-0.04em]">
-                    {insight.author}
-                  </h2>
-                  <p className="mt-4 max-w-[60ch] text-sm leading-7 text-paper-50/68">
-                    Thierry-Luc is the named author of this 42 guide. The
-                    operational guidance has been written for practical use and
-                    checked against the current primary sources listed below.
-                  </p>
-                </Surface>
+                {author && siteConfig.deploymentEnvironment !== "production" ? (
+                  <Surface className="mt-14 p-6 md:p-8" tone="dark">
+                    <p className="font-mono text-xs tracking-[0.12em] text-signal-400 uppercase">
+                      Author preview / owner review required
+                    </p>
+                    <h2 className="mt-4 text-2xl font-semibold tracking-[-0.04em]">
+                      {author.name}
+                    </h2>
+                    <p className="mt-4 max-w-[60ch] text-sm leading-7 text-paper-50/68">
+                      {author.biography}
+                    </p>
+                    <Link
+                      className="mt-6 inline-flex text-sm font-semibold underline underline-offset-4"
+                      href={`/insights/author/${author.slug}`}
+                    >
+                      Preview author page
+                    </Link>
+                  </Surface>
+                ) : null}
 
                 <div className="mt-14 border-t border-[var(--border)] pt-10">
                   <h2 className="text-xl font-semibold tracking-[-0.035em]">

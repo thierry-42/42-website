@@ -2,17 +2,13 @@ import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { GlobalCta } from "@/components/sections/global-cta";
 import { PageIntro } from "@/components/sections/page-intro";
-import { ProcessSection } from "@/components/sections/process-section";
 import { SectionHeading } from "@/components/sections/section-heading";
-import { Accordion } from "@/components/ui/accordion";
-import { ServiceCard } from "@/components/ui/cards";
+import { CapabilityTag } from "@/components/ui/capability-tag";
+import { InsightCard, ServiceCard } from "@/components/ui/cards";
 import { Surface } from "@/components/ui/surface";
+import { TextLink } from "@/components/ui/text-link";
 import { serviceNarratives } from "@/content/page-content";
-import {
-  publicContent,
-  siteContent,
-  type Service,
-} from "@/content/site-content";
+import { publicContent, type Service } from "@/content/site-content";
 
 export function ServiceDetail({
   consultationHref,
@@ -24,6 +20,9 @@ export function ServiceDetail({
   const related = service.related
     .map((slug) => publicContent.services.find((item) => item.slug === slug))
     .filter((item): item is Service => item !== undefined);
+  const relatedInsights = publicContent.insights
+    .filter((insight) => insight.serviceSlugs.includes(service.slug))
+    .slice(0, 3);
   const narrative =
     serviceNarratives[service.slug as keyof typeof serviceNarratives];
 
@@ -48,28 +47,38 @@ export function ServiceDetail({
               index="01"
               title={narrative.problemTitle}
             />
-            <Surface className="overflow-hidden lg:col-span-6 lg:col-start-7">
-              <div className="border-b border-[var(--border)] p-6 md:p-8">
+            <div className="space-y-4 lg:col-span-6 lg:col-start-7">
+              <Surface className="p-6 md:p-8">
                 <p className="font-mono text-xs tracking-[0.12em] text-[var(--text-muted)] uppercase">
-                  The working answer
+                  Who this service is for
                 </p>
-              </div>
-              <ol className="divide-y divide-[var(--border)]">
-                {narrative.answer.map((item, index) => (
-                  <li
-                    className="grid grid-cols-[3rem_1fr] gap-4 p-6 md:px-8"
-                    key={item}
-                  >
-                    <span className="font-mono text-xs text-[var(--text-muted)]">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span className="font-semibold tracking-[-0.02em]">
+                <ul className="mt-6 space-y-4">
+                  {narrative.whoFor.map((item) => (
+                    <li
+                      className="border-l-2 border-signal-500 pl-4 leading-7"
+                      key={item}
+                    >
                       {item}
-                    </span>
-                  </li>
-                ))}
-              </ol>
-            </Surface>
+                    </li>
+                  ))}
+                </ul>
+              </Surface>
+              <Surface className="p-6 md:p-8">
+                <p className="font-mono text-xs tracking-[0.12em] text-[var(--text-muted)] uppercase">
+                  Typical problems
+                </p>
+                <ul className="mt-6 grid gap-4">
+                  {narrative.typicalProblems.map((item, index) => (
+                    <li className="grid grid-cols-[2rem_1fr] gap-3" key={item}>
+                      <span className="font-mono text-xs text-[var(--text-muted)]">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <span className="leading-7">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </Surface>
+            </div>
           </div>
         </Container>
       </Section>
@@ -77,10 +86,10 @@ export function ServiceDetail({
       <Section surface="muted">
         <Container>
           <SectionHeading
-            body="The exact scope follows the business problem, platform state, dependencies, and measures of success discovered at the start of the engagement."
-            eyebrow="What this can include"
+            body="The final scope follows the business problem, platform state, dependencies, and agreed measures of success."
+            eyebrow="Typical deliverables"
             index="02"
-            title="A focused scope, built from the right capabilities."
+            title="A focused scope, made tangible."
           />
           <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {service.capabilities.map((capability, index) => (
@@ -89,7 +98,7 @@ export function ServiceDetail({
                 key={capability}
               >
                 <span className="font-mono text-xs text-[var(--text-muted)]">
-                  C/{String(index + 1).padStart(2, "0")}
+                  D/{String(index + 1).padStart(2, "0")}
                 </span>
                 <h3 className="mt-10 text-lg leading-snug font-semibold tracking-[-0.03em]">
                   {capability}
@@ -100,30 +109,61 @@ export function ServiceDetail({
         </Container>
       </Section>
 
-      <ProcessSection compact />
-
-      <Section surface="paper">
+      <Section surface="dark">
         <Container>
-          <SectionHeading
-            body="Reliable HubSpot work stays understandable after launch. These principles guide architecture, delivery, and handover."
-            eyebrow="What good looks like"
-            index="04"
-            title="Clear enough to use. Strong enough to grow."
-          />
-          <div className="mt-12 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {siteContent.brand.principles.map((principle, index) => (
-              <Surface className="min-h-40 p-6" key={principle}>
-                <span className="font-mono text-xs text-[var(--text-muted)]">
-                  P/{String(index + 1).padStart(2, "0")}
-                </span>
-                <p className="mt-9 text-lg font-semibold tracking-[-0.025em]">
-                  {principle}
-                </p>
-              </Surface>
-            ))}
+          <div className="grid gap-12 lg:grid-cols-12">
+            <div className="lg:col-span-5">
+              <SectionHeading
+                body={narrative.approach}
+                eyebrow="How the work moves"
+                index="03"
+                title="Expected outcomes, with a clear route to delivery."
+              />
+              <TextLink className="mt-8 text-paper-50" href="/approach">
+                See the full 42 approach
+              </TextLink>
+            </div>
+            <ol className="grid gap-3 lg:col-span-6 lg:col-start-7">
+              {narrative.expectedOutcomes.map((item, index) => (
+                <li key={item}>
+                  <Surface
+                    className="grid grid-cols-[3rem_1fr] gap-4 border-white/14 p-6"
+                    tone="dark"
+                  >
+                    <span className="font-mono text-xs text-white/50">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="font-semibold tracking-[-0.02em]">
+                      {item}
+                    </span>
+                  </Surface>
+                </li>
+              ))}
+            </ol>
           </div>
         </Container>
       </Section>
+
+      {relatedInsights.length > 0 ? (
+        <Section surface="paper">
+          <Container>
+            <div className="flex flex-wrap items-end justify-between gap-8">
+              <SectionHeading
+                body="Use these guides to prepare for discovery, challenge assumptions, and make the next decision with more context."
+                eyebrow="Related insights"
+                index="04"
+                title="Practical reading for this service."
+              />
+              <TextLink href="/insights">Browse all insights</TextLink>
+            </div>
+            <div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+              {relatedInsights.map((insight) => (
+                <InsightCard insight={insight} key={insight.slug} />
+              ))}
+            </div>
+          </Container>
+        </Section>
+      ) : null}
 
       {related.length > 0 ? (
         <Section surface="muted">
@@ -133,7 +173,12 @@ export function ServiceDetail({
               index="05"
               title="The next answer may sit next door."
             />
-            <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-12 flex flex-wrap gap-2">
+              {service.capabilities.slice(0, 4).map((capability) => (
+                <CapabilityTag key={capability}>{capability}</CapabilityTag>
+              ))}
+            </div>
+            <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {related.map((item, index) => (
                 <ServiceCard index={index} key={item.slug} service={item} />
               ))}
@@ -141,22 +186,6 @@ export function ServiceDetail({
           </Container>
         </Section>
       ) : null}
-
-      <Section surface="paper">
-        <Container>
-          <div className="grid gap-12 lg:grid-cols-12">
-            <SectionHeading
-              className="lg:col-span-5"
-              eyebrow="Frequently asked"
-              index="06"
-              title="Useful answers before the first conversation."
-            />
-            <div className="lg:col-span-6 lg:col-start-7">
-              <Accordion items={siteContent.faqs} />
-            </div>
-          </div>
-        </Container>
-      </Section>
 
       <GlobalCta href={consultationHref} />
     </>

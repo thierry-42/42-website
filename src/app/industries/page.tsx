@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { CardEntrance, Stagger } from "@/components/motion/reveal";
@@ -6,6 +8,7 @@ import { RouteFoundation } from "@/components/sections/route-foundation";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { Surface } from "@/components/ui/surface";
 import { industrySignals, routeFoundations } from "@/content/page-content";
+import { siteContent } from "@/content/site-content";
 import { siteConfig } from "@/lib/config";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -18,6 +21,8 @@ export const metadata = createPageMetadata({
 });
 
 export default function IndustriesPage() {
+  if (!siteContent.features.industries) notFound();
+
   return (
     <RouteFoundation
       consultationHref={siteConfig.bookingUrl ?? "/contact"}

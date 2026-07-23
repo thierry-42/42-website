@@ -1,17 +1,14 @@
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { CardEntrance, Stagger } from "@/components/motion/reveal";
-import { ProcessSection } from "@/components/sections/process-section";
 import { RouteFoundation } from "@/components/sections/route-foundation";
 import { SectionHeading } from "@/components/sections/section-heading";
-import { Accordion } from "@/components/ui/accordion";
 import { CapabilityTag } from "@/components/ui/capability-tag";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { Surface } from "@/components/ui/surface";
 import { SystemIcon, type SystemIconName } from "@/components/ui/system-icons";
 import { Heading } from "@/components/ui/typography";
 import { reviewAreas, routeFoundations } from "@/content/page-content";
-import { siteContent } from "@/content/site-content";
 import { siteConfig } from "@/lib/config";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -93,19 +90,35 @@ export default function HubSpotReviewPage() {
           </Stagger>
         </Container>
       </Section>
-      <ProcessSection compact />
       <Section surface="paper">
         <Container>
           <div className="grid gap-12 lg:grid-cols-12">
             <SectionHeading
               className="lg:col-span-5"
+              body="A useful review needs enough context to distinguish a portal symptom from the process, data, ownership, or integration decision behind it."
               eyebrow="Before the review"
               index="03"
-              title="Questions worth answering first."
+              title="Bring the context that makes the findings useful."
             />
-            <div className="lg:col-span-6 lg:col-start-7">
-              <Accordion items={siteContent.faqs} />
-            </div>
+            <ul className="grid gap-3 lg:col-span-6 lg:col-start-7">
+              {[
+                "The business questions the portal should help answer",
+                "The teams, processes, and systems that depend on HubSpot",
+                "Known data, reporting, adoption, or automation concerns",
+                "Recent changes and the decisions currently blocked",
+              ].map((item, index) => (
+                <li key={item}>
+                  <Surface className="grid grid-cols-[3rem_1fr] gap-4 p-5">
+                    <span className="font-mono text-xs text-[var(--text-muted)]">
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    <span className="font-semibold tracking-[-0.02em]">
+                      {item}
+                    </span>
+                  </Surface>
+                </li>
+              ))}
+            </ul>
           </div>
         </Container>
       </Section>

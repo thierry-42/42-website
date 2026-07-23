@@ -3,14 +3,17 @@ import { Section } from "@/components/layout/section";
 import { Reveal } from "@/components/motion/reveal";
 import { DifferenceSection } from "@/components/sections/difference-section";
 import { FoundationBand } from "@/components/sections/foundation-band";
-import { ProcessSection } from "@/components/sections/process-section";
 import { RouteFoundation } from "@/components/sections/route-foundation";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { TeamSection } from "@/components/sections/team-section";
 import { CapabilityTag } from "@/components/ui/capability-tag";
 import { Surface } from "@/components/ui/surface";
 import { TextLink } from "@/components/ui/text-link";
-import { audienceProfiles, routeFoundations } from "@/content/page-content";
+import {
+  audienceProfiles,
+  audienceRoles,
+  routeFoundations,
+} from "@/content/page-content";
 import { siteContent } from "@/content/site-content";
 import { siteConfig } from "@/lib/config";
 import { createPageMetadata } from "@/lib/metadata";
@@ -54,7 +57,7 @@ export default function AboutPage() {
       </Section>
       <DifferenceSection />
       <FoundationBand
-        body={siteContent.brand.positioning}
+        body="The method stays practical: clarify the question, make decisions visible, build for the people operating the system, and leave behind an answer the team can maintain."
         title="Principles that keep complex work clear."
       />
       <TeamSection />
@@ -66,17 +69,36 @@ export default function AboutPage() {
             index="05"
             title="Built for teams whose systems have outgrown the simple answer."
           />
-          <div className="mt-10 flex flex-wrap gap-3">
-            {audienceProfiles.map((profile) => (
-              <CapabilityTag key={profile}>{profile}</CapabilityTag>
-            ))}
+          <div className="mt-10 grid gap-8 lg:grid-cols-2">
+            <div>
+              <p className="font-mono text-xs tracking-[0.12em] text-[var(--text-muted)] uppercase">
+                Organisation profiles
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                {audienceProfiles.map((profile) => (
+                  <CapabilityTag key={profile}>{profile}</CapabilityTag>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="font-mono text-xs tracking-[0.12em] text-[var(--text-muted)] uppercase">
+                People 42 works alongside
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                {audienceRoles.map((role) => (
+                  <CapabilityTag key={role}>{role}</CapabilityTag>
+                ))}
+              </div>
+            </div>
           </div>
-          <TextLink className="mt-8" href="/industries">
-            Explore industry contexts
+          <p className="mt-8 max-w-[58ch] text-sm leading-6 text-[var(--text-muted)]">
+            Public service areas: North America and EMEA.
+          </p>
+          <TextLink className="mt-8" href="/services">
+            Explore HubSpot services
           </TextLink>
         </Container>
       </Section>
-      <ProcessSection compact />
     </RouteFoundation>
   );
 }

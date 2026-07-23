@@ -23,6 +23,7 @@ const playwrightCli = path.join(
 
 process.env.PLAYWRIGHT_BROWSERS_PATH ??= browserPath;
 process.env.PLAYWRIGHT_BASE_URL = baseUrl;
+process.env.SITE_ENVIRONMENT ??= "production";
 
 async function isServerReady() {
   try {

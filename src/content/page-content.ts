@@ -283,97 +283,185 @@ export const audienceRoles = [
 
 export const serviceNarratives = {
   "hubspot-strategy-consulting": {
+    whoFor: [
+      "Mid-market leaders planning a new HubSpot investment or major change",
+      "CRM, RevOps, marketing, sales, operations, and IT owners who need one coherent roadmap",
+    ],
+    typicalProblems: [
+      "The platform decision is being made before the operating model is clear",
+      "Teams have competing definitions, priorities, or ownership",
+      "The delivery backlog lacks an agreed architecture and sequence",
+    ],
     problemTitle: "The build is moving faster than the decisions behind it.",
     problemBody:
       "When goals, ownership, process, data, and platform constraints are unclear, every configuration choice creates another dependency. Strategy makes the answer explicit before effort is committed.",
-    answer: [
+    expectedOutcomes: [
       "A shared definition of the business problem",
       "A coherent solution and data architecture",
       "A prioritised roadmap with clear dependencies",
       "Governance that keeps future decisions consistent",
     ],
+    approach:
+      "Start with discovery, evidence, and decision mapping. Turn the findings into an architecture and prioritised roadmap before configuration or development begins.",
   },
   "implementation-onboarding": {
+    whoFor: [
+      "Mid-market organisations implementing HubSpot for the first time",
+      "Teams replacing spreadsheets, a legacy CRM, or an under-designed portal",
+    ],
+    typicalProblems: [
+      "Default onboarding does not represent the real customer process",
+      "Migration, permissions, automation, reporting, and adoption are being planned separately",
+      "Launch scope is growing without clear acceptance criteria",
+    ],
     problemTitle:
       "A default setup cannot represent a specific operating model.",
     problemBody:
       "Implementation needs to connect customer journeys, data, ownership, permissions, automation, migration, testing, and adoption—not simply switch HubSpot features on.",
-    answer: [
+    expectedOutcomes: [
       "A portal structured around real teams and processes",
       "A controlled migration and launch plan",
       "Tested automation, permissions, and reporting",
       "Documentation and enablement for confident adoption",
     ],
+    approach:
+      "Design the portal, migration, controls, test plan, and launch as one programme. Build in stages, validate with real users, and hand over clear documentation.",
   },
   "crm-revops": {
+    whoFor: [
+      "Revenue and operations teams that cannot rely on the CRM view",
+      "Mid-market organisations standardising lifecycle, pipeline, ownership, and reporting",
+    ],
+    typicalProblems: [
+      "Customer data and commercial definitions vary between teams",
+      "Routing and handovers depend on manual knowledge",
+      "Dashboards look complete but do not answer operational questions",
+    ],
     problemTitle:
       "The CRM stores activity but cannot answer commercial questions.",
     problemBody:
       "Inconsistent data, unclear ownership, disconnected pipelines, and competing definitions make reporting difficult to trust and revenue processes harder to manage.",
-    answer: [
+    expectedOutcomes: [
       "A clear customer and revenue data model",
       "Defined ownership across the lifecycle",
       "Usable pipelines, routing, and quality controls",
       "Reporting built on consistent definitions",
     ],
+    approach:
+      "Trace the questions the business needs to answer back to data, ownership, and process rules. Rebuild the model in a controlled sequence so reporting rests on dependable operations.",
   },
   "automation-operations": {
+    whoFor: [
+      "Teams with repetitive handovers, routing, administration, or service work",
+      "Portal owners inheriting overlapping or difficult-to-maintain workflows",
+    ],
+    typicalProblems: [
+      "Workflow logic is undocumented or duplicated",
+      "Poor data triggers unpredictable automation",
+      "Exceptions and failure states have no clear owner",
+    ],
     problemTitle: "Automation has become another source of operational risk.",
     problemBody:
       "Workflows that overlap, depend on poor data, or lack clear ownership can hide errors and make simple changes unpredictable. Good automation stays legible and controlled.",
-    answer: [
+    expectedOutcomes: [
       "A documented workflow architecture",
       "Clear triggers, safeguards, and ownership",
       "Less repetitive work across teams",
       "Automation that remains understandable as it grows",
     ],
+    approach:
+      "Audit the current logic, define ownership and safeguards, then simplify before adding new automation. Test normal, exceptional, and failure paths before release.",
   },
   "integrations-custom-development": {
+    whoFor: [
+      "Mid-market organisations connecting HubSpot to operational, finance, ERP, or product systems",
+      "Teams whose required data model or workflow exceeds a native connector",
+    ],
+    typicalProblems: [
+      "Systems disagree about source ownership and record identity",
+      "Native synchronisation cannot support the required timing or validation",
+      "Integration errors are difficult to detect, explain, or recover",
+    ],
     problemTitle:
       "The customer process crosses systems that were never designed together.",
     problemBody:
       "Native connectors are useful until the data model, timing, validation, or operational process becomes specific. The right integration begins with the system contract, not an API call.",
-    answer: [
+    expectedOutcomes: [
       "A documented integration and data architecture",
       "Clear ownership of source and destination data",
       "Dependable synchronisation and error handling",
       "Custom functionality where native tools stop fitting",
     ],
+    approach:
+      "Define the system contract, mappings, volumes, timing, controls, and recovery behaviour first. Build and test against explicit acceptance criteria rather than a vague instruction to connect two tools.",
   },
   "websites-content-hub": {
+    whoFor: [
+      "Mid-market teams redesigning a website around HubSpot and lead capture",
+      "Organisations that need Content Hub, CRM, forms, content operations, and reporting to work together",
+    ],
+    typicalProblems: [
+      "The website and CRM are planned as separate systems",
+      "Forms capture data without a clear follow-up or consent model",
+      "Page production is slow, inconsistent, or difficult to govern",
+    ],
     problemTitle:
       "The website is publishing content but operating outside the customer system.",
     problemBody:
       "A HubSpot website should connect content, forms, journeys, CRM data, personalisation, reporting, and the operational follow-up behind every conversion.",
-    answer: [
+    expectedOutcomes: [
       "A conversion and content architecture",
       "Reusable, accessible page and module systems",
       "Forms and journeys connected to CRM operations",
       "Performance, technical SEO, and reporting foundations",
     ],
+    approach:
+      "Map content, conversion, consent, data, and operational follow-up before finalising the page system. Build reusable components with accessibility, performance, and governance designed in.",
   },
   "service-hub-customer-experience": {
+    whoFor: [
+      "Service leaders bringing support activity into the customer record",
+      "Teams replacing shared inboxes or inconsistent ticket processes with Service Hub",
+    ],
+    typicalProblems: [
+      "Tickets, inboxes, knowledge, and CRM context are disconnected",
+      "Routing, escalation, and service ownership vary by person",
+      "Service reporting does not reflect the work customers experience",
+    ],
     problemTitle:
       "Service teams are working without the full customer context.",
     problemBody:
       "Disconnected inboxes, ticket processes, knowledge, routing, and reporting make support harder to manage and separate service activity from the customer record.",
-    answer: [
+    expectedOutcomes: [
       "A clear service operating model",
       "Structured ticketing, routing, and ownership",
       "Connected knowledge and customer context",
       "Reporting that makes service performance visible",
     ],
+    approach:
+      "Design the service operating model, ticket structure, routing, escalation, knowledge, and reporting together. Validate the model with the people handling real customer work.",
   },
   "managed-hubspot-support": {
+    whoFor: [
+      "Mid-market teams that need senior HubSpot capacity without another full-time hire",
+      "Portal owners with a growing improvement backlog and multiple specialist needs",
+    ],
+    typicalProblems: [
+      "Important portal work competes with daily operational demand",
+      "Changes are delivered without a visible backlog or decision record",
+      "The internal team needs reliable access to consulting and technical specialists",
+    ],
     problemTitle:
       "The portal needs steady improvement, but the internal backlog keeps growing.",
     problemBody:
       "Managed support adds senior capacity for prioritisation, administration, troubleshooting, optimisation, enablement, and technical delivery without creating another disconnected workstream.",
-    answer: [
+    expectedOutcomes: [
       "A visible, prioritised improvement backlog",
       "Reliable portal administration and troubleshooting",
       "Continuous optimisation with documented decisions",
       "Flexible specialist capacity around the internal team",
     ],
+    approach:
+      "Maintain one prioritised backlog, make ownership visible, and deliver improvements in reviewable increments. Document decisions and revisit priorities with the internal owner on a regular cadence.",
   },
 } as const;

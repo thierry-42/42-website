@@ -9,6 +9,7 @@ import { ProblemSection } from "@/components/sections/problem-section";
 import { ProcessSection } from "@/components/sections/process-section";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { ServiceGrid } from "@/components/sections/service-grid";
+import { SelectedInsights } from "@/components/sections/selected-insights";
 import { SystemCapabilities } from "@/components/sections/system-capabilities";
 import { Accordion } from "@/components/ui/accordion";
 import { homeScrollStatement } from "@/content/experience-content";
@@ -39,6 +40,7 @@ export default function HomePage() {
       <DifferenceSection />
       <EngagementsSection />
       <ProcessSection />
+      <SelectedInsights />
 
       <Section surface="paper">
         <Container>
@@ -46,7 +48,7 @@ export default function HomePage() {
             <SectionHeading
               className="lg:col-span-5"
               eyebrow="Frequently asked"
-              index="07"
+              index="08"
               title="A few useful answers before we talk."
             />
             <div className="lg:col-span-6 lg:col-start-7">

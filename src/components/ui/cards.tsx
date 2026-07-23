@@ -14,6 +14,7 @@ import { Surface } from "@/components/ui/surface";
 import { SystemIcon, type SystemIconName } from "@/components/ui/system-icons";
 import { TextLink } from "@/components/ui/text-link";
 import { cn } from "@/lib/cn";
+import { siteConfig } from "@/lib/config";
 import { isPublicRecord } from "@/lib/proof";
 
 type ServiceCardProps = {
@@ -237,36 +238,50 @@ export function InsightCard({
 export function TeamCard({ member }: { member: TeamMember }) {
   if (!isPublicRecord(member)) return null;
 
+  const showPortrait =
+    member.portraitApprovalStatus === "approved" ||
+    siteConfig.usesDevelopmentPortraits;
+  const showBiography =
+    member.bioApprovalStatus === "approved" ||
+    siteConfig.deploymentEnvironment !== "production";
+  const showSpecialisms =
+    member.specialismsApprovalStatus === "approved" ||
+    siteConfig.deploymentEnvironment !== "production";
+
   return (
     <article className="h-full">
       <Surface className="flex h-full flex-col overflow-hidden" interactive>
-        <div className="relative aspect-[4/5] bg-paper-100">
-          <Image
-            alt={member.imageAlt}
-            className="object-cover"
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            src={member.image}
-          />
-          {member.imageIsPlaceholder ? (
+        {showPortrait ? (
+          <div className="relative aspect-[4/5] bg-paper-100">
+            <Image
+              alt={member.imageAlt}
+              className="object-cover"
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              src={member.image}
+            />
             <span className="absolute top-3 left-3 rounded-full border border-white/20 bg-ink-950/88 px-3 py-1 font-mono text-[0.625rem] tracking-[0.1em] text-paper-50 uppercase backdrop-blur-sm">
-              AI portrait placeholder
+              Development portrait / approval required
             </span>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
         <div className="flex flex-1 flex-col p-6">
           <h3 className="text-xl font-semibold tracking-[-0.035em]">
             {member.name}
           </h3>
           <p className="mt-1 text-sm text-[var(--text-muted)]">{member.role}</p>
-          <p className="mt-5 text-sm leading-6 text-[var(--text-muted)]">
-            {member.bio}
-          </p>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {member.specialisms.map((specialism) => (
-              <CapabilityTag key={specialism}>{specialism}</CapabilityTag>
-            ))}
-          </div>
+          {showBiography ? (
+            <p className="mt-5 text-sm leading-6 text-[var(--text-muted)]">
+              {member.bio}
+            </p>
+          ) : null}
+          {showSpecialisms ? (
+            <div className="mt-5 flex flex-wrap gap-2">
+              {member.specialisms.map((specialism) => (
+                <CapabilityTag key={specialism}>{specialism}</CapabilityTag>
+              ))}
+            </div>
+          ) : null}
         </div>
       </Surface>
     </article>

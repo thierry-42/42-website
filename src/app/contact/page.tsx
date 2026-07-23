@@ -41,12 +41,22 @@ export default function ContactPage() {
                 Share enough context for a useful first response. You do not
                 need to arrive with a finished brief.
               </p>
+              <p className="mt-6 max-w-[42ch] text-sm leading-6 text-[var(--text-muted)]">
+                If the form is unavailable, email{" "}
+                <a
+                  className="font-semibold text-[var(--foreground)] underline underline-offset-4"
+                  href={`mailto:${siteConfig.contactEmail}`}
+                >
+                  {siteConfig.contactEmail}
+                </a>
+                . 42 works with mid-market organisations across North America
+                and EMEA.
+              </p>
             </div>
             <div className="lg:col-span-7 lg:col-start-6">
               <ContactForm
-                formId={siteConfig.hubspotFormId}
-                portalId={siteConfig.hubspotPortalId}
-                region={siteConfig.hubspotRegion}
+                contactEmail={siteConfig.contactEmail}
+                form={siteConfig.hubspotForm}
               />
             </div>
           </div>

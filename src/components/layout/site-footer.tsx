@@ -3,7 +3,11 @@ import type { ReactNode } from "react";
 
 import { Container } from "@/components/layout/container";
 import { Logo } from "@/components/layout/logo";
-import { publicPrimaryNavigation, siteContent } from "@/content/site-content";
+import {
+  publicFooterNavigation,
+  publicPrimaryNavigation,
+  siteContent,
+} from "@/content/site-content";
 import { siteConfig } from "@/lib/config";
 
 export function SiteFooter() {
@@ -53,7 +57,7 @@ export function SiteFooter() {
               ))}
             </FooterGroup>
             <FooterGroup label="Utility">
-              {siteContent.navigation.footer.map((item) => (
+              {publicFooterNavigation.map((item) => (
                 <FooterLink href={item.href} key={item.href}>
                   {item.label}
                 </FooterLink>

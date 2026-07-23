@@ -6,10 +6,14 @@ import { RouteFoundation } from "@/components/sections/route-foundation";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { ServiceGrid } from "@/components/sections/service-grid";
 import { SystemCapabilities } from "@/components/sections/system-capabilities";
-import { Accordion } from "@/components/ui/accordion";
+import { CapabilityTag } from "@/components/ui/capability-tag";
 import { ProblemCard } from "@/components/ui/cards";
+import {
+  audienceProfiles,
+  audienceRoles,
+  routeFoundations,
+} from "@/content/page-content";
 import { siteContent } from "@/content/site-content";
-import { routeFoundations } from "@/content/page-content";
 import { siteConfig } from "@/lib/config";
 import { createPageMetadata } from "@/lib/metadata";
 
@@ -48,22 +52,42 @@ export default function ServicesPage() {
           </div>
         </Container>
       </Section>
-      <ProcessSection compact />
-      <Section surface="paper">
+      <Section surface="muted">
         <Container>
           <div className="grid gap-12 lg:grid-cols-12">
             <SectionHeading
+              body="42 works with mid-market organisations across North America and EMEA when customer processes, teams, data, and systems need a clearer operating model."
               className="lg:col-span-5"
-              eyebrow="Frequently asked"
-              index="06"
-              title="Useful answers before choosing a service."
+              eyebrow="Who the services are for"
+              index="05"
+              title="Senior support for teams beyond the simple setup."
             />
-            <div className="lg:col-span-6 lg:col-start-7">
-              <Accordion items={siteContent.faqs} />
+            <div className="space-y-8 lg:col-span-6 lg:col-start-7">
+              <div>
+                <p className="font-mono text-xs tracking-[0.12em] text-[var(--text-muted)] uppercase">
+                  Organisation profiles
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {audienceProfiles.map((profile) => (
+                    <CapabilityTag key={profile}>{profile}</CapabilityTag>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <p className="font-mono text-xs tracking-[0.12em] text-[var(--text-muted)] uppercase">
+                  Typical stakeholders
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {audienceRoles.map((role) => (
+                    <CapabilityTag key={role}>{role}</CapabilityTag>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </Container>
       </Section>
+      <ProcessSection compact />
     </RouteFoundation>
   );
 }
