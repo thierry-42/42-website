@@ -1,52 +1,153 @@
+import Link from "next/link";
+
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
-import { SectionHeading } from "@/components/sections/section-heading";
 import { Surface } from "@/components/ui/surface";
+import type { LegalDocumentContent } from "@/content/legal-content";
 
-type LegalReviewProps = {
-  body: string;
-  sections: readonly string[];
+type LegalDocumentProps = {
+  contactEmail: string;
+  document: LegalDocumentContent;
 };
 
-export function LegalReview({ body, sections }: LegalReviewProps) {
+export function LegalDocument({ contactEmail, document }: LegalDocumentProps) {
   return (
     <Section surface="paper">
       <Container>
-        <div className="grid gap-12 lg:grid-cols-12">
-          <SectionHeading
-            body={body}
-            className="lg:col-span-5"
-            eyebrow="Publication status"
-            index="01"
-            title="Legal review is required before launch."
-          />
-          <div className="lg:col-span-6 lg:col-start-7">
+        <div className="grid items-start gap-10 lg:grid-cols-12 lg:gap-16">
+          <aside className="lg:sticky lg:top-28 lg:col-span-4">
             <Surface className="overflow-hidden">
-              <div className="flex items-center justify-between gap-4 border-b border-[var(--border)] p-6">
-                <p className="font-mono text-xs tracking-[0.12em] text-[var(--text-muted)] uppercase">
-                  Required coverage
+              <div className="border-b border-[var(--border)] p-6">
+                <p className="font-mono text-[0.6875rem] tracking-[0.12em] text-[var(--text-muted)] uppercase">
+                  Publication status
                 </p>
-                <span className="rounded-full border border-[var(--border)] px-3 py-1 font-mono text-[0.6875rem] text-[var(--text-muted)]">
-                  Draft withheld
-                </span>
+                <p className="mt-3 text-lg font-semibold tracking-[-0.03em]">
+                  {document.status}
+                </p>
+                <p className="mt-3 text-sm leading-6 text-[var(--text-muted)]">
+                  Last updated {document.effectiveDate}
+                </p>
               </div>
-              <ol className="divide-y divide-[var(--border)]">
-                {sections.map((item, index) => (
-                  <li
-                    className="grid grid-cols-[3rem_1fr] gap-4 p-6"
-                    key={item}
-                  >
-                    <span className="font-mono text-xs text-[var(--text-muted)]">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span className="font-semibold tracking-[-0.02em]">
-                      {item}
-                    </span>
-                  </li>
-                ))}
-              </ol>
+              <nav aria-label="On this page" className="p-6">
+                <p className="font-mono text-[0.6875rem] tracking-[0.12em] text-[var(--text-muted)] uppercase">
+                  On this page
+                </p>
+                <ol className="mt-5 grid gap-3">
+                  {document.sections.map((section, index) => (
+                    <li
+                      className="grid grid-cols-[2rem_1fr] gap-2 text-sm leading-5"
+                      key={section.id}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="font-mono text-[0.6875rem] text-[var(--text-muted)]"
+                      >
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <a
+                        className="font-semibold underline-offset-4 hover:underline"
+                        href={`#${section.id}`}
+                      >
+                        {section.title}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </nav>
             </Surface>
-          </div>
+          </aside>
+
+          <article className="lg:col-span-8">
+            <div className="border-b border-ink-950/16 pb-10">
+              <p className="max-w-[68ch] text-lg leading-8">
+                {document.introduction}
+              </p>
+              <div
+                className="mt-8 rounded-lg border border-hubspot-coral/30 bg-white p-5"
+                role="note"
+              >
+                <p className="font-mono text-[0.6875rem] tracking-[0.12em] text-hubspot-coral uppercase">
+                  Approval required
+                </p>
+                <p className="mt-3 max-w-[70ch] text-sm leading-6 text-[var(--text-muted)]">
+                  {document.reviewSummary}
+                </p>
+              </div>
+            </div>
+
+            <div className="divide-y divide-ink-950/14">
+              {document.sections.map((section, index) => (
+                <section
+                  className="scroll-mt-28 py-10 first:pt-12"
+                  id={section.id}
+                  key={section.id}
+                >
+                  <div className="grid gap-5 sm:grid-cols-[3rem_1fr]">
+                    <p
+                      aria-hidden="true"
+                      className="pt-1 font-mono text-xs text-[var(--text-muted)]"
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </p>
+                    <div>
+                      <h2 className="text-3xl leading-tight font-semibold tracking-[-0.045em] sm:text-4xl">
+                        {section.title}
+                      </h2>
+                      <div className="mt-6 grid max-w-[70ch] gap-5 text-base leading-7 text-ink-950/76">
+                        {section.paragraphs.map((paragraph) => (
+                          <p key={paragraph}>{paragraph}</p>
+                        ))}
+                      </div>
+                      {section.bullets ? (
+                        <ul className="mt-6 grid max-w-[70ch] gap-3 pl-5 text-base leading-7 text-ink-950/76">
+                          {section.bullets.map((item) => (
+                            <li className="list-disc pl-1" key={item}>
+                              {item}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+                      {section.links ? (
+                        <div className="mt-6 flex flex-wrap gap-4">
+                          {section.links.map((link) => (
+                            <Link
+                              className="text-sm font-semibold underline underline-offset-4"
+                              href={link.href}
+                              key={link.href}
+                            >
+                              {link.label}
+                            </Link>
+                          ))}
+                        </div>
+                      ) : null}
+                      {section.reviewNote ? (
+                        <div
+                          className="mt-7 max-w-[70ch] border-l-2 border-hubspot-coral pl-4 text-sm leading-6 text-[var(--text-muted)]"
+                          role="note"
+                        >
+                          <span className="font-semibold text-[var(--foreground)]">
+                            Owner/legal review:
+                          </span>{" "}
+                          {section.reviewNote}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                </section>
+              ))}
+            </div>
+
+            <p className="border-t border-ink-950/16 pt-8 text-sm leading-6 text-[var(--text-muted)]">
+              Questions about this draft may be sent to{" "}
+              <a
+                className="font-semibold text-[var(--foreground)] underline underline-offset-4"
+                href={`mailto:${contactEmail}`}
+              >
+                {contactEmail}
+              </a>
+              .
+            </p>
+          </article>
         </div>
       </Container>
     </Section>

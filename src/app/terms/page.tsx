@@ -1,5 +1,6 @@
-import { LegalReview } from "@/components/sections/legal-review";
+import { LegalDocument } from "@/components/sections/legal-review";
 import { RouteFoundation } from "@/components/sections/route-foundation";
+import { termsOfUse } from "@/content/legal-content";
 import { routeFoundations } from "@/content/page-content";
 import { siteConfig } from "@/lib/config";
 import { createPageMetadata } from "@/lib/metadata";
@@ -18,16 +19,9 @@ export default function TermsPage() {
       consultationHref={siteConfig.bookingUrl ?? "/contact"}
       route="terms"
     >
-      <LegalReview
-        body="No draft terms are presented as a final agreement. Ownership, permitted use, disclaimers, jurisdiction, and legal entity details require appropriate approval."
-        sections={[
-          "Legal entity and scope of the website terms",
-          "Permitted use and prohibited activity",
-          "Intellectual property and third-party content",
-          "Availability, accuracy, and disclaimers",
-          "Liability and indemnity provisions",
-          "Governing law, jurisdiction, and updates",
-        ]}
+      <LegalDocument
+        contactEmail={siteConfig.contactEmail}
+        document={termsOfUse}
       />
     </RouteFoundation>
   );

@@ -65,16 +65,16 @@ export const routeFoundations = {
   privacy: {
     path: "/privacy",
     eyebrow: "Legal",
-    title: "Privacy notice",
+    title: "Privacy Policy",
     description:
-      "This route is reserved for the approved privacy notice. No draft legal wording is presented as final policy.",
+      "How 42 handles information submitted through this website and its HubSpot enquiry form. This draft requires owner and legal approval before production publication.",
   },
   terms: {
     path: "/terms",
     eyebrow: "Legal",
-    title: "Terms of use",
+    title: "Terms of Use",
     description:
-      "This route is reserved for approved website terms. No draft legal wording is presented as final terms.",
+      "The draft terms that apply to use of the public 42 website. Consultancy engagements remain subject to separate written agreements.",
   },
 } as const;
 

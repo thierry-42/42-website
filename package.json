@@ -15,6 +15,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "node scripts/run-tests.mjs",
+    "test:staging": "node scripts/run-staging-tests.mjs",
     "test:install": "node scripts/playwright.mjs install chromium",
     "test:ui": "node scripts/run-tests.mjs --ui"
   },

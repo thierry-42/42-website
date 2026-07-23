@@ -1,14 +1,17 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 
 type EmbedState = "disabled" | "loading" | "ready" | "error";
+type SubmissionState = "idle" | "success";
 
 type ContactFormProps = {
   contactEmail: string;
+  deploymentEnvironment: "development" | "staging" | "production";
   form: {
     formId: string;
     portalId: string;
@@ -16,11 +19,27 @@ type ContactFormProps = {
   } | null;
 };
 
-export function ContactForm({ contactEmail, form }: ContactFormProps) {
+type HubspotEventDetail = {
+  formId?: string;
+};
+
+type LegacyHubspotMessage = {
+  eventName?: string;
+  id?: string;
+  type?: string;
+};
+
+export function ContactForm({
+  contactEmail,
+  deploymentEnvironment,
+  form,
+}: ContactFormProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [embedState, setEmbedState] = useState<EmbedState>(
     form ? "loading" : "disabled",
   );
+  const [submissionState, setSubmissionState] =
+    useState<SubmissionState>("idle");
 
   useEffect(() => {
     if (!form) return;
@@ -32,9 +51,37 @@ export function ContactForm({ contactEmail, form }: ContactFormProps) {
     const markReady = () => {
       if (container.querySelector("iframe, form")) setEmbedState("ready");
     };
+    const isCurrentFormEvent = (event: Event) => {
+      const formId = (event as CustomEvent<HubspotEventDetail>).detail?.formId;
+      return !formId || formId === form.formId;
+    };
+    const handleReady = (event: Event) => {
+      if (isCurrentFormEvent(event)) setEmbedState("ready");
+    };
+    const handleSubmissionSuccess = (event: Event) => {
+      if (isCurrentFormEvent(event)) setSubmissionState("success");
+    };
+    const handleLegacyMessage = (event: MessageEvent<unknown>) => {
+      if (!event.data || typeof event.data !== "object") return;
+
+      const message = event.data as LegacyHubspotMessage;
+      if (message.type !== "hsFormCallback" || message.id !== form.formId)
+        return;
+
+      if (message.eventName === "onFormReady") setEmbedState("ready");
+      if (message.eventName === "onFormSubmitted") {
+        setSubmissionState("success");
+      }
+    };
 
     const observer = new MutationObserver(markReady);
     observer.observe(container, { childList: true, subtree: true });
+    window.addEventListener("hs-form-event:on-ready", handleReady);
+    window.addEventListener(
+      "hs-form-event:on-submission:success",
+      handleSubmissionSuccess,
+    );
+    window.addEventListener("message", handleLegacyMessage);
 
     const script = document.createElement("script");
     script.defer = true;
@@ -53,6 +100,12 @@ export function ContactForm({ contactEmail, form }: ContactFormProps) {
     return () => {
       window.clearTimeout(timeout);
       observer.disconnect();
+      window.removeEventListener("hs-form-event:on-ready", handleReady);
+      window.removeEventListener(
+        "hs-form-event:on-submission:success",
+        handleSubmissionSuccess,
+      );
+      window.removeEventListener("message", handleLegacyMessage);
       script.remove();
     };
   }, [form]);
@@ -71,12 +124,24 @@ export function ContactForm({ contactEmail, form }: ContactFormProps) {
       </div>
 
       <div className="relative p-5 sm:p-8">
+        {submissionState === "success" ? (
+          <div
+            className="bg-signal-100 mb-6 rounded-md border border-signal-500/50 p-4 text-sm leading-6 text-ink-950"
+            data-testid="hubspot-form-success"
+            role="status"
+          >
+            Thank you. Your enquiry has been submitted to 42.
+          </div>
+        ) : null}
         {embedState === "loading" ? <FormLoadingState /> : null}
         {embedState === "error" ? (
           <FormErrorState contactEmail={contactEmail} />
         ) : null}
         {embedState === "disabled" ? (
-          <FormDisabledState contactEmail={contactEmail} />
+          <FormDisabledState
+            contactEmail={contactEmail}
+            deploymentEnvironment={deploymentEnvironment}
+          />
         ) : null}
 
         {form ? (
@@ -92,6 +157,18 @@ export function ContactForm({ contactEmail, form }: ContactFormProps) {
             data-region={form.region}
             ref={containerRef}
           />
+        ) : null}
+
+        {form && embedState === "ready" ? (
+          <p className="mt-6 border-t border-ink-950/12 pt-5 text-xs leading-5 text-ink-950/62">
+            When you submit this form, 42 and HubSpot process the information
+            you provide so that 42 can review and respond to your enquiry. Read
+            the{" "}
+            <Link className="font-semibold underline" href="/privacy">
+              Privacy Policy
+            </Link>
+            .
+          </p>
         ) : null}
 
         <noscript>
@@ -167,18 +244,32 @@ function FormErrorState({ contactEmail }: { contactEmail: string }) {
   );
 }
 
-function FormDisabledState({ contactEmail }: { contactEmail: string }) {
+function FormDisabledState({
+  contactEmail,
+  deploymentEnvironment,
+}: {
+  contactEmail: string;
+  deploymentEnvironment: ContactFormProps["deploymentEnvironment"];
+}) {
+  const isProduction = deploymentEnvironment === "production";
+
   return (
     <div className="flex min-h-80 flex-col items-start justify-center rounded-lg border border-ink-950/12 bg-paper-100 p-6 sm:p-8">
       <p className="font-mono text-[0.625rem] tracking-[0.12em] text-ink-950/60 uppercase">
-        Non-production environment
+        {isProduction
+          ? "Production form pending"
+          : "Form configuration pending"}
       </p>
       <h2 className="mt-4 max-w-[20ch] text-3xl leading-tight font-semibold tracking-[-0.04em]">
-        The live enquiry form is intentionally disabled here.
+        {isProduction
+          ? "The production enquiry form is not configured yet."
+          : "The staging enquiry form is not configured here."}
       </h2>
       <p className="mt-4 max-w-[52ch] text-sm leading-6 text-[var(--text-muted)]">
-        This prevents staging and development tests from entering the live
-        HubSpot process. You can still contact 42 at{" "}
+        {isProduction
+          ? "Production never falls back to the staging form. "
+          : "All three environment-specific HubSpot values are required. "}
+        You can still contact 42 at{" "}
         <a className="font-semibold underline" href={`mailto:${contactEmail}`}>
           {contactEmail}
         </a>

@@ -56,6 +56,7 @@ export default function ContactPage() {
             <div className="lg:col-span-7 lg:col-start-6">
               <ContactForm
                 contactEmail={siteConfig.contactEmail}
+                deploymentEnvironment={siteConfig.deploymentEnvironment}
                 form={siteConfig.hubspotForm}
               />
             </div>

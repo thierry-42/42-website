@@ -2,7 +2,12 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
 async function mockHubspotForm(page: Page) {
-  await page.route("https://js-eu1.hsforms.net/**", async (route) => {
+  const region = process.env.HUBSPOT_STAGING_REGION ?? "eu1";
+  const formId =
+    process.env.HUBSPOT_STAGING_FORM_ID ??
+    "da5e2637-3fc8-4ab0-96b1-4764ecd0f16e";
+
+  await page.route(`https://js-${region}.hsforms.net/**`, async (route) => {
     await route.fulfill({
       body: `
         document.querySelectorAll(".hs-form-frame").forEach(function (frame) {
@@ -10,12 +15,24 @@ async function mockHubspotForm(page: Page) {
           iframe.title = "HubSpot enquiry form";
           frame.appendChild(iframe);
         });
+        window.dispatchEvent(new CustomEvent("hs-form-event:on-ready", {
+          detail: { formId: "${formId}" }
+        }));
       `,
       contentType: "application/javascript",
       status: 200,
     });
   });
 }
+
+const deploymentEnvironment = process.env.SITE_ENVIRONMENT ?? "production";
+const stagingFormConfigured =
+  deploymentEnvironment !== "production" &&
+  Boolean(
+    process.env.HUBSPOT_STAGING_REGION &&
+    process.env.HUBSPOT_STAGING_PORTAL_ID &&
+    process.env.HUBSPOT_STAGING_FORM_ID,
+  );
 
 const primaryRoutes = [
   "/",
@@ -88,7 +105,28 @@ for (const route of categoryRoutes) {
   });
 }
 
-test("contact uses the approved HubSpot form embed", async ({ page }) => {
+test("production contact does not fall back to the staging HubSpot form", async ({
+  page,
+}) => {
+  test.skip(
+    deploymentEnvironment !== "production",
+    "Production environment safeguard",
+  );
+  await page.goto("/contact");
+
+  await expect(page.locator(".hs-form-frame")).toHaveCount(0);
+  await expect(
+    page.getByText("The production enquiry form is not configured yet."),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "hello@company42.co" }).first(),
+  ).toHaveAttribute("href", "mailto:hello@company42.co");
+});
+
+test("staging contact uses the approved HubSpot form variables", async ({
+  page,
+}) => {
+  test.skip(!stagingFormConfigured, "Staging form configuration required");
   await mockHubspotForm(page);
   await page.goto("/contact");
 
@@ -104,6 +142,46 @@ test("contact uses the approved HubSpot form embed", async ({ page }) => {
     "HubSpot enquiry form",
   );
   await expect(page.getByTestId("hubspot-form-loading")).toBeHidden();
+  await expect(
+    page.getByRole("link", { name: "hello@company42.co" }).first(),
+  ).toHaveAttribute("href", "mailto:hello@company42.co");
+  await expect(
+    page.getByRole("link", { name: "Privacy Policy" }),
+  ).toHaveAttribute("href", "/privacy");
+});
+
+test("staging HubSpot form exposes accessible success and load-failure states", async ({
+  page,
+}) => {
+  test.skip(!stagingFormConfigured, "Staging form configuration required");
+  await mockHubspotForm(page);
+  await page.goto("/contact");
+  await expect(page.locator(".hs-form-frame iframe")).toHaveCount(1);
+  await expect(page.getByTestId("hubspot-form-loading")).toBeHidden();
+
+  await page.evaluate((formId) => {
+    window.dispatchEvent(
+      new CustomEvent("hs-form-event:on-submission:success", {
+        detail: { formId },
+      }),
+    );
+  }, process.env.HUBSPOT_STAGING_FORM_ID);
+  await expect(page.getByTestId("hubspot-form-success")).toHaveAttribute(
+    "role",
+    "status",
+  );
+  await expect(page.getByTestId("hubspot-form-success")).toContainText(
+    "submitted to 42",
+  );
+
+  await page.unrouteAll();
+  await page.route("https://js-eu1.hsforms.net/**", async (route) => {
+    await route.abort("failed");
+  });
+  await page.reload();
+  await expect(
+    page.getByText("The enquiry form could not be loaded."),
+  ).toBeVisible();
   await expect(
     page.getByRole("link", { name: "hello@company42.co" }).first(),
   ).toHaveAttribute("href", "mailto:hello@company42.co");
@@ -242,7 +320,7 @@ test("Approach uses the reconciled four-step structure", async ({ page }) => {
   }
 });
 
-test("About renders approved team identities without development portraits in production", async ({
+test("About renders approved team identities with environment-safe portraits", async ({
   page,
 }) => {
   await page.goto("/about");
@@ -258,10 +336,17 @@ test("About renders approved team identities without development portraits in pr
     await expect(page.getByRole("heading", { name })).toBeVisible();
     await expect(page.getByText(role)).toBeVisible();
   }
-  await expect(
-    page.getByText("Development portrait / approval required"),
-  ).toHaveCount(0);
-  await expect(page.locator('img[src*="/images/team/"]')).toHaveCount(0);
+  if (deploymentEnvironment === "production") {
+    await expect(
+      page.getByText("Development portrait / approval required"),
+    ).toHaveCount(0);
+    await expect(page.locator('img[src*="/images/team/"]')).toHaveCount(0);
+  } else {
+    await expect(
+      page.getByText("Development portrait / approval required"),
+    ).toHaveCount(4);
+    await expect(page.locator('img[src*="/images/team/"]')).toHaveCount(4);
+  }
 });
 
 test("draft author architecture is withheld from production", async ({
@@ -448,4 +533,30 @@ test("homepage has no serious automated accessibility violations", async ({
     .analyze();
 
   expect(results.violations).toEqual([]);
+});
+
+test("legal drafts use the confirmed operator and expose review status", async ({
+  page,
+}) => {
+  const operatorStatement =
+    "42 is the public-facing brand of Company42, a trading name of Madeyoulookagency LLC, a limited liability company registered in California, United States of America.";
+
+  await page.goto("/privacy");
+  await expect(page.getByText(operatorStatement)).toBeVisible();
+  await expect(
+    page.getByText("Draft for owner and legal review"),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Cookies and browser storage" }),
+  ).toBeVisible();
+  await expect(page.getByText("Draft withheld")).toHaveCount(0);
+
+  await page.goto("/terms");
+  await expect(page.getByText(operatorStatement)).toBeVisible();
+  await expect(
+    page.getByText("Laws of the State of California."),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Consultancy engagements" }),
+  ).toBeVisible();
 });

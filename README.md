@@ -15,7 +15,7 @@ Production foundation for the public website of **42**, the public-facing brand 
 - `/insights/[slug]` — ten published, sourced articles
 - `/hubspot-review` — genuine portal-review service and conversion page
 - `/contact` — environment-aware HubSpot form and email fallback
-- `/privacy` and `/terms` — existing legal-review foundations awaiting Batch 3
+- `/privacy` and `/terms` — complete Batch 3 drafts, visibly marked for owner and legal review before production publication
 
 `/audience`, `/industries`, `/work`, and `/work/[slug]` remain in source but are unpublished for Version 1. They are omitted from public navigation and sitemap output and return 404 while their feature flags are disabled.
 
@@ -59,6 +59,7 @@ Open `http://localhost:3000`. In development only, `/dev/design-system` provides
 | `npm run format:check` | Verify formatting without changing files            |
 | `npm run test:install` | Install Chromium for smoke tests                    |
 | `npm test`             | Run desktop and mobile Playwright smoke tests       |
+| `npm run test:staging` | Run the approved staging-form integration checks    |
 | `npm run test:ui`      | Open Playwright's interactive runner                |
 
 ## Project structure
@@ -100,7 +101,7 @@ Do not bypass this projection for public proof. Team names and roles are approve
 
 Every published Insight has one governed `categorySlug`, one `authorSlug`, explicit related-Insight links, and one or more related services. The four category records include original introductions. Empty categories are automatically excluded.
 
-Confirmed legal-operator facts are stored under `legal` in `site-content.json` for Batch 3. This does not make the current Privacy or Terms routes final legal wording.
+Confirmed legal-operator facts are stored under `legal` in `site-content.json`. The Privacy Policy and Terms of Use drafts use those facts and are clearly marked for owner and legal review. They must not be treated as approved production policies until every inline review note is resolved.
 
 ## Portrait and image replacement
 
@@ -119,20 +120,22 @@ Service and Insight illustrations use stable local paths. Unpublished case-study
 
 Copy `.env.example` to `.env.local` and set only approved values:
 
-| Variable                        | Use                                                            |
-| ------------------------------- | -------------------------------------------------------------- |
-| `SITE_ENVIRONMENT`              | `development`, `staging`, or `production`                      |
-| `NEXT_PUBLIC_LINKEDIN_URL`      | Optional approved public profile                               |
-| `NEXT_PUBLIC_HUBSPOT_REGION`    | Optional production-form override                              |
-| `NEXT_PUBLIC_HUBSPOT_PORTAL_ID` | Optional production-form override                              |
-| `NEXT_PUBLIC_HUBSPOT_FORM_ID`   | Optional production-form override                              |
-| `HUBSPOT_STAGING_REGION`        | Separate non-production form; provide all three staging values |
-| `HUBSPOT_STAGING_PORTAL_ID`     | Separate non-production form; provide all three staging values |
-| `HUBSPOT_STAGING_FORM_ID`       | Separate non-production form; provide all three staging values |
+| Variable                       | Use                                                             |
+| ------------------------------ | --------------------------------------------------------------- |
+| `SITE_ENVIRONMENT`             | `development`, `staging`, or `production`                       |
+| `NEXT_PUBLIC_LINKEDIN_URL`     | Optional approved public profile                                |
+| `HUBSPOT_STAGING_REGION`       | Approved staging/testing form; provide all three staging values |
+| `HUBSPOT_STAGING_PORTAL_ID`    | Approved staging/testing form; provide all three staging values |
+| `HUBSPOT_STAGING_FORM_ID`      | Approved staging/testing form; provide all three staging values |
+| `HUBSPOT_PRODUCTION_REGION`    | Future production form; leave unset until separately approved   |
+| `HUBSPOT_PRODUCTION_PORTAL_ID` | Future production form; leave unset until separately approved   |
+| `HUBSPOT_PRODUCTION_FORM_ID`   | Future production form; leave unset until separately approved   |
 
 The production canonical is `https://company42.co`, the visible fallback is `hello@company42.co`, and all consultation links remain on `/contact`.
 
-The approved live HubSpot form loads only when `SITE_ENVIRONMENT=production`. Development and staging display the email fallback unless all three separate staging-form values are supplied. This prevents test enquiries entering the live process. No analytics or tracking integration is active.
+The existing HubSpot form is approved for development and staging testing only. It loads only when all three staging variables are present and `SITE_ENVIRONMENT` is not `production`. Production uses only the three production variables and never falls back to staging values. Until the separate production form is created, the production Contact page shows the visible `hello@company42.co` fallback.
+
+The form embed has resilient loading, success, validation, and script-failure states. The fallback email remains outside the cross-origin form frame and is usable even if HubSpot or JavaScript is unavailable. No analytics, HubSpot website tracking code, marketing pixel, or newsletter tracking integration is active.
 
 ## Figma workflow
 
@@ -157,7 +160,9 @@ npm test
 npm run build
 ```
 
-Playwright builds and serves the app with `SITE_ENVIRONMENT=production`. Tests cover public and unpublished routes, the category taxonomy, service requirements, production portrait safeguards, live-form configuration, visible email fallback, navigation, menu interactions, scroll-to-top, keyboard skip navigation, mobile navigation, console errors, and automated WCAG checks.
+Playwright builds and serves the app with `SITE_ENVIRONMENT=production`. Tests cover public and unpublished routes, the category taxonomy, service requirements, production portrait safeguards, production form isolation, visible email fallback, legal draft safeguards, navigation, menu interactions, scroll-to-top, keyboard skip navigation, mobile navigation, console errors, and automated WCAG checks.
+
+`npm run test:staging` builds the application with the approved staging form variables and runs the HubSpot embed, success-state, failure-state, Privacy-link, and fallback checks without submitting a real form.
 
 Manual review should still cover keyboard navigation, 200% zoom, reduced motion, and the viewport list in the master brief.
 
@@ -171,4 +176,13 @@ Render is staging/testing only. Set `SITE_ENVIRONMENT=staging` there and do not 
 - Next.js service start command: `npm run start`
 - Environment variables: configure in the hosting platform, never in Git
 
-Production hosting is still to be confirmed. Privacy and Terms belong to Batch 3 and must reflect the deployed technology, HubSpot form behaviour, consent, third-party processing, and cookies actually present. Search-engine environment policy and final canonical/sitemap/robots work belong to Batch 4.
+On the Render staging Web Service, configure:
+
+```text
+SITE_ENVIRONMENT=staging
+HUBSPOT_STAGING_REGION=eu1
+HUBSPOT_STAGING_PORTAL_ID=148811132
+HUBSPOT_STAGING_FORM_ID=da5e2637-3fc8-4ab0-96b1-4764ecd0f16e
+```
+
+Do not configure the production form variables on staging. Production hosting is still to be confirmed, and its three production form variables must remain unset until the separate production form is created and approved. Search-engine environment policy and final canonical, sitemap, and robots work belong to Batch 4.

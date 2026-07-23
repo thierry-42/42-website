@@ -3,10 +3,6 @@ import { z } from "zod";
 const emptyToUndefined = (value: unknown) =>
   typeof value === "string" && value.trim() === "" ? undefined : value;
 
-const optionalString = z.preprocess(
-  emptyToUndefined,
-  z.string().trim().optional(),
-);
 const optionalUrl = z.preprocess(emptyToUndefined, z.string().url().optional());
 const optionalHubspotRegion = z.preprocess(
   emptyToUndefined,
@@ -16,22 +12,24 @@ const optionalHubspotRegion = z.preprocess(
     .regex(/^[a-z0-9-]+$/)
     .optional(),
 );
-
-const productionHubspotForm = {
-  formId: "da5e2637-3fc8-4ab0-96b1-4764ecd0f16e",
-  portalId: "148811132",
-  region: "eu1",
-} as const;
+const optionalHubspotPortalId = z.preprocess(
+  emptyToUndefined,
+  z.string().trim().regex(/^\d+$/).optional(),
+);
+const optionalHubspotFormId = z.preprocess(
+  emptyToUndefined,
+  z.string().trim().uuid().optional(),
+);
 
 const environmentSchema = z.object({
   SITE_ENVIRONMENT: z.enum(["development", "staging", "production"]).optional(),
   NEXT_PUBLIC_LINKEDIN_URL: optionalUrl,
-  NEXT_PUBLIC_HUBSPOT_REGION: optionalHubspotRegion,
-  NEXT_PUBLIC_HUBSPOT_PORTAL_ID: optionalString,
-  NEXT_PUBLIC_HUBSPOT_FORM_ID: optionalString,
   HUBSPOT_STAGING_REGION: optionalHubspotRegion,
-  HUBSPOT_STAGING_PORTAL_ID: optionalString,
-  HUBSPOT_STAGING_FORM_ID: optionalString,
+  HUBSPOT_STAGING_PORTAL_ID: optionalHubspotPortalId,
+  HUBSPOT_STAGING_FORM_ID: optionalHubspotFormId,
+  HUBSPOT_PRODUCTION_REGION: optionalHubspotRegion,
+  HUBSPOT_PRODUCTION_PORTAL_ID: optionalHubspotPortalId,
+  HUBSPOT_PRODUCTION_FORM_ID: optionalHubspotFormId,
 });
 
 const parsedEnvironment = environmentSchema.safeParse(process.env);
@@ -47,37 +45,49 @@ const deploymentEnvironment =
   environment.SITE_ENVIRONMENT ??
   (process.env.NODE_ENV === "development" ? "development" : "staging");
 
-const productionForm = {
-  formId:
-    environment.NEXT_PUBLIC_HUBSPOT_FORM_ID ?? productionHubspotForm.formId,
-  portalId:
-    environment.NEXT_PUBLIC_HUBSPOT_PORTAL_ID ?? productionHubspotForm.portalId,
-  region:
-    environment.NEXT_PUBLIC_HUBSPOT_REGION ?? productionHubspotForm.region,
+type HubspotFormConfig = {
+  formId: string;
+  portalId: string;
+  region: string;
 };
 
-const stagingFormValues = [
-  environment.HUBSPOT_STAGING_REGION,
-  environment.HUBSPOT_STAGING_PORTAL_ID,
-  environment.HUBSPOT_STAGING_FORM_ID,
-];
-const hasCompleteStagingForm = stagingFormValues.every(Boolean);
-const hasPartialStagingForm =
-  stagingFormValues.some(Boolean) && !hasCompleteStagingForm;
+function resolveHubspotForm(
+  label: "STAGING" | "PRODUCTION",
+  values: {
+    formId?: string;
+    portalId?: string;
+    region?: string;
+  },
+): HubspotFormConfig | null {
+  const suppliedValues = [values.region, values.portalId, values.formId];
+  const hasCompleteForm = suppliedValues.every(Boolean);
+  const hasPartialForm = suppliedValues.some(Boolean) && !hasCompleteForm;
 
-if (hasPartialStagingForm) {
-  throw new Error(
-    "HUBSPOT_STAGING_REGION, HUBSPOT_STAGING_PORTAL_ID, and HUBSPOT_STAGING_FORM_ID must be provided together.",
-  );
+  if (hasPartialForm) {
+    throw new Error(
+      `HUBSPOT_${label}_REGION, HUBSPOT_${label}_PORTAL_ID, and HUBSPOT_${label}_FORM_ID must be provided together.`,
+    );
+  }
+
+  return hasCompleteForm
+    ? {
+        formId: values.formId!,
+        portalId: values.portalId!,
+        region: values.region!,
+      }
+    : null;
 }
 
-const stagingForm = hasCompleteStagingForm
-  ? {
-      formId: environment.HUBSPOT_STAGING_FORM_ID!,
-      portalId: environment.HUBSPOT_STAGING_PORTAL_ID!,
-      region: environment.HUBSPOT_STAGING_REGION!,
-    }
-  : null;
+const stagingForm = resolveHubspotForm("STAGING", {
+  formId: environment.HUBSPOT_STAGING_FORM_ID,
+  portalId: environment.HUBSPOT_STAGING_PORTAL_ID,
+  region: environment.HUBSPOT_STAGING_REGION,
+});
+const productionForm = resolveHubspotForm("PRODUCTION", {
+  formId: environment.HUBSPOT_PRODUCTION_FORM_ID,
+  portalId: environment.HUBSPOT_PRODUCTION_PORTAL_ID,
+  region: environment.HUBSPOT_PRODUCTION_REGION,
+});
 
 export const siteConfig = {
   siteUrl: "https://company42.co",
