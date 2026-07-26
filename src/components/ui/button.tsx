@@ -15,9 +15,9 @@ const baseClasses =
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "border-signal-400 bg-signal-400 text-signal-900 hover:border-signal-500 hover:bg-signal-500",
+    "border-[var(--colour-action)] bg-[var(--colour-action)] text-[var(--colour-action-text)] hover:border-[var(--colour-action-hover)] hover:bg-[var(--colour-action-hover)] active:border-[var(--colour-action-active)] active:bg-[var(--colour-action-active)]",
   secondary:
-    "border-[var(--border-strong)] bg-transparent text-current hover:border-current hover:bg-[var(--surface-muted)]",
+    "border-[var(--colour-border-strong)] bg-transparent text-current hover:border-current hover:bg-[var(--colour-surface-subtle)]",
   quiet:
     "border-transparent bg-transparent px-1 text-current hover:text-[var(--text-muted)]",
 };
@@ -75,7 +75,13 @@ export function Button(props: LinkButtonProps | NativeButtonProps) {
     }
 
     return (
-      <Link className={classes} href={href} prefetch={false} {...linkProps}>
+      <Link
+        className={classes}
+        data-button
+        href={href}
+        prefetch={false}
+        {...linkProps}
+      >
         {content}
       </Link>
     );
@@ -89,7 +95,7 @@ export function Button(props: LinkButtonProps | NativeButtonProps) {
     ...buttonProps
   } = props as NativeButtonProps;
   return (
-    <button className={classes} type="button" {...buttonProps}>
+    <button className={classes} data-button type="button" {...buttonProps}>
       {content}
     </button>
   );

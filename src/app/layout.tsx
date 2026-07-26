@@ -9,10 +9,12 @@ import { CustomCursor } from "@/components/motion/custom-cursor";
 import { ScrollProgress } from "@/components/motion/scroll-progress";
 import { ScrollToTop } from "@/components/motion/scroll-to-top";
 import { StructuredData } from "@/components/seo/structured-data";
+import { VisualPreferences } from "@/components/visual-preferences/visual-preferences";
 import { publicPrimaryNavigation, siteContent } from "@/content/site-content";
 import { isSearchIndexable, siteConfig } from "@/lib/config";
 import { cn } from "@/lib/cn";
 import { createGlobalStructuredData } from "@/lib/structured-data";
+import { visualPreferencesPrePaintScript } from "@/lib/visual-preferences-script";
 
 import "@/styles/globals.css";
 
@@ -97,7 +99,23 @@ export default function RootLayout({
   }));
 
   return (
-    <html data-scroll-behavior="smooth" lang="en-GB">
+    <html
+      data-brand-theme="current"
+      data-contrast-mode="standard"
+      data-scroll-behavior="smooth"
+      data-vision-mode="standard"
+      lang="en-GB"
+      suppressHydrationWarning
+    >
+      {siteConfig.visualPreferencesEnabled ? (
+        <head>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: visualPreferencesPrePaintScript,
+            }}
+          />
+        </head>
+      ) : null}
       <body
         className={cn(
           overusedGrotesk.variable,
@@ -106,7 +124,7 @@ export default function RootLayout({
         )}
       >
         <a
-          className="sr-only-focusable fixed top-3 left-3 z-[100] rounded-sm bg-signal-400 px-4 py-3 text-sm font-semibold text-signal-900"
+          className="sr-only-focusable fixed top-3 left-3 z-[100] rounded-sm bg-[var(--colour-action)] px-4 py-3 text-sm font-semibold text-[var(--colour-action-text)]"
           href="#main-content"
         >
           Skip to main content
@@ -121,6 +139,7 @@ export default function RootLayout({
         <ScrollProgress />
         <main id="main-content">{children}</main>
         <SiteFooter />
+        {siteConfig.visualPreferencesEnabled ? <VisualPreferences /> : null}
         <ScrollToTop />
         <CustomCursor />
       </body>

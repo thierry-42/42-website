@@ -11,10 +11,10 @@ type SectionProps = HTMLAttributes<HTMLElement> & {
 };
 
 const surfaceClasses: Record<SurfaceTone, string> = {
-  paper: "bg-paper-50 text-ink-950",
-  white: "bg-white text-ink-950",
-  muted: "bg-paper-100 text-ink-950",
-  dark: "bg-ink-950 text-paper-50",
+  paper: "bg-[var(--colour-canvas)] text-[var(--colour-text)]",
+  white: "bg-[var(--colour-surface)] text-[var(--colour-text)]",
+  muted: "bg-[var(--colour-surface-subtle)] text-[var(--colour-text)]",
+  dark: "bg-[var(--colour-surface-inverse)] text-[var(--colour-text-inverse)]",
 };
 
 const spacingClasses = {

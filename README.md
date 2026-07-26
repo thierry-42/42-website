@@ -124,20 +124,23 @@ Service and Insight illustrations use stable local paths. Unpublished case-study
 
 Copy `.env.example` to `.env.local` and set only approved values:
 
-| Variable                       | Use                                                             |
-| ------------------------------ | --------------------------------------------------------------- |
-| `SITE_ENVIRONMENT`             | `development`, `staging`, or `production`                       |
-| `NEXT_PUBLIC_LINKEDIN_URL`     | Optional approved public profile                                |
-| `HUBSPOT_STAGING_REGION`       | Approved staging/testing form; provide all three staging values |
-| `HUBSPOT_STAGING_PORTAL_ID`    | Approved staging/testing form; provide all three staging values |
-| `HUBSPOT_STAGING_FORM_ID`      | Approved staging/testing form; provide all three staging values |
-| `HUBSPOT_PRODUCTION_REGION`    | Future production form; leave unset until separately approved   |
-| `HUBSPOT_PRODUCTION_PORTAL_ID` | Future production form; leave unset until separately approved   |
-| `HUBSPOT_PRODUCTION_FORM_ID`   | Future production form; leave unset until separately approved   |
+| Variable                                 | Use                                                             |
+| ---------------------------------------- | --------------------------------------------------------------- |
+| `SITE_ENVIRONMENT`                       | `development`, `staging`, or `production`                       |
+| `NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED` | Staging visual-preferences trial; production is forced off      |
+| `NEXT_PUBLIC_LINKEDIN_URL`               | Optional approved public profile                                |
+| `HUBSPOT_STAGING_REGION`                 | Approved staging/testing form; provide all three staging values |
+| `HUBSPOT_STAGING_PORTAL_ID`              | Approved staging/testing form; provide all three staging values |
+| `HUBSPOT_STAGING_FORM_ID`                | Approved staging/testing form; provide all three staging values |
+| `HUBSPOT_PRODUCTION_REGION`              | Future production form; leave unset until separately approved   |
+| `HUBSPOT_PRODUCTION_PORTAL_ID`           | Future production form; leave unset until separately approved   |
+| `HUBSPOT_PRODUCTION_FORM_ID`             | Future production form; leave unset until separately approved   |
 
 The production canonical is always `https://company42.co`; staging and local hosts are never emitted as canonical URLs. `SITE_ENVIRONMENT=production` is the only indexable mode. Staging and development emit `noindex, nofollow`, disallow crawling in `robots.txt`, return an empty sitemap, and omit canonical, Open Graph, and structured-data output. If `SITE_ENVIRONMENT` is omitted from a non-development build, the safe default is staging.
 
 The visible fallback is `hello@company42.co`, and all consultation links remain on `/contact`.
+
+The visual-preferences trial is enabled only when `SITE_ENVIRONMENT` is not `production` and `NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED=true`. Selections are stored in the browser under `company42.visualPreferences.v1`; they are not transmitted, tracked, or stored in a cookie. Production forces the feature off even if the public flag is set incorrectly.
 
 The existing HubSpot form is approved for development and staging testing only. It loads only when all three staging variables are present and `SITE_ENVIRONMENT` is not `production`. Production uses only the three production variables and never falls back to staging values. Until the separate production form is created, the production Contact page shows the visible `hello@company42.co` fallback.
 
@@ -201,6 +204,7 @@ On the Render staging Web Service, configure:
 
 ```text
 SITE_ENVIRONMENT=staging
+NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED=true
 HUBSPOT_STAGING_REGION=eu1
 HUBSPOT_STAGING_PORTAL_ID=148811132
 HUBSPOT_STAGING_FORM_ID=da5e2637-3fc8-4ab0-96b1-4764ecd0f16e

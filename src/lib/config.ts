@@ -4,6 +4,10 @@ const emptyToUndefined = (value: unknown) =>
   typeof value === "string" && value.trim() === "" ? undefined : value;
 
 const optionalUrl = z.preprocess(emptyToUndefined, z.string().url().optional());
+const optionalBooleanString = z.preprocess(
+  emptyToUndefined,
+  z.enum(["true", "false"]).optional(),
+);
 const optionalHubspotRegion = z.preprocess(
   emptyToUndefined,
   z
@@ -23,6 +27,7 @@ const optionalHubspotFormId = z.preprocess(
 
 const environmentSchema = z.object({
   SITE_ENVIRONMENT: z.enum(["development", "staging", "production"]).optional(),
+  NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED: optionalBooleanString,
   NEXT_PUBLIC_LINKEDIN_URL: optionalUrl,
   HUBSPOT_STAGING_REGION: optionalHubspotRegion,
   HUBSPOT_STAGING_PORTAL_ID: optionalHubspotPortalId,
@@ -89,6 +94,9 @@ const productionForm = resolveHubspotForm("PRODUCTION", {
   portalId: environment.HUBSPOT_PRODUCTION_PORTAL_ID,
   region: environment.HUBSPOT_PRODUCTION_REGION,
 });
+const visualPreferencesEnabled =
+  deploymentEnvironment !== "production" &&
+  environment.NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED === "true";
 
 export const siteConfig = {
   siteUrl: productionSiteUrl,
@@ -99,6 +107,7 @@ export const siteConfig = {
   hubspotForm:
     deploymentEnvironment === "production" ? productionForm : stagingForm,
   usesDevelopmentPortraits: deploymentEnvironment !== "production",
+  visualPreferencesEnabled,
 } as const;
 
 export const localSiteOrigin = "http://localhost:3000";

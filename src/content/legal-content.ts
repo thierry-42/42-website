@@ -23,7 +23,7 @@ const operatorStatement = siteContent.legal.operatorStatement;
 const contactEmail = siteContent.meta.contactEmail;
 
 export const privacyPolicy: LegalDocumentContent = {
-  effectiveDate: "23 July 2026",
+  effectiveDate: "26 July 2026",
   introduction:
     "This Privacy Policy explains how 42 handles personal information through this website and its HubSpot enquiry form. It reflects the technology and form behaviour inspected on 23 July 2026.",
   sections: [
@@ -95,6 +95,7 @@ export const privacyPolicy: LegalDocumentContent = {
       paragraphs: [
         "The inspected live form session identified cookies named __cf_bm on HubSpot-controlled domains. The observed cookies were Secure, SameSite=None, and HttpOnly, so they were not accessible to the website or form through JavaScript.",
         "The inspection did not identify any script-accessible cookies or entries in localStorage or sessionStorage before or after a synthetic HubSpot form submission. No cookie banner is active on the current site.",
+        "The website may store your selected visual preferences in your browser so that your chosen brand appearance, colour-vision support palette, and contrast setting remain active as you navigate the site or return later. This preference is stored locally in your browser. It is not used for analytics, advertising, profiling, or identification, and it is not sent to 42 or HubSpot.",
         "HubSpot controls the form frame and may change its technical implementation. Storage behaviour can also vary with browser settings, location, account configuration, and future HubSpot changes.",
       ],
     },

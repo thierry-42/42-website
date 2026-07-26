@@ -22,7 +22,7 @@ export function SiteFooter() {
 
   return (
     <footer
-      className="border-t border-white/12 bg-ink-950 py-16 text-paper-50"
+      className="border-t border-[var(--colour-border-inverse)] bg-[var(--colour-surface-inverse)] py-16 text-[var(--colour-text-inverse)]"
       data-cursor-color="light"
       data-surface="dark"
     >
@@ -33,7 +33,7 @@ export function SiteFooter() {
             <p className="mt-7 max-w-[18ch] text-3xl leading-tight font-semibold tracking-[-0.045em]">
               {siteContent.meta.tagline}
             </p>
-            <p className="mt-5 max-w-[46ch] text-sm leading-6 text-white/62">
+            <p className="mt-5 max-w-[46ch] text-sm leading-6 text-[var(--colour-text-inverse-muted)]">
               Senior-led strategy and hands-on technical delivery for HubSpot
               systems that need to work clearly.
             </p>
@@ -63,6 +63,9 @@ export function SiteFooter() {
                   {item.label}
                 </FooterLink>
               ))}
+              {siteConfig.visualPreferencesEnabled ? (
+                <FooterLink href="/accessibility">Accessibility</FooterLink>
+              ) : null}
               {contactLinks.map((item) => (
                 <FooterLink href={item.href} key={item.href}>
                   {item.label}
@@ -72,7 +75,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-3 border-t border-white/15 pt-6 font-mono text-[0.6875rem] tracking-[0.06em] text-white/55 uppercase sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-16 flex flex-col gap-3 border-t border-[var(--colour-border-inverse)] pt-6 font-mono text-[0.6875rem] tracking-[0.06em] text-[var(--colour-text-inverse-muted)] uppercase sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} 42. All rights reserved.</p>
           <p>Built with clarity and an unreasonable dislike of messy CRMs.</p>
         </div>
@@ -90,7 +93,7 @@ function FooterGroup({
 }) {
   return (
     <div>
-      <h2 className="font-mono text-[0.6875rem] tracking-[0.14em] text-white/48 uppercase">
+      <h2 className="font-mono text-[0.6875rem] tracking-[0.14em] text-[var(--colour-text-inverse-muted)] uppercase">
         {label}
       </h2>
       <ul className="mt-5 space-y-3">{children}</ul>
@@ -102,7 +105,7 @@ function FooterLink({ children, href }: { children: ReactNode; href: string }) {
   return (
     <li>
       <Link
-        className="inline-block py-1 text-sm text-white/78 hover:text-white"
+        className="inline-block py-1 text-sm text-[var(--colour-text-inverse-muted)] hover:text-[var(--colour-text-inverse)]"
         href={href}
         prefetch={false}
       >

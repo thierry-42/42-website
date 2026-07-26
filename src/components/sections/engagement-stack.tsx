@@ -22,7 +22,7 @@ const engagementIcons: SystemIconName[] = [
 const engagementTones = [
   "border-ink-950/16 bg-white text-ink-950",
   "surface-texture-dark border-white/15 bg-ink-950 text-paper-50",
-  "border-orbit-600/24 bg-[#dfe5ff] text-ink-950",
+  "border-orbit-600/24 bg-[var(--colour-surface-subtle)] text-[var(--colour-text)]",
   "border-ink-950/16 bg-paper-100 text-ink-950",
 ] as const;
 
