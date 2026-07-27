@@ -10,9 +10,9 @@ import {
   type VisualPreferencesValue,
 } from "@/lib/visual-preferences";
 
-const brandOptions = [
-  { label: "Current 42", value: "current" },
-  { label: "New brand palette", value: "brand-kit" },
+const appearanceOptions = [
+  { label: "Light", value: "light" },
+  { label: "Dark", value: "dark" },
 ] as const;
 
 const visionOptions = [
@@ -31,7 +31,7 @@ const contrastOptions = [
 function readRootPreferences(): VisualPreferencesValue {
   const root = document.documentElement;
   const candidate = {
-    brandTheme: root.dataset.brandTheme,
+    appearance: root.dataset.appearance,
     visionMode: root.dataset.visionMode,
     contrastMode: root.dataset.contrastMode,
   };
@@ -119,81 +119,98 @@ export function VisualPreferences() {
       {isOpen ? (
         <section
           aria-labelledby="visual-preferences-title"
-          className="absolute bottom-[calc(100%+0.75rem)] left-0 max-h-[min(42rem,calc(100dvh-6rem))] w-[min(22rem,calc(100vw-1.5rem))] overflow-y-auto rounded-lg border-2 border-[var(--colour-border-strong)] bg-[var(--colour-surface-raised)] p-5 text-[var(--colour-text)] shadow-lift"
+          className="absolute bottom-[calc(100%+0.75rem)] left-0 flex max-h-[min(42rem,calc(100dvh-6rem))] w-[min(22rem,calc(100vw-1.5rem))] flex-col overflow-hidden rounded-lg border-2 border-[var(--colour-border-strong)] bg-[var(--colour-surface-raised)] text-[var(--colour-text)] shadow-lift"
           id="visual-preferences-panel"
         >
-          <div className="flex items-start justify-between gap-5">
-            <div>
-              <p className="font-mono text-[0.625rem] tracking-[0.12em] text-[var(--colour-text-muted)] uppercase">
-                Display controls
-              </p>
-              <h2
-                className="mt-1 text-xl font-semibold tracking-[-0.035em] text-[var(--colour-heading)]"
-                id="visual-preferences-title"
+          <header
+            className="shrink-0 border-b border-[var(--colour-border)] p-5 pb-4"
+            data-testid="visual-preferences-header"
+          >
+            <div className="flex items-start justify-between gap-5">
+              <div>
+                <p className="font-mono text-[0.625rem] tracking-[0.12em] text-[var(--colour-text-muted)] uppercase">
+                  Display controls
+                </p>
+                <h2
+                  className="mt-1 text-xl font-semibold tracking-[-0.035em] text-[var(--colour-heading)]"
+                  id="visual-preferences-title"
+                >
+                  Visual preferences
+                </h2>
+              </div>
+              <button
+                aria-label="Close visual preferences"
+                className="grid size-11 shrink-0 place-items-center rounded-sm border border-[var(--colour-border-strong)] bg-[var(--colour-surface)] text-[var(--colour-text)] hover:bg-[var(--colour-surface-subtle)]"
+                onClick={() => setIsOpen(false)}
+                ref={closeRef}
+                type="button"
               >
-                Visual preferences
-              </h2>
+                <ClosePreferencesIcon />
+              </button>
             </div>
+            <p className="mt-4 text-sm leading-6 text-[var(--colour-text-muted)]">
+              Adjust the site presentation without changing photographs or
+              sending your choice to 42 or HubSpot.
+            </p>
+          </header>
+
+          <div
+            className="visual-preferences-body min-h-0 flex-1 [scrollbar-gutter:stable] overflow-y-auto overscroll-contain py-5 pr-2 pl-5"
+            data-testid="visual-preferences-body"
+          >
+            <div className="grid gap-6 pr-2">
+              <PreferenceGroup
+                legend="Appearance"
+                name="appearance"
+                onChange={(value) =>
+                  updatePreference(
+                    "appearance",
+                    value as VisualPreferencesValue["appearance"],
+                  )
+                }
+                options={appearanceOptions}
+                selected={preferences.appearance}
+              />
+              <PreferenceGroup
+                description="Support palettes are not diagnostic tools or exact medical simulations."
+                legend="Colour vision"
+                name="vision-mode"
+                onChange={(value) =>
+                  updatePreference(
+                    "visionMode",
+                    value as VisualPreferencesValue["visionMode"],
+                  )
+                }
+                options={visionOptions}
+                selected={preferences.visionMode}
+              />
+              <PreferenceGroup
+                legend="Contrast"
+                name="contrast-mode"
+                onChange={(value) =>
+                  updatePreference(
+                    "contrastMode",
+                    value as VisualPreferencesValue["contrastMode"],
+                  )
+                }
+                options={contrastOptions}
+                selected={preferences.contrastMode}
+              />
+            </div>
+          </div>
+
+          <footer
+            className="shrink-0 border-t border-[var(--colour-border)] p-4"
+            data-testid="visual-preferences-footer"
+          >
             <button
-              aria-label="Close visual preferences"
-              className="grid size-11 shrink-0 place-items-center rounded-sm border border-[var(--colour-border-strong)] bg-[var(--colour-surface)] text-[var(--colour-text)] hover:bg-[var(--colour-surface-subtle)]"
-              onClick={() => setIsOpen(false)}
-              ref={closeRef}
+              className="min-h-11 w-full rounded-sm border border-[var(--colour-border-strong)] bg-[var(--colour-action-secondary)] px-4 py-2.5 text-sm font-semibold text-[var(--colour-action-secondary-text)] hover:opacity-90"
+              onClick={resetPreferences}
               type="button"
             >
-              <ClosePreferencesIcon />
+              Reset visual preferences
             </button>
-          </div>
-
-          <p className="mt-4 text-sm leading-6 text-[var(--colour-text-muted)]">
-            Adjust the site presentation without changing photographs or sending
-            your choice to 42 or HubSpot.
-          </p>
-
-          <div className="mt-6 grid gap-6">
-            <PreferenceGroup
-              legend="Brand appearance"
-              name="brand-theme"
-              onChange={(value) =>
-                updatePreference("brandTheme", value as "current" | "brand-kit")
-              }
-              options={brandOptions}
-              selected={preferences.brandTheme}
-            />
-            <PreferenceGroup
-              description="Support palettes are not diagnostic tools or exact medical simulations."
-              legend="Colour vision"
-              name="vision-mode"
-              onChange={(value) =>
-                updatePreference(
-                  "visionMode",
-                  value as VisualPreferencesValue["visionMode"],
-                )
-              }
-              options={visionOptions}
-              selected={preferences.visionMode}
-            />
-            <PreferenceGroup
-              legend="Contrast"
-              name="contrast-mode"
-              onChange={(value) =>
-                updatePreference(
-                  "contrastMode",
-                  value as VisualPreferencesValue["contrastMode"],
-                )
-              }
-              options={contrastOptions}
-              selected={preferences.contrastMode}
-            />
-          </div>
-
-          <button
-            className="mt-6 min-h-11 w-full rounded-sm border border-[var(--colour-border-strong)] bg-[var(--colour-action-secondary)] px-4 py-2.5 text-sm font-semibold text-[var(--colour-action-secondary-text)] hover:opacity-90"
-            onClick={resetPreferences}
-            type="button"
-          >
-            Reset visual preferences
-          </button>
+          </footer>
         </section>
       ) : null}
 

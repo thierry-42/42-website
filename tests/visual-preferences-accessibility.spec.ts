@@ -74,19 +74,100 @@ test("panel reflows at 320 CSS pixels and at a 200 percent zoom proxy", async ({
       ),
     ).toBeTruthy();
 
+    const panelLayout = await page.evaluate(() => {
+      const panel = document.querySelector("#visual-preferences-panel");
+      const header = document.querySelector(
+        '[data-testid="visual-preferences-header"]',
+      );
+      const body = document.querySelector(
+        '[data-testid="visual-preferences-body"]',
+      );
+      const footer = document.querySelector(
+        '[data-testid="visual-preferences-footer"]',
+      );
+      if (
+        !(panel instanceof HTMLElement) ||
+        !(header instanceof HTMLElement) ||
+        !(body instanceof HTMLElement) ||
+        !(footer instanceof HTMLElement)
+      ) {
+        return null;
+      }
+
+      const panelBox = panel.getBoundingClientRect();
+      const headerBox = header.getBoundingClientRect();
+      const footerBox = footer.getBoundingClientRect();
+      const bodyStyle = getComputedStyle(body);
+      body.scrollTop = body.scrollHeight;
+
+      return {
+        bodyCanScroll: body.scrollHeight > body.clientHeight,
+        footerInsidePanel: footerBox.bottom <= panelBox.bottom + 1,
+        headerInsidePanel: headerBox.top >= panelBox.top - 1,
+        overflowY: bodyStyle.overflowY,
+        reachedBottom:
+          Math.ceil(body.scrollTop + body.clientHeight) >= body.scrollHeight,
+      };
+    });
+
+    expect(panelLayout).toEqual({
+      bodyCanScroll: true,
+      footerInsidePanel: true,
+      headerInsidePanel: true,
+      overflowY: "auto",
+      reachedBottom: true,
+    });
+
     await page
       .getByRole("button", { name: "Close visual preferences" })
       .click();
   }
 });
 
-test("all brand, vision and contrast combinations meet token contrast thresholds", async ({
+test("representative combined modes preserve rendered accessibility", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await openPreferences(page);
+
+  const combinations = [
+    { appearance: "Dark", contrast: "Standard contrast", vision: "Standard" },
+    { appearance: "Dark", contrast: "High contrast", vision: "Tritan support" },
+    {
+      appearance: "Light",
+      contrast: "High contrast",
+      vision: "Deutan support",
+    },
+  ] as const;
+
+  for (const combination of combinations) {
+    await page
+      .getByRole("radio", { exact: true, name: combination.appearance })
+      .check();
+    await page
+      .getByRole("radio", { exact: true, name: combination.vision })
+      .check();
+    await page
+      .getByRole("radio", { exact: true, name: combination.contrast })
+      .check();
+
+    const results = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+      .analyze();
+    expect(
+      results.violations,
+      `${combination.appearance}/${combination.vision}/${combination.contrast} should pass Axe`,
+    ).toEqual([]);
+  }
+});
+
+test("all appearance, vision and contrast combinations meet token contrast thresholds", async ({
   page,
 }) => {
   await page.goto("/");
 
   const results = await page.evaluate(() => {
-    const brandThemes = ["current", "brand-kit"] as const;
+    const appearances = ["light", "dark"] as const;
     const visionModes = [
       "standard",
       "protan",
@@ -195,14 +276,14 @@ test("all brand, vision and contrast combinations meet token contrast thresholds
     ] as const;
 
     const matrix = [];
-    for (const brandTheme of brandThemes) {
+    for (const appearance of appearances) {
       for (const visionMode of visionModes) {
         for (const contrastMode of contrastModes) {
-          document.documentElement.dataset.brandTheme = brandTheme;
+          document.documentElement.dataset.appearance = appearance;
           document.documentElement.dataset.visionMode = visionMode;
           document.documentElement.dataset.contrastMode = contrastMode;
           matrix.push({
-            mode: `${brandTheme}/${visionMode}/${contrastMode}`,
+            mode: `${appearance}/${visionMode}/${contrastMode}`,
             checks: checks.map(([name, foreground, background, threshold]) => ({
               name,
               ratio: ratio(foreground, background),

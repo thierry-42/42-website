@@ -100,7 +100,7 @@ export default function RootLayout({
 
   return (
     <html
-      data-brand-theme="current"
+      data-appearance="light"
       data-contrast-mode="standard"
       data-scroll-behavior="smooth"
       data-vision-mode="standard"

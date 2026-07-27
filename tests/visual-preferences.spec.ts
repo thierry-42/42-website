@@ -29,6 +29,8 @@ test("panel supports keyboard opening, Escape and focus restoration", async ({
   await expect(
     page.getByRole("button", { name: "Close visual preferences" }),
   ).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(page.getByRole("radio", { name: "Light" })).toBeFocused();
 
   await page.keyboard.press("Escape");
   await expect(trigger).toHaveAttribute("aria-expanded", "false");
@@ -41,14 +43,11 @@ test("mode selections persist across reload and reset to defaults", async ({
   await page.goto("/");
   await openPreferences(page);
 
-  await page.getByRole("radio", { name: "New brand palette" }).check();
+  await page.getByRole("radio", { name: "Dark" }).check();
   await page.getByRole("radio", { name: "Deutan support" }).check();
   await page.getByRole("radio", { name: "High contrast" }).check();
 
-  await expect(page.locator("html")).toHaveAttribute(
-    "data-brand-theme",
-    "brand-kit",
-  );
+  await expect(page.locator("html")).toHaveAttribute("data-appearance", "dark");
   await expect(page.locator("html")).toHaveAttribute(
     "data-vision-mode",
     "deutan",
@@ -62,17 +61,14 @@ test("mode selections persist across reload and reset to defaults", async ({
     await page.evaluate((key) => window.localStorage.getItem(key), storageKey),
   ).toBe(
     JSON.stringify({
-      brandTheme: "brand-kit",
+      appearance: "dark",
       visionMode: "deutan",
       contrastMode: "high",
     }),
   );
 
   await page.reload();
-  await expect(page.locator("html")).toHaveAttribute(
-    "data-brand-theme",
-    "brand-kit",
-  );
+  await expect(page.locator("html")).toHaveAttribute("data-appearance", "dark");
   await expect(page.locator("html")).toHaveAttribute(
     "data-vision-mode",
     "deutan",
@@ -86,8 +82,8 @@ test("mode selections persist across reload and reset to defaults", async ({
   await page.getByRole("button", { name: "Reset visual preferences" }).click();
 
   await expect(page.locator("html")).toHaveAttribute(
-    "data-brand-theme",
-    "current",
+    "data-appearance",
+    "light",
   );
   await expect(page.locator("html")).toHaveAttribute(
     "data-vision-mode",
@@ -116,8 +112,8 @@ test("malformed or unavailable storage does not break the controls", async ({
   await page.goto("/");
 
   await expect(page.locator("html")).toHaveAttribute(
-    "data-brand-theme",
-    "current",
+    "data-appearance",
+    "light",
   );
   await expect(page.locator("html")).toHaveAttribute(
     "data-vision-mode",
@@ -150,6 +146,48 @@ test("malformed or unavailable storage does not break the controls", async ({
   expect(consoleErrors).toEqual([]);
 });
 
+for (const legacyBrandTheme of ["current", "brand-kit"]) {
+  test(`migrates the legacy ${legacyBrandTheme} preference to light appearance`, async ({
+    page,
+  }) => {
+    await page.addInitScript(
+      ({ key, brandTheme }) => {
+        window.localStorage.setItem(
+          key,
+          JSON.stringify({
+            brandTheme,
+            visionMode: "tritan",
+            contrastMode: "high",
+          }),
+        );
+      },
+      { brandTheme: legacyBrandTheme, key: storageKey },
+    );
+
+    await page.goto("/");
+    await expect(page.locator("html")).toHaveAttribute(
+      "data-appearance",
+      "light",
+    );
+    await expect(page.locator("html")).not.toHaveAttribute(
+      "data-brand-theme",
+      /.+/,
+    );
+    expect(
+      await page.evaluate(
+        (key) => window.localStorage.getItem(key),
+        storageKey,
+      ),
+    ).toBe(
+      JSON.stringify({
+        appearance: "light",
+        visionMode: "tritan",
+        contrastMode: "high",
+      }),
+    );
+  });
+}
+
 test("preference changes make no request and do not recolour photographs", async ({
   page,
 }) => {
@@ -160,11 +198,42 @@ test("preference changes make no request and do not recolour photographs", async
   page.on("request", (request) => requests.push(request.url()));
 
   await openPreferences(page);
+  await page.getByRole("radio", { name: "Dark" }).check();
   await page.getByRole("radio", { name: "Monochrome" }).check();
   await page.getByRole("radio", { name: "High contrast" }).check();
   await page.waitForTimeout(100);
 
   expect(requests).toEqual([]);
+  await expect(
+    page.getByAltText("Thierry-Luc Denichaud, founder of 42"),
+  ).toHaveCSS("filter", "none");
+});
+
+test("dark appearance applies semantic surfaces without image or page filters", async ({
+  page,
+}) => {
+  await page.goto("/about");
+  await openPreferences(page);
+  await page.getByRole("radio", { name: "Dark" }).check();
+
+  const theme = await page.evaluate(() => {
+    const root = getComputedStyle(document.documentElement);
+    return {
+      canvas: root.getPropertyValue("--colour-canvas").trim(),
+      surface: root.getPropertyValue("--colour-surface").trim(),
+      text: root.getPropertyValue("--colour-text").trim(),
+      documentFilter: getComputedStyle(document.documentElement).filter,
+      bodyFilter: getComputedStyle(document.body).filter,
+    };
+  });
+
+  expect(theme).toEqual({
+    canvas: "#090b10",
+    surface: "#11141b",
+    text: "#f7f5ef",
+    documentFilter: "none",
+    bodyFilter: "none",
+  });
   await expect(
     page.getByAltText("Thierry-Luc Denichaud, founder of 42"),
   ).toHaveCSS("filter", "none");

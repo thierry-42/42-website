@@ -23,7 +23,7 @@ export const accessibilityStatement = {
       title: "Supported interaction preferences",
       paragraphs: [
         "The website supports keyboard navigation, visible focus indicators, a skip link, reduced-motion preferences, responsive layouts, semantic headings, and labelled controls.",
-        "On the staging trial, optional visual preferences allow visitors to choose the current or new brand appearance, select a colour-vision support palette, and enable high contrast. These support palettes are not diagnostic tools or exact medical simulations.",
+        "On the staging trial, optional visual preferences allow visitors to choose a light or dark appearance, select a colour-vision support palette, and enable high contrast. These support palettes are not diagnostic tools or exact medical simulations.",
       ],
     },
     {

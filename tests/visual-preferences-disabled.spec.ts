@@ -9,8 +9,12 @@ test("production keeps the visual-preferences trial disabled", async ({
     page.getByRole("button", { name: "Open visual preferences" }),
   ).toHaveCount(0);
   await expect(page.locator("html")).toHaveAttribute(
+    "data-appearance",
+    "light",
+  );
+  await expect(page.locator("html")).not.toHaveAttribute(
     "data-brand-theme",
-    "current",
+    /.+/,
   );
   await expect(page.locator("html")).toHaveAttribute(
     "data-vision-mode",

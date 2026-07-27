@@ -162,6 +162,7 @@ export function SiteHeader({
                   </summary>
                   <div
                     className="fixed top-[calc(var(--header-height)+0.75rem)] left-1/2 w-[min(52rem,calc(100vw-(2*var(--gutter))))] -translate-x-1/2 rounded-lg border border-ink-950/10 bg-paper-50 p-3 text-ink-950 shadow-lift"
+                    data-surface="light"
                     data-testid="services-menu"
                   >
                     <div className="grid grid-cols-2 gap-1">
