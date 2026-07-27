@@ -6,9 +6,13 @@ import { Section } from "@/components/layout/section";
 import { GlobalCta } from "@/components/sections/global-cta";
 import { PageIntro } from "@/components/sections/page-intro";
 import { Surface } from "@/components/ui/surface";
-import { accessibilityStatement } from "@/content/accessibility-content";
+import { getAccessibilityStatement } from "@/content/accessibility-content";
 import { siteConfig } from "@/lib/config";
 import { createPageMetadata } from "@/lib/metadata";
+
+const accessibilityStatement = getAccessibilityStatement(
+  siteConfig.deploymentEnvironment,
+);
 
 export function generateMetadata(): Metadata {
   if (!siteConfig.visualPreferencesEnabled) return {};

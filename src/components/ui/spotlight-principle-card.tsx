@@ -50,16 +50,8 @@ export function SpotlightPrincipleCard({
 
       <div
         aria-hidden="true"
-        className="spotlight-card__overlay surface-texture-dark pointer-events-none absolute inset-0 z-20 flex min-h-44 flex-col justify-between bg-ink-950 p-5 text-paper-50 opacity-0"
-      >
-        <div className="flex items-start justify-between gap-4">
-          <span className="font-mono text-xs text-signal-400">{number}</span>
-          <SystemIcon className="size-10 text-signal-400" name={icon} />
-        </div>
-        <p className="mt-10 max-w-[20ch] text-lg font-semibold tracking-[-0.025em]">
-          {principle}
-        </p>
-      </div>
+        className="spotlight-card__overlay pointer-events-none absolute inset-0 z-20 bg-white opacity-0 mix-blend-difference"
+      />
     </article>
   );
 }
