@@ -127,22 +127,22 @@ Copy `.env.example` to `.env.local` and set only approved values:
 | Variable                                 | Use                                                             |
 | ---------------------------------------- | --------------------------------------------------------------- |
 | `SITE_ENVIRONMENT`                       | `development`, `staging`, or `production`                       |
-| `NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED` | Staging visual-preferences trial; production is forced off      |
+| `NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED` | Enables the approved visual-preferences controls                |
 | `NEXT_PUBLIC_LINKEDIN_URL`               | Optional approved public profile                                |
 | `HUBSPOT_STAGING_REGION`                 | Approved staging/testing form; provide all three staging values |
 | `HUBSPOT_STAGING_PORTAL_ID`              | Approved staging/testing form; provide all three staging values |
 | `HUBSPOT_STAGING_FORM_ID`                | Approved staging/testing form; provide all three staging values |
-| `HUBSPOT_PRODUCTION_REGION`              | Future production form; leave unset until separately approved   |
-| `HUBSPOT_PRODUCTION_PORTAL_ID`           | Future production form; leave unset until separately approved   |
-| `HUBSPOT_PRODUCTION_FORM_ID`             | Future production form; leave unset until separately approved   |
+| `HUBSPOT_PRODUCTION_REGION`              | Approved production form; provide all three production values   |
+| `HUBSPOT_PRODUCTION_PORTAL_ID`           | Approved production form; provide all three production values   |
+| `HUBSPOT_PRODUCTION_FORM_ID`             | Approved production form; provide all three production values   |
 
 The production canonical is always `https://company42.co`; staging and local hosts are never emitted as canonical URLs. `SITE_ENVIRONMENT=production` is the only indexable mode. Staging and development emit `noindex, nofollow`, disallow crawling in `robots.txt`, return an empty sitemap, and omit canonical, Open Graph, and structured-data output. If `SITE_ENVIRONMENT` is omitted from a non-development build, the safe default is staging.
 
 The visible fallback is `hello@company42.co`, and all consultation links remain on `/contact`.
 
-The visual-preferences trial is enabled only when `SITE_ENVIRONMENT` is not `production` and `NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED=true`. Selections are stored in the browser under `company42.visualPreferences.v1`; they are not transmitted, tracked, or stored in a cookie. Production forces the feature off even if the public flag is set incorrectly.
+Visual preferences are enabled when `NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED=true`. Selections are stored in the browser under `company42.visualPreferences.v1`; they are not transmitted, tracked, or stored in a cookie.
 
-The existing HubSpot form is approved for development and staging testing only. It loads only when all three staging variables are present and `SITE_ENVIRONMENT` is not `production`. Production uses only the three production variables and never falls back to staging values. Until the separate production form is created, the production Contact page shows the visible `hello@company42.co` fallback.
+The staging form loads only when all three staging variables are present and `SITE_ENVIRONMENT` is not `production`. Production uses only the three production variables and never falls back to staging values. The visible `hello@company42.co` fallback remains available in every environment.
 
 The form embed has resilient loading, success, validation, and script-failure states. The fallback email remains outside the cross-origin form frame and is usable even if HubSpot or JavaScript is unavailable. No analytics, HubSpot website tracking code, marketing pixel, or newsletter tracking integration is active.
 
@@ -192,7 +192,7 @@ The HubSpot allowances are intentionally limited to the Contact form. No analyti
 
 ## Deployment
 
-Render is staging/testing only. Set `SITE_ENVIRONMENT=staging` there and do not use its URL as the canonical origin.
+Render hosts separate staging and production Web Services. The staging service uses `SITE_ENVIRONMENT=staging`; the production service uses `SITE_ENVIRONMENT=production`. Render subdomains are not emitted as canonical origins.
 
 - Project root: repository root
 - Node.js: 20.9 or newer
@@ -210,4 +210,4 @@ HUBSPOT_STAGING_PORTAL_ID=148811132
 HUBSPOT_STAGING_FORM_ID=da5e2637-3fc8-4ab0-96b1-4764ecd0f16e
 ```
 
-Do not configure the production form variables on staging. Production hosting is still to be confirmed, and its three production form variables must remain unset until the separate production form is created and approved. Render remains staging-only, is blocked from indexing, and must never be used as the canonical host.
+Do not configure the production form variables on staging. On the production Web Service, set `SITE_ENVIRONMENT=production`, `NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED=true`, and all three approved `HUBSPOT_PRODUCTION_*` values. Production never falls back to the staging form configuration.

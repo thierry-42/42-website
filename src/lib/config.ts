@@ -95,7 +95,6 @@ const productionForm = resolveHubspotForm("PRODUCTION", {
   region: environment.HUBSPOT_PRODUCTION_REGION,
 });
 const visualPreferencesEnabled =
-  deploymentEnvironment !== "production" &&
   environment.NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED === "true";
 
 export const siteConfig = {
