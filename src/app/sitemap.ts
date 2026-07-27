@@ -5,7 +5,6 @@ import {
   publicAuthors,
   publicContent,
   publicInsightCategories,
-  siteContent,
 } from "@/content/site-content";
 import { getSiteOrigin, isSearchIndexable } from "@/lib/config";
 
@@ -28,14 +27,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const serviceRoutes = publicContent.services.map(
     (service) => `/services/${service.slug}`,
   );
-  const workRoutes = siteContent.features.work
-    ? [
-        "/work",
-        ...publicContent.caseStudies.map(
-          (caseStudy) => `/work/${caseStudy.slug}`,
-        ),
-      ]
-    : [];
   const insightRoutes = publicContent.insights.map(
     (insight) => `/insights/${insight.slug}`,
   );
@@ -49,7 +40,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const publishedRoutes = [
     ...routes.filter(isRoutePublished),
     ...serviceRoutes,
-    ...workRoutes,
     ...insightRoutes,
     ...categoryRoutes,
     ...authorRoutes,

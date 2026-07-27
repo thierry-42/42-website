@@ -62,14 +62,6 @@
         "href": "/approach"
       },
       {
-        "label": "Industries",
-        "href": "/industries"
-      },
-      {
-        "label": "Work",
-        "href": "/work"
-      },
-      {
         "label": "About",
         "href": "/about"
       },
@@ -83,14 +75,6 @@
       "href": "/contact"
     },
     "footer": [
-      {
-        "label": "Who 42 helps",
-        "href": "/audience"
-      },
-      {
-        "label": "Industries",
-        "href": "/industries"
-      },
       {
         "label": "HubSpot review",
         "href": "/hubspot-review"

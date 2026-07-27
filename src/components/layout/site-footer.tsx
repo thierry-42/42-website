@@ -25,6 +25,7 @@ export function SiteFooter() {
       className="border-t border-[var(--colour-border-inverse)] bg-[var(--colour-surface-inverse)] py-16 text-[var(--colour-text-inverse)]"
       data-cursor-color="light"
       data-surface="dark"
+      data-testid="site-footer"
     >
       <Container>
         <div className="grid gap-14 lg:grid-cols-12">

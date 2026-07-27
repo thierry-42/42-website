@@ -21,6 +21,8 @@ export function FoundationBand({
     "engagement-connect",
     "engagement-build",
     "engagement-improve",
+    "problem-trust",
+    "problem-data",
   ];
 
   return (
@@ -37,17 +39,15 @@ export function FoundationBand({
             </Body>
           </Reveal>
           <Stagger className="grid gap-3 sm:grid-cols-2 lg:col-span-6 lg:col-start-7">
-            {siteContent.brand.principles
-              .slice(0, 4)
-              .map((principle, index) => (
-                <CardEntrance className="h-full" key={principle}>
-                  <SpotlightPrincipleCard
-                    icon={principleIcons[index]}
-                    index={index}
-                    principle={principle}
-                  />
-                </CardEntrance>
-              ))}
+            {siteContent.brand.principles.map((principle, index) => (
+              <CardEntrance className="h-full" key={principle}>
+                <SpotlightPrincipleCard
+                  icon={principleIcons[index]}
+                  index={index}
+                  principle={principle}
+                />
+              </CardEntrance>
+            ))}
           </Stagger>
         </div>
       </Container>
