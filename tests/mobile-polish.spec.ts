@@ -242,6 +242,7 @@ test("answer diagram stays stable in every mode and visual preference", async ({
 }) => {
   await page.setViewportSize({ height: 568, width: 320 });
   await page.goto("/");
+  await page.evaluate(() => document.fonts.ready);
 
   const heights: number[] = [];
   for (const mode of answerModes) {
@@ -249,7 +250,10 @@ test("answer diagram stays stable in every mode and visual preference", async ({
     heights.push(await expectStableAnswerDiagram(page));
   }
 
-  expect(Math.max(...heights) - Math.min(...heights)).toBeLessThanOrEqual(1);
+  expect(
+    Math.max(...heights) - Math.min(...heights),
+    `answer field heights: ${heights.join(", ")}`,
+  ).toBeLessThanOrEqual(1);
 
   const preferences = page.getByRole("button", {
     name: "Open visual preferences",
