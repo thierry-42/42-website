@@ -23,7 +23,7 @@ export function HeroAnswerField() {
 
   return (
     <div
-      className="surface-texture relative overflow-hidden rounded-xl border border-ink-950/18 bg-white/90 shadow-[0_1.75rem_6rem_rgb(9_11_16/0.12)] sm:min-h-[39rem]"
+      className="surface-texture relative min-h-[34rem] overflow-hidden rounded-xl border border-ink-950/18 bg-white/90 shadow-[0_1.75rem_6rem_rgb(9_11_16/0.12)] sm:min-h-[39rem]"
       data-testid="hero-answer-field"
     >
       <div

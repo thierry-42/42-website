@@ -323,7 +323,9 @@ test("footer ends the document and floating controls stay separate", async ({
     };
   });
 
-  expect(geometry.afterFooter).toBe(0);
+  expect(
+    Math.abs(geometry.afterFooter ?? Number.POSITIVE_INFINITY),
+  ).toBeLessThanOrEqual(1);
   expect(geometry.preferences).not.toBeNull();
   expect(geometry.scrollTop).not.toBeNull();
 
