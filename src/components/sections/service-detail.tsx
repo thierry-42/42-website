@@ -103,13 +103,14 @@ export function ServiceDetail({
           <div className="mt-12 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {service.capabilities.map((capability, index) => (
               <Surface
-                className="flex min-h-44 flex-col justify-between p-5"
+                className="flex flex-col justify-between p-4 sm:min-h-44 sm:p-5"
+                data-testid="deliverable-card"
                 key={capability}
               >
                 <span className="font-mono text-xs text-[var(--text-muted)]">
                   D/{String(index + 1).padStart(2, "0")}
                 </span>
-                <h3 className="mt-10 text-lg leading-snug font-semibold tracking-[-0.03em]">
+                <h3 className="mt-5 text-[clamp(1.125rem,5vw,1.25rem)] leading-snug font-semibold tracking-[-0.03em] sm:mt-10 sm:text-lg">
                   {capability}
                 </h3>
               </Surface>

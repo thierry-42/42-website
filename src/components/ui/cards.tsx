@@ -27,7 +27,7 @@ export function ServiceCard({ index = 0, service }: ServiceCardProps) {
 
   return (
     <Surface
-      className="group flex h-full min-h-[30rem] flex-col overflow-hidden"
+      className="group flex h-full flex-col overflow-hidden sm:min-h-[30rem]"
       interactive
     >
       <ImagePlaceholder
@@ -37,8 +37,8 @@ export function ServiceCard({ index = 0, service }: ServiceCardProps) {
         sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
         src={service.image}
       />
-      <div className="flex flex-1 flex-col p-6 md:p-8">
-        <div className="mb-10 flex items-start justify-between text-[var(--text-muted)]">
+      <div className="flex flex-1 flex-col p-5 sm:p-6 md:p-8">
+        <div className="mb-7 flex items-start justify-between text-[var(--text-muted)] sm:mb-10">
           <div className="flex items-center gap-4">
             <span className="grid size-12 place-items-center rounded-md border border-[var(--border)] bg-[var(--surface-muted)] text-[var(--foreground)] transition-colors duration-300 group-hover:border-signal-500 group-hover:bg-signal-400 group-hover:text-signal-900 group-hover:[&_circle.text-signal-400]:text-ink-950">
               <SystemIcon
@@ -59,7 +59,7 @@ export function ServiceCard({ index = 0, service }: ServiceCardProps) {
           {service.summary}
         </p>
         <TextLink
-          className="mt-auto self-start pt-8"
+          className="mt-7 self-start sm:mt-auto sm:pt-8"
           href={`/services/${service.slug}`}
         >
           Explore service
@@ -86,7 +86,7 @@ export function ProblemCard({ index = 0, title }: ProblemCardProps) {
 
   return (
     <Surface
-      className="group flex min-h-44 flex-col justify-between p-5 md:p-6"
+      className="group flex flex-col justify-between p-4 sm:min-h-44 sm:p-5 md:p-6"
       interactive
     >
       <div className="flex items-start justify-between gap-4">
@@ -98,7 +98,7 @@ export function ProblemCard({ index = 0, title }: ProblemCardProps) {
           name={icons[index % icons.length]}
         />
       </div>
-      <h3 className="mt-10 max-w-[24ch] text-xl leading-snug font-semibold tracking-[-0.035em]">
+      <h3 className="mt-6 max-w-[24ch] text-xl leading-snug font-semibold tracking-[-0.035em] sm:mt-10">
         {title}
       </h3>
     </Surface>

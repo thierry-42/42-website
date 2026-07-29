@@ -46,7 +46,7 @@ export function EngagementsSection({
               >
                 <Surface
                   className={cn(
-                    "h-full min-h-96 p-6 md:p-8",
+                    "h-full p-5 sm:min-h-96 sm:p-6 md:p-8",
                     index === 3 && "xl:min-h-72",
                   )}
                 >
@@ -59,7 +59,7 @@ export function EngagementsSection({
                       name={engagementIcons[index]}
                     />
                   </div>
-                  <h3 className="mt-12 font-serif text-4xl tracking-[-0.035em]">
+                  <h3 className="mt-8 font-serif text-4xl tracking-[-0.035em] text-pretty sm:mt-12">
                     {engagement.name}
                   </h3>
                   <p className="mt-3 text-sm leading-6 text-[var(--text-muted)]">

@@ -8,6 +8,7 @@ import { SectionHeading } from "@/components/sections/section-heading";
 import { TeamSection } from "@/components/sections/team-section";
 import { CapabilityTag } from "@/components/ui/capability-tag";
 import { Surface } from "@/components/ui/surface";
+import { StakeholderList } from "@/components/ui/stakeholder-list";
 import { TextLink } from "@/components/ui/text-link";
 import {
   audienceProfiles,
@@ -84,10 +85,11 @@ export default function AboutPage() {
               <p className="font-mono text-xs tracking-[0.12em] text-[var(--text-muted)] uppercase">
                 People 42 works alongside
               </p>
-              <div className="mt-4 flex flex-wrap gap-3">
-                {audienceRoles.map((role) => (
-                  <CapabilityTag key={role}>{role}</CapabilityTag>
-                ))}
+              <div className="mt-4">
+                <StakeholderList
+                  ariaLabel="People 42 works alongside"
+                  items={audienceRoles}
+                />
               </div>
             </div>
           </div>

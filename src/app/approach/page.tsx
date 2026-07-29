@@ -40,15 +40,15 @@ export default function ApproachPage() {
             />
             <Stagger className="grid gap-3 sm:grid-cols-2 lg:col-span-6 lg:col-start-7">
               {siteContent.brand.principles.map((principle, index) => (
-                <CardEntrance className="h-full" key={principle}>
+                <CardEntrance className="sm:h-full" key={principle}>
                   <Surface
-                    className="h-full min-h-40 border-white/14 p-6"
+                    className="h-full border-white/14 p-5 sm:min-h-40 sm:p-6"
                     tone="dark"
                   >
                     <p className="font-mono text-xs text-white/50">
                       P/{String(index + 1).padStart(2, "0")}
                     </p>
-                    <p className="mt-10 max-w-[24ch] font-semibold tracking-[-0.025em]">
+                    <p className="mt-6 max-w-[24ch] text-lg leading-snug font-semibold tracking-[-0.025em] text-pretty sm:mt-10 sm:text-base">
                       {principle}
                     </p>
                   </Surface>

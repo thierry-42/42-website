@@ -113,7 +113,7 @@ export function VisualPreferences() {
 
   return (
     <div
-      className="fixed bottom-[max(0.75rem,env(safe-area-inset-bottom))] left-[max(0.75rem,env(safe-area-inset-left))] z-[90]"
+      className="fixed bottom-[max(0.75rem,calc(env(safe-area-inset-bottom)+0.5rem))] left-[max(0.75rem,calc(env(safe-area-inset-left)+0.5rem))] z-[90]"
       data-native-cursor
     >
       {isOpen ? (
@@ -218,13 +218,13 @@ export function VisualPreferences() {
         aria-controls="visual-preferences-panel"
         aria-expanded={isOpen}
         aria-label="Open visual preferences"
-        className="group inline-flex min-h-11 items-center gap-2 rounded-full border-2 border-[var(--colour-border-strong)] bg-[var(--colour-surface-inverse)] px-4 py-2.5 text-sm font-semibold text-[var(--colour-text-inverse)] shadow-lift hover:bg-[var(--colour-action)] hover:text-[var(--colour-action-text)]"
+        className="group inline-flex size-11 items-center justify-center gap-2 rounded-full border-2 border-[var(--colour-border-strong)] bg-[var(--colour-surface-inverse)] p-2.5 text-sm font-semibold text-[var(--colour-text-inverse)] shadow-lift hover:bg-[var(--colour-action)] hover:text-[var(--colour-action-text)] min-[23.4375rem]:h-auto min-[23.4375rem]:min-h-11 min-[23.4375rem]:w-auto min-[23.4375rem]:justify-start min-[23.4375rem]:px-4 min-[23.4375rem]:py-2.5"
         onClick={() => setIsOpen((current) => !current)}
         ref={triggerRef}
         type="button"
       >
         <PreferencesIcon />
-        <span>Visual preferences</span>
+        <span className="hidden min-[23.4375rem]:inline">Display</span>
       </button>
     </div>
   );

@@ -8,7 +8,7 @@ type ProcessStepProps = {
 
 export function ProcessStep({ body, number, title }: ProcessStepProps) {
   return (
-    <Surface className="grid gap-8 p-6 md:grid-cols-[5rem_1fr] md:p-8">
+    <Surface className="grid gap-5 p-5 sm:gap-8 sm:p-6 md:grid-cols-[5rem_1fr] md:p-8">
       <div className="font-mono text-sm text-[var(--text-muted)]">{number}</div>
       <div>
         <h3 className="text-2xl font-semibold tracking-[-0.04em]">{title}</h3>

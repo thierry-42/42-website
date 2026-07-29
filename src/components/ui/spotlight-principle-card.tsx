@@ -33,17 +33,17 @@ export function SpotlightPrincipleCard({
 
   return (
     <article
-      className="spotlight-card group relative min-h-44 overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] text-ink-950 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.18)]"
+      className="spotlight-card group relative overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)] text-ink-950 shadow-[inset_0_0_0_1px_rgb(255_255_255/0.18)] sm:min-h-44"
       data-testid="principle-spotlight"
       onPointerEnter={updateSpotlight}
       onPointerMove={updateSpotlight}
     >
-      <div className="surface-texture relative z-10 flex min-h-44 flex-col justify-between p-5">
+      <div className="surface-texture relative z-10 flex flex-col justify-between p-4 sm:min-h-44 sm:p-5">
         <div className="flex items-start justify-between gap-4">
           <span className="font-mono text-xs text-slate-500">{number}</span>
           <SystemIcon className="size-10" name={icon} />
         </div>
-        <p className="mt-10 max-w-[20ch] text-lg font-semibold tracking-[-0.025em]">
+        <p className="mt-6 max-w-none text-[clamp(1.125rem,5.5vw,1.3rem)] leading-[1.2] font-semibold tracking-[-0.025em] text-pretty sm:mt-10 sm:max-w-[20ch] sm:text-lg sm:leading-normal">
           {principle}
         </p>
       </div>

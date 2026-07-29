@@ -35,13 +35,13 @@ export function ProblemSection() {
             </ol>
           </div>
           <Surface
-            className="min-h-[30rem] p-8 md:p-12 lg:sticky lg:top-28 lg:col-span-5 lg:col-start-8"
+            className="p-5 sm:min-h-[30rem] sm:p-8 md:p-12 lg:sticky lg:top-28 lg:col-span-5 lg:col-start-8"
             tone="dark"
           >
             <p className="font-mono text-xs tracking-[0.12em] text-signal-400 uppercase">
               An implementation that stopped at setup
             </p>
-            <p className="mt-20 max-w-[18ch] font-serif text-4xl leading-[1.02] tracking-[-0.035em] md:text-5xl">
+            <p className="mt-10 max-w-[18ch] font-serif text-[clamp(2rem,10vw,2.5rem)] leading-[1.02] tracking-[-0.035em] text-pretty sm:mt-20 sm:text-4xl md:text-5xl">
               42 finds the real problem, designs the right answer, and builds it
               into the platform.
             </p>
