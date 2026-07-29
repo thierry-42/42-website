@@ -40,7 +40,7 @@ export function FoundationBand({
           </Reveal>
           <Stagger className="grid gap-3 sm:grid-cols-2 lg:col-span-6 lg:col-start-7">
             {siteContent.brand.principles.map((principle, index) => (
-              <CardEntrance className="h-full" key={principle}>
+              <CardEntrance className="sm:h-full" key={principle}>
                 <SpotlightPrincipleCard
                   icon={principleIcons[index]}
                   index={index}

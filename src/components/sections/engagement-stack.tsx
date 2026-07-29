@@ -76,7 +76,7 @@ function EngagementStackCard({
   return (
     <article
       className={cn(
-        "view-engagement-card group surface-texture relative mb-5 min-h-[32rem] overflow-hidden rounded-xl border p-6 shadow-[0_1.5rem_5rem_rgb(9_11_16/0.13)] md:p-10 lg:sticky lg:mb-[18vh] lg:min-h-[34rem] lg:last:mb-0",
+        "view-engagement-card group surface-texture relative mb-5 overflow-hidden rounded-xl border p-5 shadow-[0_1.5rem_5rem_rgb(9_11_16/0.13)] sm:min-h-[32rem] sm:p-6 md:p-10 lg:sticky lg:mb-[18vh] lg:min-h-[34rem] lg:last:mb-0",
         engagementTones[index],
         stackTopClasses[index],
       )}
@@ -98,7 +98,7 @@ function EngagementStackCard({
         {index + 1}
       </div>
 
-      <div className="relative z-10 flex min-h-[26rem] flex-col">
+      <div className="relative z-10 flex flex-col sm:min-h-[26rem]">
         <div className="flex items-start justify-between gap-8 border-b border-current/15 pb-6">
           <p
             className={cn(
@@ -119,14 +119,14 @@ function EngagementStackCard({
           />
         </div>
 
-        <div className="grid flex-1 gap-10 pt-9 md:grid-cols-12 md:items-end">
+        <div className="grid flex-1 gap-7 pt-7 sm:gap-10 sm:pt-9 md:grid-cols-12 md:items-end">
           <div className="md:col-span-6">
-            <h3 className="font-serif text-[clamp(3.75rem,8vw,7.75rem)] leading-[0.85] tracking-[-0.06em]">
+            <h3 className="font-serif text-[clamp(2.6rem,13vw,3.75rem)] leading-[0.9] tracking-[-0.055em] text-pretty sm:text-[clamp(3.75rem,8vw,7.75rem)] sm:leading-[0.85] sm:tracking-[-0.06em]">
               {engagement.name}
             </h3>
             <p
               className={cn(
-                "mt-6 max-w-[34ch] text-lg leading-8",
+                "mt-5 max-w-[34ch] text-base leading-7 sm:mt-6 sm:text-lg sm:leading-8",
                 dark ? "text-white/62" : "text-slate-500",
               )}
             >

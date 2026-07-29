@@ -18,7 +18,7 @@ export function ScrollToTop() {
     <button
       aria-hidden={!visible}
       aria-label="Scroll to top"
-      className={`group fixed right-5 bottom-5 z-[70] grid size-12 place-items-center rounded-full border border-[var(--colour-border-inverse)] bg-[var(--colour-surface-inverse)] text-[var(--colour-text-inverse)] shadow-lift transition-[opacity,transform,background-color,color] duration-200 hover:bg-[var(--colour-action)] hover:text-[var(--colour-action-text)] md:right-7 md:bottom-7 ${
+      className={`group fixed right-[max(0.75rem,calc(env(safe-area-inset-right)+0.5rem))] bottom-[max(0.75rem,calc(env(safe-area-inset-bottom)+0.5rem))] z-[70] grid size-11 place-items-center rounded-full border border-[var(--colour-border-inverse)] bg-[var(--colour-surface-inverse)] text-[var(--colour-text-inverse)] shadow-lift transition-[opacity,transform,background-color,color] duration-200 hover:bg-[var(--colour-action)] hover:text-[var(--colour-action-text)] md:right-7 md:bottom-7 md:size-12 ${
         visible
           ? "translate-y-0 scale-100 opacity-100"
           : "pointer-events-none translate-y-2 scale-90 opacity-0"

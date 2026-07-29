@@ -65,13 +65,16 @@ export function ApproachSteps() {
                   </p>
                   <Stagger className="mt-4 grid gap-3 sm:grid-cols-2">
                     {step.outputs.map((output, outputIndex) => (
-                      <CardEntrance className="h-full" key={output}>
-                        <Surface className="h-full min-h-28 p-4">
+                      <CardEntrance className="sm:h-full" key={output}>
+                        <Surface
+                          className="h-full p-4 sm:min-h-28"
+                          data-testid="typical-output-card"
+                        >
                           <p className="font-mono text-[0.625rem] text-slate-500">
                             {step.number}.
                             {String(outputIndex + 1).padStart(2, "0")}
                           </p>
-                          <p className="mt-4 text-sm font-semibold tracking-[-0.02em]">
+                          <p className="mt-3 text-[clamp(1.1rem,5vw,1.25rem)] leading-snug font-semibold tracking-[-0.025em] sm:mt-4 sm:text-sm">
                             {output}
                           </p>
                         </Surface>

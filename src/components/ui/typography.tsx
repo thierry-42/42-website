@@ -12,10 +12,9 @@ type HeadingProps = HTMLAttributes<HTMLHeadingElement> & {
 };
 
 const headingSizes: Record<HeadingSize, string> = {
-  display:
-    "text-[clamp(3.75rem,7.5vw,7rem)] leading-[0.92] tracking-[-0.045em]",
-  h1: "text-[clamp(3.25rem,5.2vw,5.25rem)] leading-[0.94] tracking-[-0.04em]",
-  h2: "text-[clamp(2.5rem,4vw,4rem)] leading-[0.98] tracking-[-0.035em]",
+  display: "text-[clamp(3rem,7.5vw,7rem)] leading-[0.92] tracking-[-0.045em]",
+  h1: "text-[clamp(2.5rem,5.2vw,5.25rem)] leading-[0.94] tracking-[-0.04em]",
+  h2: "text-[clamp(2.25rem,4vw,4rem)] leading-[0.98] tracking-[-0.035em]",
   h3: "text-[clamp(1.75rem,2.5vw,2.5rem)] leading-[1.04] tracking-[-0.025em]",
 };
 
@@ -29,7 +28,7 @@ export function Heading({
   return (
     <Component
       className={cn(
-        "font-serif font-normal text-balance",
+        "font-serif font-normal text-pretty [overflow-wrap:break-word]",
         headingSizes[size],
         className,
       )}

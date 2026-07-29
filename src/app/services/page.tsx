@@ -8,6 +8,7 @@ import { ServiceGrid } from "@/components/sections/service-grid";
 import { SystemCapabilities } from "@/components/sections/system-capabilities";
 import { CapabilityTag } from "@/components/ui/capability-tag";
 import { ProblemCard } from "@/components/ui/cards";
+import { StakeholderList } from "@/components/ui/stakeholder-list";
 import {
   audienceProfiles,
   audienceRoles,
@@ -77,10 +78,11 @@ export default function ServicesPage() {
                 <p className="font-mono text-xs tracking-[0.12em] text-[var(--text-muted)] uppercase">
                   Typical stakeholders
                 </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {audienceRoles.map((role) => (
-                    <CapabilityTag key={role}>{role}</CapabilityTag>
-                  ))}
+                <div className="mt-4">
+                  <StakeholderList
+                    ariaLabel="Typical stakeholders"
+                    items={audienceRoles}
+                  />
                 </div>
               </div>
             </div>
