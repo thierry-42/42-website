@@ -108,7 +108,7 @@ export function HeroAnswerField() {
           ))}
         </div>
 
-        <div className="mt-5 flex min-h-[4.5rem] items-end justify-between gap-4 sm:absolute sm:right-7 sm:bottom-7 sm:left-7 sm:mt-0 sm:min-h-0">
+        <div className="mt-5 flex min-h-24 items-end justify-between gap-4 sm:absolute sm:right-7 sm:bottom-7 sm:left-7 sm:mt-0 sm:min-h-0">
           <p className="max-w-[36ch] text-sm leading-6 text-ink-950/68">
             {activeMode.body}
           </p>
