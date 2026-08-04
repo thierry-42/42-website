@@ -6,7 +6,7 @@ const contentSecurityPolicy = [
   "object-src 'none'",
   "frame-ancestors 'none'",
   "form-action 'self' https://*.hsforms.com",
-  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} https://*.hsforms.net`,
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}${process.env.SITE_ENVIRONMENT === "staging" ? " 'wasm-unsafe-eval'" : ""} https://*.hsforms.net`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://*.hubspot.com https://*.hsforms.com https://*.hsforms.net https://*.hsappstatic.net",
   "font-src 'self' data:",

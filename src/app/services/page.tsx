@@ -34,6 +34,7 @@ export default function ServicesPage() {
     >
       <ServiceGrid
         body="Eight connected service lines cover strategy, implementation, CRM architecture, automation, integrations, websites, service operations, and managed optimisation."
+        enableStrategyPrototype
         eyebrow="What 42 can help with"
       />
       <EngagementsSection variant="stacked" />
