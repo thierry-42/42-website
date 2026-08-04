@@ -22,7 +22,7 @@ export function StrategyServiceCardPrototype({
       <div className="flex flex-1 flex-col p-5 sm:p-6 md:p-8">
         <div className="mb-7 flex items-start justify-between text-[var(--text-muted)] sm:mb-10">
           <div className="flex items-center gap-4">
-            <span className="grid size-12 place-items-center rounded-md border border-white/18 bg-white/[0.04] text-white transition-colors duration-200 group-hover:border-signal-400 group-hover:text-signal-400">
+            <span className="grid size-12 place-items-center rounded-md border border-[var(--border)] bg-[var(--surface-muted)] text-[var(--foreground)] transition-colors duration-200 group-hover:border-signal-500 group-hover:bg-signal-400 group-hover:text-signal-900 group-hover:[&_circle.text-signal-400]:text-ink-950">
               <SystemIcon
                 className="size-8"
                 name="hubspot-strategy-consulting"
@@ -33,7 +33,7 @@ export function StrategyServiceCardPrototype({
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <span className="hidden items-center gap-2 font-mono text-[0.625rem] tracking-[0.1em] text-white/48 uppercase sm:inline-flex">
+            <span className="hidden items-center gap-2 font-mono text-[0.625rem] tracking-[0.1em] text-[var(--text-muted)] uppercase sm:inline-flex">
               <span className="size-1.5 rounded-full bg-signal-400" />
               Motion prototype
             </span>

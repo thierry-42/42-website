@@ -120,6 +120,23 @@ test("the player loads near the viewport without shifting the poster", async ({
   expect(consoleErrors).toEqual([]);
 });
 
+test("the player pauses outside the viewport and resumes on return", async ({
+  page,
+}) => {
+  await page.setViewportSize({ height: 640, width: 390 });
+  await page.goto("/services");
+  const visual = page.getByTestId("strategy-architecture-animation");
+
+  await visual.scrollIntoViewIfNeeded();
+  await expect(visual).toHaveAttribute("data-playback-state", "playing");
+
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expect(visual).toHaveAttribute("data-playback-state", "paused");
+
+  await visual.scrollIntoViewIfNeeded();
+  await expect(visual).toHaveAttribute("data-playback-state", "playing");
+});
+
 test("reduced motion keeps the static poster and skips the player asset", async ({
   page,
 }) => {
@@ -169,3 +186,49 @@ test("the visual remains available across display preferences", async ({
     ).toBeVisible();
   }
 });
+
+for (const width of [320, 375, 390, 430]) {
+  test(`the prototype remains stable at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ height: 760, width });
+    await page.goto("/services");
+
+    const card = page.getByTestId("strategy-service-card-prototype");
+    await card.scrollIntoViewIfNeeded();
+
+    await expect(card).toBeVisible();
+    await expect(
+      card.getByRole("heading", { name: "Strategy and consulting" }),
+    ).toBeVisible();
+    await expect(
+      card.getByRole("link", { name: "Explore service" }),
+    ).toBeVisible();
+
+    const geometry = await page.evaluate(() => {
+      const cardElement = document.querySelector(
+        '[data-testid="strategy-service-card-prototype"]',
+      );
+      const visualElement = document.querySelector(
+        '[data-testid="strategy-architecture-animation"]',
+      );
+      if (!cardElement || !visualElement) return null;
+
+      const cardRect = cardElement.getBoundingClientRect();
+      const visualRect = visualElement.getBoundingClientRect();
+      return {
+        cardLeft: cardRect.left,
+        cardRight: cardRect.right,
+        documentWidth: document.documentElement.scrollWidth,
+        ratio: visualRect.width / visualRect.height,
+        viewportWidth: window.innerWidth,
+      };
+    });
+
+    expect(geometry).not.toBeNull();
+    expect(geometry?.cardLeft ?? -1).toBeGreaterThanOrEqual(0);
+    expect(geometry?.cardRight ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(
+      width,
+    );
+    expect(geometry?.documentWidth).toBe(width);
+    expect(geometry?.ratio).toBeCloseTo(1.6, 1);
+  });
+}

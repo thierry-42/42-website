@@ -1,7 +1,6 @@
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { CardEntrance, Stagger } from "@/components/motion/reveal";
-import { StrategyServiceCardPrototype } from "@/components/prototypes/strategy-service-card-prototype";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { ServiceCard } from "@/components/ui/cards";
 import { publicContent } from "@/content/site-content";
@@ -14,12 +13,19 @@ type ServiceGridProps = {
   title?: string;
 };
 
-export function ServiceGrid({
+export async function ServiceGrid({
   body = "Eight connected service lines cover the decisions, architecture, implementation, and ongoing improvement behind a dependable HubSpot system.",
   enableStrategyPrototype = false,
   eyebrow = "What 42 solves",
   title = "Design, build, connect, and improve HubSpot.",
 }: ServiceGridProps) {
+  const StrategyServiceCardPrototype =
+    enableStrategyPrototype && siteConfig.deploymentEnvironment === "staging"
+      ? (
+          await import("@/components/prototypes/strategy-service-card-prototype")
+        ).StrategyServiceCardPrototype
+      : null;
+
   return (
     <Section surface="dark">
       <Container>
@@ -32,8 +38,7 @@ export function ServiceGrid({
         <Stagger className="mt-14 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {publicContent.services.map((service, index) => (
             <CardEntrance key={service.slug}>
-              {enableStrategyPrototype &&
-              siteConfig.deploymentEnvironment === "staging" &&
+              {StrategyServiceCardPrototype &&
               service.slug === "hubspot-strategy-consulting" ? (
                 <StrategyServiceCardPrototype index={index} service={service} />
               ) : (

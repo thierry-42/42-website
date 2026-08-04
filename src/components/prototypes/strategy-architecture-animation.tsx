@@ -26,6 +26,7 @@ const posterSource =
 export function StrategyArchitectureAnimation() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [canAnimate, setCanAnimate] = useState(false);
+  const [isInViewport, setIsInViewport] = useState(false);
   const [isNearViewport, setIsNearViewport] = useState(false);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
   const playerRef = useRef<DotLottie | null>(null);
@@ -68,6 +69,21 @@ export function StrategyArchitectureAnimation() {
     return () => observer.disconnect();
   }, [canAnimate]);
 
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container || !canAnimate) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInViewport(entry.isIntersecting && entry.intersectionRatio > 0.1);
+      },
+      { threshold: [0, 0.1, 0.5] },
+    );
+
+    observer.observe(container);
+    return () => observer.disconnect();
+  }, [canAnimate]);
+
   const shouldRenderPlayer = canAnimate && isNearViewport;
   const handlePlayerLoad = useCallback(() => setIsPlayerReady(true), []);
   const handlePlayerRef = useCallback(
@@ -80,17 +96,37 @@ export function StrategyArchitectureAnimation() {
     [handlePlayerLoad],
   );
 
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player || !isPlayerReady) return;
+
+    if (canAnimate && isInViewport) {
+      player.play();
+      return;
+    }
+
+    player.pause();
+  }, [canAnimate, isInViewport, isPlayerReady]);
+
   const animationState = isPlayerReady
     ? "loaded"
     : shouldRenderPlayer
       ? "loading"
       : "poster";
+  const playbackState = !shouldRenderPlayer
+    ? "poster"
+    : !isPlayerReady
+      ? "loading"
+      : isInViewport
+        ? "playing"
+        : "paused";
 
   return (
     <div
       aria-hidden="true"
       className="relative isolate aspect-[16/10] overflow-hidden border-b border-white/12 bg-[#090b10]"
       data-animation-state={animationState}
+      data-playback-state={playbackState}
       data-testid="strategy-architecture-animation"
       ref={containerRef}
     >
@@ -105,7 +141,7 @@ export function StrategyArchitectureAnimation() {
       {shouldRenderPlayer ? (
         <DotLottiePlayer
           aria-hidden="true"
-          autoplay
+          autoplay={false}
           className="pointer-events-none absolute inset-0 size-full"
           data-testid="strategy-architecture-player"
           dotLottieRefCallback={handlePlayerRef}
