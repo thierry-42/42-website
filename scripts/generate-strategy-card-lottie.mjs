@@ -297,21 +297,6 @@ function shapeLayer({ name, shapes, layerTransform = transform() }) {
 
 const layers = [];
 
-layers.push(
-  shapeLayer({
-    name: "Background surface",
-    shapes: [
-      rectangle({
-        fill: colours.background,
-        height: canvas.height,
-        name: "Background",
-        position: [canvas.width / 2, canvas.height / 2],
-        width: canvas.width,
-      }),
-    ],
-  }),
-);
-
 const gridShapes = [];
 for (let x = 40; x < canvas.width; x += 40) {
   gridShapes.push(

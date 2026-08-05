@@ -36,9 +36,22 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
   if (!service) notFound();
 
+  const StrategyServiceHeroPrototype =
+    siteConfig.deploymentEnvironment === "staging" &&
+    service.slug === "hubspot-strategy-consulting"
+      ? (
+          await import("@/components/prototypes/strategy-service-hero-prototype")
+        ).StrategyServiceHeroPrototype
+      : null;
+
   return (
     <ServiceDetail
       consultationHref={siteConfig.bookingUrl ?? "/contact"}
+      heroVisual={
+        StrategyServiceHeroPrototype ? (
+          <StrategyServiceHeroPrototype posterSrc={service.image} />
+        ) : undefined
+      }
       service={service satisfies Service}
     />
   );

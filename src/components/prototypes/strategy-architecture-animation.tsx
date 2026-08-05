@@ -1,7 +1,6 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { DotLottie } from "@lottiefiles/dotlottie-react";
@@ -20,11 +19,10 @@ const DotLottiePlayer = dynamic(
 
 const animationSource =
   "/animations/strategy-architecture/strategy-architecture.lottie";
-const posterSource =
-  "/animations/strategy-architecture/strategy-architecture-poster.svg";
 
-export function StrategyArchitectureAnimation() {
+export function StrategyArchitectureAnimation({ active }: { active: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [canAnimate, setCanAnimate] = useState(false);
   const [isInViewport, setIsInViewport] = useState(false);
   const [isNearViewport, setIsNearViewport] = useState(false);
@@ -37,11 +35,11 @@ export function StrategyArchitectureAnimation() {
 
   useEffect(() => {
     const motionPreference = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
+      "(prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine)",
     );
 
     const updateMotionPreference = () => {
-      setCanAnimate(!motionPreference.matches);
+      setCanAnimate(motionPreference.matches);
     };
 
     updateMotionPreference();
@@ -91,6 +89,7 @@ export function StrategyArchitectureAnimation() {
       playerRef.current?.removeEventListener("load", handlePlayerLoad);
       playerRef.current = player;
       setIsPlayerReady(Boolean(player?.isLoaded));
+      player?.setSpeed(1.8);
       player?.addEventListener("load", handlePlayerLoad);
     },
     [handlePlayerLoad],
@@ -100,53 +99,64 @@ export function StrategyArchitectureAnimation() {
     const player = playerRef.current;
     if (!player || !isPlayerReady) return;
 
-    if (canAnimate && isInViewport) {
+    if (resetTimerRef.current) {
+      clearTimeout(resetTimerRef.current);
+      resetTimerRef.current = null;
+    }
+
+    if (active && canAnimate && isInViewport) {
+      player.stop();
+      player.setSpeed(1.8);
       player.play();
       return;
     }
 
-    player.pause();
-  }, [canAnimate, isInViewport, isPlayerReady]);
+    resetTimerRef.current = setTimeout(() => {
+      player.stop();
+      resetTimerRef.current = null;
+    }, 320);
+
+    return () => {
+      if (!resetTimerRef.current) return;
+      clearTimeout(resetTimerRef.current);
+      resetTimerRef.current = null;
+    };
+  }, [active, canAnimate, isInViewport, isPlayerReady]);
 
   const animationState = isPlayerReady
     ? "loaded"
     : shouldRenderPlayer
       ? "loading"
-      : "poster";
+      : "static";
   const playbackState = !shouldRenderPlayer
-    ? "poster"
+    ? "static"
     : !isPlayerReady
       ? "loading"
-      : isInViewport
+      : active && isInViewport
         ? "playing"
-        : "paused";
+        : "idle";
+  const isVisualVisible = active && canAnimate && isInViewport && isPlayerReady;
 
   return (
     <div
       aria-hidden="true"
-      className="relative isolate aspect-[16/10] overflow-hidden border-b border-white/12 bg-[#090b10]"
+      className="pointer-events-none absolute inset-0 isolate overflow-hidden"
       data-animation-state={animationState}
       data-playback-state={playbackState}
       data-testid="strategy-architecture-animation"
       ref={containerRef}
     >
-      <Image
-        alt=""
-        className="object-cover"
-        data-testid="strategy-architecture-poster"
-        fill
-        sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
-        src={posterSource}
-      />
       {shouldRenderPlayer ? (
         <DotLottiePlayer
           aria-hidden="true"
           autoplay={false}
-          className="pointer-events-none absolute inset-0 size-full"
+          className={`pointer-events-none absolute inset-0 size-full transition-opacity duration-300 ease-out ${
+            isVisualVisible ? "opacity-100" : "opacity-0"
+          }`}
           data-testid="strategy-architecture-player"
           dotLottieRefCallback={handlePlayerRef}
           layout={{ align: [0.5, 0.5], fit: "cover" }}
-          loop
+          loop={false}
           renderConfig={{ autoResize: true, devicePixelRatio: pixelRatio }}
           role="presentation"
           src={animationSource}
@@ -154,7 +164,6 @@ export function StrategyArchitectureAnimation() {
           useFrameInterpolation={false}
         />
       ) : null}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-signal-400/70" />
     </div>
   );
 }
