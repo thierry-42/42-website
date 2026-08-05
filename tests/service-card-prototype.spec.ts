@@ -1,217 +1,186 @@
-import { readFileSync, statSync } from "node:fs";
+import { mkdirSync } from "node:fs";
 import path from "node:path";
 
+import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-const animationPath = path.join(
+const reviewDirectory = path.join(
   process.cwd(),
-  "public",
-  "animations",
-  "strategy-architecture",
-  "strategy-architecture.lottie",
-);
-const sourcePath = path.join(
-  process.cwd(),
-  "src",
-  "animations",
-  "strategy-architecture",
-  "animation.json",
+  "test-results",
+  "motion-proof",
 );
 
-test("the card asset is a compact transparent vector overlay", () => {
-  const archive = readFileSync(animationPath);
-  const animation = JSON.parse(readFileSync(sourcePath, "utf8")) as {
-    fr: number;
-    ip: number;
-    layers: Array<{ nm: string; ty: number }>;
-    op: number;
-  };
-
-  expect(archive.subarray(0, 2).toString()).toBe("PK");
-  expect(statSync(animationPath).size).toBeLessThan(10_000);
-  expect((animation.op - animation.ip) / animation.fr).toBe(5);
-  expect(animation.layers).toHaveLength(23);
-  expect(animation.layers.every((layer) => layer.ty === 4)).toBe(true);
-  expect(
-    animation.layers.some((layer) => layer.nm === "Central CRM core"),
-  ).toBe(true);
-  expect(
-    animation.layers.some((layer) => layer.nm === "Background surface"),
-  ).toBe(false);
+test.beforeAll(() => {
+  mkdirSync(reviewDirectory, { recursive: true });
 });
 
-test("the prototype enhances only the staging Strategy card", async ({
+test("the staging homepage renders a semantic, code-native motion prototype", async ({
   page,
 }) => {
-  await page.goto("/services");
-  const card = page.getByTestId("strategy-service-card-prototype");
+  const consoleErrors: string[] = [];
+  const prohibitedRuntimeRequests: string[] = [];
 
-  await expect(card).toHaveCount(1);
-  await expect(
-    card.getByRole("heading", { name: "Strategy and consulting" }),
-  ).toBeVisible();
-  await expect(
-    card.getByRole("link", { name: "Explore service" }),
-  ).toBeVisible();
-  await expect(card.locator('img[src*="strategy-consulting"]')).toBeVisible();
+  page.on("console", (message) => {
+    if (message.type() === "error") consoleErrors.push(message.text());
+  });
+  page.on("request", (request) => {
+    if (/\.(?:lottie|wasm|mp4|webm)(?:\?|$)/u.test(request.url())) {
+      prohibitedRuntimeRequests.push(request.url());
+    }
+  });
 
+  await page.setViewportSize({ height: 1000, width: 1440 });
   await page.goto("/");
-  await expect(page.getByTestId("strategy-service-card-prototype")).toHaveCount(
-    0,
+
+  const hero = page.getByTestId("home-hero-motion-prototype");
+  await expect(hero).toBeVisible();
+  await expect(hero).toHaveAttribute("aria-hidden", "true");
+  await expect(hero).toHaveAttribute("data-motion-renderer", "svg-css");
+  await expect(hero).toHaveAttribute("data-motion-state", "playing");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Your HubSpot Answer",
   );
+  await expect(
+    page.getByRole("link", { name: "Book a consultation" }).first(),
+  ).toBeVisible();
+  await expect(hero.locator("svg")).toHaveCount(1);
+  await expect(hero.locator("canvas, video, audio")).toHaveCount(0);
+  await expect(hero.locator("text")).toHaveCount(0);
+  await expect(hero.locator("[tabindex]")).toHaveCount(0);
+  await expect(page.getByTestId("hero-answer-field")).toHaveCount(0);
+  expect(prohibitedRuntimeRequests).toEqual([]);
+  expect(consoleErrors).toEqual([]);
 });
 
-test("desktop hover plays the overlay and settles without layout shift", async ({
+test("the hero pauses outside the viewport and resumes without a frame loop", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const hero = page.getByTestId("home-hero-motion-prototype");
+
+  await expect(hero).toHaveAttribute("data-motion-state", "playing");
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expect(hero).toHaveAttribute("data-motion-state", "paused");
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect(hero).toHaveAttribute("data-motion-state", "playing");
+
+  expect(
+    await hero.evaluate(
+      (element) => element.querySelectorAll("canvas, video").length,
+    ),
+  ).toBe(0);
+});
+
+test("reduced motion presents the completed static hero and original card image", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+
+  const hero = page.getByTestId("home-hero-motion-prototype");
+  await expect(hero).toHaveAttribute("data-motion-state", "static");
+  await expect(hero.locator(".motion-accent-disc__hubspot-mark")).toBeVisible();
+  expect(
+    await hero
+      .locator(".motion-accent-disc")
+      .evaluate((element) => getComputedStyle(element).animationName),
+  ).toBe("none");
+
+  await page.goto("/services");
+  const card = page.getByTestId("strategy-service-card-prototype");
+  await card.scrollIntoViewIfNeeded();
+  await expect(card.locator('img[src*="strategy-consulting"]')).toBeVisible();
+  await expect(page.getByTestId("strategy-motion-card-overlay")).toBeHidden();
+});
+
+test("the service card keeps its image and settles into a connected hover state", async ({
   page,
 }, testInfo) => {
   test.skip(testInfo.project.name.includes("mobile"));
-  await page.setViewportSize({ height: 900, width: 1440 });
-
-  const animationRequests: string[] = [];
-  const runtimeRequests: string[] = [];
   const consoleErrors: string[] = [];
-  page.on("request", (request) => {
-    if (request.url().endsWith("strategy-architecture.lottie")) {
-      animationRequests.push(request.url());
-    }
-    if (request.url().endsWith("dotlottie-player.wasm")) {
-      runtimeRequests.push(request.url());
-    }
-  });
   page.on("console", (message) => {
     if (message.type() === "error") consoleErrors.push(message.text());
   });
 
+  await page.setViewportSize({ height: 1000, width: 1440 });
   await page.goto("/services");
   const card = page.getByTestId("strategy-service-card-prototype");
   const visual = page.getByTestId("strategy-card-visual");
-  const animation = page.getByTestId("strategy-architecture-animation");
-  await card.scrollIntoViewIfNeeded();
-  await expect(animation).toHaveAttribute("data-playback-state", "idle");
-  const before = await visual.evaluate((element) => {
-    const bounds = element.getBoundingClientRect();
-    return { height: bounds.height, width: bounds.width };
-  });
-
-  await card.hover();
-  await expect(card).toHaveAttribute("data-hover-active", "true");
-  await expect(animation).toHaveAttribute("data-playback-state", "playing");
-  const player = page.getByTestId("strategy-architecture-player");
-  await expect(player).toBeVisible();
-  await expect.poll(() => animationRequests.length).toBe(1);
-  await expect.poll(() => runtimeRequests.length).toBe(1);
-
-  const canvasCost = await player.evaluate((element) => {
-    const canvas = element as HTMLCanvasElement;
-    return {
-      backingHeight: canvas.height,
-      backingWidth: canvas.width,
-      clientHeight: canvas.clientHeight,
-      clientWidth: canvas.clientWidth,
-    };
-  });
-  expect(canvasCost.backingWidth / canvasCost.clientWidth).toBeLessThanOrEqual(
-    1.55,
-  );
-  expect(
-    canvasCost.backingHeight / canvasCost.clientHeight,
-  ).toBeLessThanOrEqual(1.55);
-
-  const after = await visual.evaluate((element) => {
-    const bounds = element.getBoundingClientRect();
-    return { height: bounds.height, width: bounds.width };
-  });
-  expect(Math.abs(after.width - before.width)).toBeLessThan(1);
-  expect(Math.abs(after.height - before.height)).toBeLessThan(1);
-
-  await page.mouse.move(2, 2);
-  await expect(card).toHaveAttribute("data-hover-active", "false");
-  await expect(animation).toHaveAttribute("data-playback-state", "idle");
-  expect(consoleErrors).toEqual([]);
-});
-
-test("reduced motion keeps the original card image and skips the player", async ({
-  page,
-}) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  const animationRequests: string[] = [];
-  page.on("request", (request) => {
-    if (request.url().endsWith("strategy-architecture.lottie")) {
-      animationRequests.push(request.url());
-    }
-  });
-
-  await page.goto("/services");
-  const card = page.getByTestId("strategy-service-card-prototype");
+  const overlay = page.getByTestId("strategy-motion-card-overlay");
   await card.scrollIntoViewIfNeeded();
 
   await expect(card.locator('img[src*="strategy-consulting"]')).toBeVisible();
-  await expect(page.getByTestId("strategy-architecture-player")).toHaveCount(0);
-  expect(animationRequests).toHaveLength(0);
-});
+  await expect(overlay).toHaveCSS("opacity", "0");
+  const before = await visual.boundingBox();
 
-test("the strategy detail hero lazy loads over its fixed poster", async ({
-  page,
-}) => {
-  const consoleErrors: string[] = [];
-  page.on("console", (message) => {
-    if (message.type() === "error") consoleErrors.push(message.text());
-  });
-
-  await page.goto("/services/hubspot-strategy-consulting");
-  const hero = page.getByTestId("strategy-service-hero-prototype");
-  const poster = page.getByTestId("strategy-service-hero-poster");
-  const before = await hero.evaluate((element) => {
-    const bounds = element.getBoundingClientRect();
-    return { height: bounds.height, width: bounds.width };
-  });
-
-  await expect(poster).toHaveAttribute("alt", "");
-  await expect(hero).toHaveAttribute("data-renderer", "code-based-2.5d");
-  await expect(hero).toHaveAttribute("data-animation-state", "playing");
-  await expect(page.getByTestId("strategy-service-hero-scene")).toBeVisible();
-
-  const after = await hero.evaluate((element) => {
-    const bounds = element.getBoundingClientRect();
-    return {
-      duration: getComputedStyle(
-        element.querySelector(".strategy-hero-scene")!,
-      ).getPropertyValue("--strategy-duration"),
-      height: bounds.height,
-      width: bounds.width,
-    };
-  });
-  expect(after.duration.trim()).toBe("6.4s");
-  expect(Math.abs(after.width - before.width)).toBeLessThan(1);
-  expect(Math.abs(after.height - before.height)).toBeLessThan(1);
-  expect(consoleErrors).toEqual([]);
-
-  await page.goto("/services/implementation-onboarding");
-  await expect(page.getByTestId("strategy-service-hero-prototype")).toHaveCount(
-    0,
+  await card.hover();
+  await expect(overlay).toHaveCSS("opacity", "1");
+  await expect
+    .poll(() =>
+      overlay
+        .locator(".motion-signal-path__trace")
+        .first()
+        .evaluate((element) => getComputedStyle(element).strokeDashoffset),
+    )
+    .toMatch(/^0(?:px)?$/u);
+  await expect(overlay.locator(".motion-system-node").first()).toHaveCSS(
+    "opacity",
+    "1",
   );
+
+  const after = await visual.boundingBox();
+  expect(Math.abs((after?.width ?? 0) - (before?.width ?? 0))).toBeLessThan(1);
+  expect(Math.abs((after?.height ?? 0) - (before?.height ?? 0))).toBeLessThan(
+    1,
+  );
+
+  await page.mouse.move(4, 4);
+  await expect(overlay).toHaveCSS("opacity", "0");
+  expect(consoleErrors).toEqual([]);
 });
 
-test("reduced motion keeps the strategy hero poster static", async ({
+test("keyboard focus activates the same restrained service-card state", async ({
   page,
-}) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/services/hubspot-strategy-consulting");
+}, testInfo) => {
+  test.skip(testInfo.project.name.includes("mobile"));
+  await page.goto("/services");
+  const card = page.getByTestId("strategy-service-card-prototype");
+  const link = card.getByRole("link", { name: "Explore service" });
+  const overlay = page.getByTestId("strategy-motion-card-overlay");
+  await card.scrollIntoViewIfNeeded();
 
-  const hero = page.getByTestId("strategy-service-hero-prototype");
-  await expect(hero).toHaveAttribute("data-animation-state", "poster");
-  await expect(page.getByTestId("strategy-service-hero-poster")).toBeVisible();
-  await expect(page.getByTestId("strategy-service-hero-scene")).toHaveCount(0);
+  await link.focus();
+  await expect(link).toBeFocused();
+  await expect(overlay).toHaveCSS("opacity", "1");
+  await expect(link).toHaveCSS("outline-style", "solid");
+
+  await page.keyboard.press("Tab");
+  await expect(overlay).toHaveCSS("opacity", "0");
 });
 
-test("the prototype remains intact across visual preferences", async ({
+test("the decorative motion introduces no serious accessibility violations", async ({
   page,
 }) => {
-  await page.goto("/services/hubspot-strategy-consulting");
-  const hero = page.getByTestId("strategy-service-hero-prototype");
-  await expect(hero).toBeVisible();
+  await page.goto("/");
+  await expect(page.getByTestId("home-hero-motion-prototype")).toBeVisible();
 
+  const results = await new AxeBuilder({ page })
+    .include("main > section:first-of-type")
+    .analyze();
+  const materialViolations = results.violations.filter((violation) =>
+    ["critical", "serious"].includes(violation.impact ?? ""),
+  );
+
+  expect(materialViolations).toEqual([]);
+});
+
+test("the prototypes remain decorative and legible across Visual Preferences", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const hero = page.getByTestId("home-hero-motion-prototype");
   await page.getByRole("button", { name: "Open visual preferences" }).click();
+
   for (const option of [
     "Light",
     "Dark",
@@ -223,67 +192,63 @@ test("the prototype remains intact across visual preferences", async ({
   ]) {
     await page.getByRole("radio", { name: option }).check();
     await expect(hero).toBeVisible();
-    await expect(
-      page.getByTestId("strategy-service-hero-poster"),
-    ).toBeVisible();
+    await expect(hero.locator(".motion-accent-disc__face")).not.toHaveCSS(
+      "fill",
+      "rgba(0, 0, 0, 0)",
+    );
   }
+
+  await expect(hero.locator(".motion-accent-disc__shadow")).toBeHidden();
 });
 
-for (const width of [320, 375, 390, 430]) {
-  test(`the card and hero remain stable at ${width}px`, async ({ page }) => {
-    await page.setViewportSize({ height: 760, width });
-    await page.goto("/services");
+for (const viewport of [
+  { height: 568, width: 320 },
+  { height: 667, width: 375 },
+  { height: 844, width: 390 },
+  { height: 932, width: 430 },
+  { height: 1024, width: 768 },
+  { height: 1000, width: 1440 },
+  { height: 1200, width: 1920 },
+]) {
+  test(`the motion prototype has no overflow or content collision at ${viewport.width}x${viewport.height}`, async ({
+    page,
+  }) => {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
 
-    const card = page.getByTestId("strategy-service-card-prototype");
-    await card.scrollIntoViewIfNeeded();
-    const cardGeometry = await card.evaluate((element) => {
-      const bounds = element.getBoundingClientRect();
+    const geometry = await page.evaluate(() => {
+      const hero = document
+        .querySelector('[data-testid="home-hero-motion-prototype"]')
+        ?.getBoundingClientRect();
+      const heading = document.querySelector("h1")?.getBoundingClientRect();
+      const buttons = document
+        .querySelector("h1")
+        ?.parentElement?.querySelectorAll("a");
+      const lastButton = buttons
+        ?.item(buttons.length - 1)
+        .getBoundingClientRect();
+
       return {
         documentWidth: document.documentElement.scrollWidth,
-        left: bounds.left,
-        right: bounds.right,
+        headingBottom: heading?.bottom ?? 0,
+        heroBottom: hero?.bottom ?? 0,
+        heroLeft: hero?.left ?? -1,
+        heroRight: hero?.right ?? Number.POSITIVE_INFINITY,
+        heroTop: hero?.top ?? 0,
+        lastButtonBottom: lastButton?.bottom ?? 0,
         viewportWidth: window.innerWidth,
       };
     });
-    expect(cardGeometry.left).toBeGreaterThanOrEqual(0);
-    expect(cardGeometry.right).toBeLessThanOrEqual(width);
-    expect(cardGeometry.documentWidth).toBe(width);
 
-    await page.goto("/services/hubspot-strategy-consulting");
-    const heading = page.getByRole("heading", {
-      name: "Make the right HubSpot decisions before building the wrong system.",
-    });
-    const hero = page.getByTestId("strategy-service-hero-prototype");
-    const geometry = await page.evaluate(() => {
-      const headingElement = document.querySelector("h1");
-      const heroElement = document.querySelector(
-        '[data-testid="strategy-service-hero-prototype"]',
-      );
-      if (!headingElement || !heroElement) return null;
-      const headingBounds = headingElement.getBoundingClientRect();
-      const heroBounds = heroElement.getBoundingClientRect();
-      return {
-        documentWidth: document.documentElement.scrollWidth,
-        headingBottom: headingBounds.bottom,
-        heroLeft: heroBounds.left,
-        heroRight: heroBounds.right,
-        heroTop: heroBounds.top,
-        ratio: heroBounds.width / heroBounds.height,
-      };
-    });
+    expect(geometry.documentWidth).toBeLessThanOrEqual(geometry.viewportWidth);
+    expect(geometry.heroLeft).toBeGreaterThanOrEqual(0);
+    expect(geometry.heroRight).toBeLessThanOrEqual(geometry.viewportWidth);
+    expect(geometry.heroBottom).toBeGreaterThan(geometry.heroTop);
 
-    await expect(heading).toBeVisible();
-    await expect(hero).toBeVisible();
-    expect(geometry).not.toBeNull();
-    expect(geometry?.heroLeft ?? -1).toBeGreaterThanOrEqual(0);
-    expect(geometry?.heroRight ?? Number.POSITIVE_INFINITY).toBeLessThanOrEqual(
-      width,
-    );
-    expect(geometry?.heroTop ?? 0).toBeGreaterThan(
-      geometry?.headingBottom ?? Number.POSITIVE_INFINITY,
-    );
-    expect(geometry?.ratio).toBeCloseTo(1, 1);
-    expect(geometry?.documentWidth).toBe(width);
+    if (viewport.width < 1024) {
+      expect(geometry.heroTop).toBeGreaterThan(geometry.lastButtonBottom);
+      expect(geometry.heroTop).toBeGreaterThan(geometry.headingBottom);
+    }
   });
 }
 
@@ -294,11 +259,12 @@ test.describe("touch fallback", () => {
     viewport: { height: 844, width: 390 },
   });
 
-  test("touch does not load or rely on the card hover animation", async ({
+  test("touch keeps the original card image without a hover dependency", async ({
     page,
   }) => {
     await page.goto("/services");
     const card = page.getByTestId("strategy-service-card-prototype");
+    const overlay = page.getByTestId("strategy-motion-card-overlay");
     await card.scrollIntoViewIfNeeded();
 
     expect(
@@ -306,19 +272,67 @@ test.describe("touch fallback", () => {
         () => window.matchMedia("(hover: hover) and (pointer: fine)").matches,
       ),
     ).toBe(false);
-    await expect(card).toHaveAttribute("data-hover-active", "false");
-    await expect(page.getByTestId("strategy-architecture-player")).toHaveCount(
-      0,
-    );
+    await expect(card.locator('img[src*="strategy-consulting"]')).toBeVisible();
+    await expect(overlay).toHaveCSS("opacity", "0");
     await expect(
       card.getByRole("link", { name: "Explore service" }),
     ).toBeVisible();
+  });
+});
 
-    await page.goto("/services/hubspot-strategy-consulting");
-    const hero = page.getByTestId("strategy-service-hero-prototype");
+test.describe("JavaScript fallback", () => {
+  test.use({ javaScriptEnabled: false });
+
+  test("the homepage remains complete with a static server-rendered scene", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const hero = page.getByTestId("home-hero-motion-prototype");
+
     await expect(hero).toBeVisible();
-    await expect(page.getByTestId("strategy-service-hero-scene")).toBeVisible();
-    await expect(hero.locator("canvas")).toHaveCount(0);
-    await expect(hero.locator(".strategy-hero-scene__module")).toHaveCount(6);
+    await expect(hero).toHaveAttribute("data-motion-state", "static");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      "Your HubSpot Answer",
+    );
+    await expect(
+      page.getByRole("link", { name: "Book a consultation" }).first(),
+    ).toBeVisible();
+  });
+});
+
+test("capture motion proof review images", async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name.includes("mobile"));
+
+  await page.setViewportSize({ height: 1000, width: 1440 });
+  await page.goto("/");
+  await page.waitForTimeout(4700);
+  await page
+    .locator("main > section")
+    .first()
+    .screenshot({
+      path: path.join(reviewDirectory, "homepage-hero-desktop.png"),
+    });
+
+  await page.setViewportSize({ height: 844, width: 390 });
+  await page.goto("/");
+  await page.waitForTimeout(7200);
+  await page
+    .locator("main > section")
+    .first()
+    .screenshot({
+      path: path.join(reviewDirectory, "homepage-hero-mobile.png"),
+    });
+
+  await page.setViewportSize({ height: 1000, width: 1440 });
+  await page.goto("/services");
+  const card = page.getByTestId("strategy-service-card-prototype");
+  await card.scrollIntoViewIfNeeded();
+  await card.screenshot({
+    path: path.join(reviewDirectory, "service-card-resting.png"),
+  });
+  await card.hover();
+  await page.waitForTimeout(1100);
+  await card.screenshot({
+    path: path.join(reviewDirectory, "service-card-hover.png"),
   });
 });

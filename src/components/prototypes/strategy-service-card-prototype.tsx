@@ -1,15 +1,10 @@
-"use client";
-
-import { useState } from "react";
-
 import type { Service } from "@/content/site-content";
-import { StrategyArchitectureAnimation } from "@/components/prototypes/strategy-architecture-animation";
+import { MotionCardOverlay } from "@/components/motion/system-motion-primitives";
 import { ImagePlaceholder } from "@/components/ui/image-placeholder";
 import { ArrowRightIcon } from "@/components/ui/icons";
 import { Surface } from "@/components/ui/surface";
 import { SystemIcon } from "@/components/ui/system-icons";
 import { TextLink } from "@/components/ui/text-link";
-import { cn } from "@/lib/cn";
 
 export function StrategyServiceCardPrototype({
   index,
@@ -18,18 +13,11 @@ export function StrategyServiceCardPrototype({
   index: number;
   service: Service;
 }) {
-  const [isHovered, setIsHovered] = useState(false);
-
   return (
     <Surface
-      className="group flex h-full flex-col overflow-hidden sm:min-h-[30rem]"
-      data-hover-active={isHovered ? "true" : "false"}
+      className="strategy-service-card group flex h-full flex-col overflow-hidden sm:min-h-[30rem]"
       data-testid="strategy-service-card-prototype"
       interactive
-      onPointerEnter={(event) => {
-        if (event.pointerType === "mouse") setIsHovered(true);
-      }}
-      onPointerLeave={() => setIsHovered(false)}
     >
       <div
         className="relative isolate overflow-hidden border-b border-[var(--border)]"
@@ -42,20 +30,10 @@ export function StrategyServiceCardPrototype({
           sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
           src={service.image}
         />
+        <MotionCardOverlay />
         <div
           aria-hidden="true"
-          className={cn(
-            "pointer-events-none absolute inset-0 bg-ink-950/10 opacity-0 transition-opacity duration-300 ease-out",
-            isHovered && "opacity-55",
-          )}
-        />
-        <StrategyArchitectureAnimation active={isHovered} />
-        <div
-          aria-hidden="true"
-          className={cn(
-            "pointer-events-none absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-signal-400 transition-transform duration-300 ease-out",
-            isHovered && "scale-x-100",
-          )}
+          className="strategy-service-card__edge pointer-events-none absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-signal-400 transition-transform duration-300 ease-out"
         />
       </div>
       <div className="flex flex-1 flex-col p-5 sm:p-6 md:p-8">
@@ -72,7 +50,7 @@ export function StrategyServiceCardPrototype({
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <ArrowRightIcon className="size-5 transition-transform duration-200 group-hover:translate-x-1" />
+            <ArrowRightIcon className="size-5 transition-transform duration-200 group-focus-within:translate-x-1 group-hover:translate-x-1" />
           </div>
         </div>
         <h3 className="max-w-[18ch] text-2xl leading-tight font-semibold tracking-[-0.04em]">
