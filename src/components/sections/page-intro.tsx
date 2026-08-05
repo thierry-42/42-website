@@ -17,7 +17,6 @@ type PageIntroProps = {
   path?: string;
   title: string;
   visual?: boolean;
-  visualContent?: ReactNode;
 };
 
 export function PageIntro({
@@ -30,7 +29,6 @@ export function PageIntro({
   path,
   title,
   visual = false,
-  visualContent,
 }: PageIntroProps) {
   return (
     <Section
@@ -73,15 +71,13 @@ export function PageIntro({
           </div>
           {visual ? (
             <div className="lg:col-span-5">
-              {visualContent ?? (
-                <ImagePlaceholder
-                  alt=""
-                  aspect="square"
-                  className="rounded-none border-white/15 bg-ink-900"
-                  sizes="(max-width: 1024px) 100vw, 38vw"
-                  src={imageSrc}
-                />
-              )}
+              <ImagePlaceholder
+                alt=""
+                aspect="square"
+                className="rounded-none border-white/15 bg-ink-900"
+                sizes="(max-width: 1024px) 100vw, 38vw"
+                src={imageSrc}
+              />
             </div>
           ) : (
             <div className="lg:col-span-4 lg:pb-2">

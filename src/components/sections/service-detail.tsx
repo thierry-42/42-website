@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { GlobalCta } from "@/components/sections/global-cta";
@@ -16,11 +14,9 @@ import { createServiceStructuredData } from "@/lib/structured-data";
 
 export function ServiceDetail({
   consultationHref,
-  heroVisual,
   service,
 }: {
   consultationHref: string;
-  heroVisual?: ReactNode;
   service: Service;
 }) {
   const related = service.related
@@ -48,7 +44,6 @@ export function ServiceDetail({
         path={`/services/${service.slug}`}
         title={service.headline}
         visual
-        visualContent={heroVisual}
       />
 
       <Section surface="paper">

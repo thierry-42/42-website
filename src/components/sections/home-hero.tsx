@@ -6,19 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { Body, Heading } from "@/components/ui/typography";
 import { siteContent } from "@/content/site-content";
-import { siteConfig } from "@/lib/config";
 
-export async function HomeHero({
-  consultationHref,
-}: {
-  consultationHref: string;
-}) {
+export function HomeHero({ consultationHref }: { consultationHref: string }) {
   const hero = siteContent.home.hero;
-  const HomeHeroMotionPrototype =
-    siteConfig.deploymentEnvironment === "staging"
-      ? (await import("@/components/prototypes/home-hero-motion-prototype"))
-          .HomeHeroMotionPrototype
-      : null;
 
   return (
     <Section
@@ -54,18 +44,12 @@ export async function HomeHero({
             </div>
             <div className="mt-10 flex items-center gap-4 border-t border-ink-950/14 pt-5 font-mono text-[0.625rem] tracking-[0.12em] text-ink-950/60 uppercase">
               <span className="h-px w-10 bg-signal-500" />
-              {HomeHeroMotionPrototype
-                ? "System architecture in motion"
-                : "Select an answer mode"}
+              Select an answer mode
             </div>
           </div>
 
           <div className="lg:col-span-7">
-            {HomeHeroMotionPrototype ? (
-              <HomeHeroMotionPrototype />
-            ) : (
-              <HeroAnswerField />
-            )}
+            <HeroAnswerField />
           </div>
         </div>
       </Container>
