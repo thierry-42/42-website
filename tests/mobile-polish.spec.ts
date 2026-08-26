@@ -19,8 +19,6 @@ const representativeRoutes = [
   "/contact",
 ] as const;
 
-const answerModes = ["understand", "architect", "build", "enable"] as const;
-
 async function expectNoDocumentOverflow(page: Page, route: string) {
   const dimensions = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
@@ -31,33 +29,6 @@ async function expectNoDocumentOverflow(page: Page, route: string) {
     dimensions.scrollWidth,
     `${route} should not overflow at ${dimensions.clientWidth}px`,
   ).toBeLessThanOrEqual(dimensions.clientWidth + 1);
-}
-
-async function answerDiagramGeometry(page: Page) {
-  return page.evaluate(() => {
-    const toRect = (element: Element) => {
-      const rect = element.getBoundingClientRect();
-      return {
-        bottom: rect.bottom,
-        height: rect.height,
-        left: rect.left,
-        right: rect.right,
-        top: rect.top,
-        width: rect.width,
-      };
-    };
-    const centre = document.querySelector('[data-testid="hero-answer-centre"]');
-    const field = document.querySelector('[data-testid="hero-answer-field"]');
-    const signals = Array.from(
-      document.querySelectorAll('[data-testid="hero-answer-signal"]'),
-    );
-
-    return {
-      centre: centre ? toRect(centre) : null,
-      fieldHeight: field?.getBoundingClientRect().height ?? 0,
-      signals: signals.map(toRect),
-    };
-  });
 }
 
 function rectanglesOverlap(
@@ -80,32 +51,6 @@ function rectanglesOverlap(
     first.bottom <= second.top + 1 ||
     first.top >= second.bottom - 1
   );
-}
-
-async function expectStableAnswerDiagram(page: Page) {
-  const geometry = await answerDiagramGeometry(page);
-  expect(geometry.centre).not.toBeNull();
-  expect(geometry.signals).toHaveLength(3);
-
-  if (!geometry.centre) return geometry.fieldHeight;
-
-  for (const signal of geometry.signals) {
-    expect(rectanglesOverlap(geometry.centre, signal)).toBe(false);
-  }
-
-  for (let first = 0; first < geometry.signals.length; first += 1) {
-    for (
-      let second = first + 1;
-      second < geometry.signals.length;
-      second += 1
-    ) {
-      expect(
-        rectanglesOverlap(geometry.signals[first], geometry.signals[second]),
-      ).toBe(false);
-    }
-  }
-
-  return geometry.fieldHeight;
 }
 
 async function capture(
@@ -237,23 +182,35 @@ for (const viewport of mobileViewports) {
   });
 }
 
-test("answer diagram stays stable in every mode and visual preference", async ({
+test("homepage service interactions stay stable in every visual preference", async ({
   page,
 }) => {
   await page.setViewportSize({ height: 568, width: 320 });
   await page.goto("/");
   await page.evaluate(() => document.fonts.ready);
 
+  const stage = page.getByTestId("home-service-stage");
   const heights: number[] = [];
-  for (const mode of answerModes) {
-    await page.getByTestId(`hero-mode-${mode}`).click();
-    heights.push(await expectStableAnswerDiagram(page));
+  for (const tab of await stage.getByRole("tab").all()) {
+    await tab.click();
+    await expect(tab).toHaveAttribute("aria-selected", "true");
+    heights.push((await stage.boundingBox())?.height ?? 0);
   }
 
   expect(
     Math.max(...heights) - Math.min(...heights),
-    `answer field heights: ${heights.join(", ")}`,
+    `service stage heights: ${heights.join(", ")}`,
   ).toBeLessThanOrEqual(1);
+
+  const expertise = page.getByTestId("home-expertise");
+  const crmTab = expertise.getByRole("button", { name: /CRM and RevOps/ });
+  await crmTab.click();
+  await expect(crmTab).toHaveAttribute("aria-expanded", "true");
+  await expect(
+    expertise.getByRole("heading", {
+      name: "CRM and revenue operations architecture",
+    }),
+  ).toBeVisible();
 
   const preferences = page.getByRole("button", {
     name: "Open visual preferences",
@@ -269,15 +226,13 @@ test("answer diagram stays stable in every mode and visual preference", async ({
     "High contrast",
   ]) {
     await page.getByRole("radio", { name: option }).check();
-    await expectStableAnswerDiagram(page);
+    await expect(stage).toBeVisible();
+    await expect(expertise).toBeVisible();
+    await expectNoDocumentOverflow(page, `/ with ${option}`);
   }
 
   await page.getByRole("button", { name: "Close visual preferences" }).click();
-  await capture(
-    page,
-    page.getByTestId("hero-answer-field"),
-    "after-answer-diagram-320.png",
-  );
+  await capture(page, stage, "after-home-service-stage-320.png");
 });
 
 test("footer ends the document and floating controls stay separate", async ({

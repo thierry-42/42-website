@@ -1,40 +1,36 @@
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
-import { RetroAnswerTerminal } from "@/components/illustrations/retro-answer-terminal";
-import { HeroAnswerField } from "@/components/sections/hero-answer-field";
+import { HomeServiceStage } from "@/components/sections/home-service-stage";
 import { Button } from "@/components/ui/button";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { Body, Heading } from "@/components/ui/typography";
-import { siteContent } from "@/content/site-content";
+import { publicContent, siteContent } from "@/content/site-content";
 
 export function HomeHero({ consultationHref }: { consultationHref: string }) {
   const hero = siteContent.home.hero;
 
   return (
     <Section
-      className="min-h-[calc(100svh-1px)] border-b border-ink-950/12 pt-[calc(var(--header-height)+3.5rem)] md:pt-[calc(var(--header-height)+5rem)]"
+      className="border-b border-[var(--colour-border)] pt-[calc(var(--header-height)+2.5rem)] sm:pt-[calc(var(--header-height)+3.5rem)]"
       spacing="compact"
       surface="paper"
     >
-      <div
-        aria-hidden="true"
-        className="hairline-grid absolute inset-0 [mask-image:linear-gradient(to_right,transparent,black_42%,black_88%,transparent)] opacity-35"
-      />
-      <RetroAnswerTerminal
-        aria-hidden="true"
-        className="pointer-events-none absolute top-[calc(var(--header-height)+0.5rem)] -right-[18rem] w-[42rem] text-ink-950 opacity-[0.055] sm:-right-[12rem] sm:w-[52rem] lg:-right-[7rem] lg:w-[60rem]"
-      />
-      <Container className="relative z-10">
-        <div className="grid items-center gap-14 lg:grid-cols-12 lg:gap-12">
-          <div className="lg:col-span-5">
+      <Container>
+        <div className="grid gap-8 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-8">
             <Eyebrow index="42">{hero.eyebrow}</Eyebrow>
-            <Heading as="h1" className="max-w-[7ch]" size="display">
+            <Heading
+              as="h1"
+              className="max-w-none text-[clamp(3.6rem,9.4vw,9rem)] leading-[0.82] tracking-[-0.075em]"
+            >
               {hero.headline}
             </Heading>
-            <Body className="mt-7 max-w-[50ch]" size="lg">
+          </div>
+          <div className="pb-1 lg:col-span-4">
+            <Body className="max-w-[47ch]" size="lg">
               {hero.body}
             </Body>
-            <div className="mt-9 flex flex-wrap gap-3">
+            <div className="mt-7 flex flex-wrap gap-3">
               <Button href={consultationHref} showArrow>
                 {hero.primaryCta.label}
               </Button>
@@ -42,16 +38,10 @@ export function HomeHero({ consultationHref }: { consultationHref: string }) {
                 {hero.secondaryCta.label}
               </Button>
             </div>
-            <div className="mt-10 flex items-center gap-4 border-t border-ink-950/14 pt-5 font-mono text-[0.625rem] tracking-[0.12em] text-ink-950/60 uppercase">
-              <span className="h-px w-10 bg-signal-500" />
-              Select an answer mode
-            </div>
-          </div>
-
-          <div className="lg:col-span-7">
-            <HeroAnswerField />
           </div>
         </div>
+
+        <HomeServiceStage services={publicContent.services} />
       </Container>
     </Section>
   );

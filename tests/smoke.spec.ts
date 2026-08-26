@@ -450,7 +450,7 @@ test("custom cursor stays disabled for touch and reduced-motion contexts", async
   await expect(page.locator("body")).toHaveCSS("cursor", "auto");
 });
 
-test("homepage answer field and capability explorer respond to selection", async ({
+test("homepage service stage and expertise accordion respond to selection", async ({
   page,
 }) => {
   await page.goto("/");
@@ -460,23 +460,30 @@ test("homepage answer field and capability explorer respond to selection", async
     "light",
   );
 
-  const architect = page.getByTestId("hero-mode-architect");
-  await architect.click();
-  await expect(architect).toHaveAttribute("aria-pressed", "true");
+  const heroStage = page.getByTestId("home-service-stage");
+  const implementation = heroStage.getByRole("tab", {
+    name: /Implementation and onboarding/,
+  });
+  await implementation.click();
+  await expect(implementation).toHaveAttribute("aria-selected", "true");
   await expect(
-    page.getByTestId("hero-answer-field").getByText("HubSpot / 02"),
-  ).toBeVisible();
-
-  const explorer = page.getByTestId("capability-explorer");
-  const operations = explorer.getByRole("button", { name: /Operations/ });
-  await operations.click();
-  await expect(operations).toHaveAttribute("aria-pressed", "true");
-  await expect(
-    explorer.getByRole("heading", {
-      name: "Connect customer activity to the operational processes that fulfil it.",
+    heroStage.getByRole("heading", {
+      name: "Implementation and onboarding",
     }),
   ).toBeVisible();
-  await expect(explorer.locator("h3")).toHaveCount(1);
+
+  const expertise = page.getByTestId("home-expertise");
+  const crm = expertise.getByRole("button", { name: /CRM and RevOps/ });
+  await crm.click();
+  await expect(crm).toHaveAttribute("aria-expanded", "true");
+  await expect(
+    expertise.getByRole("heading", {
+      name: "CRM and revenue operations architecture",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByTestId("expertise-service-crm-revops"),
+  ).toHaveAttribute("data-active", "true");
 
   await page.goto("/services");
   const servicesExplorer = page.getByTestId("capability-explorer");

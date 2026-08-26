@@ -4,7 +4,7 @@ import { CardEntrance, Stagger } from "@/components/motion/reveal";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { siteContent } from "@/content/site-content";
 
-export function DifferenceSection() {
+export function DifferenceSection({ index = "06" }: { index?: string }) {
   const content = siteContent.home.difference;
 
   return (
@@ -15,7 +15,7 @@ export function DifferenceSection() {
             body={content.body}
             className="lg:col-span-5"
             eyebrow={content.eyebrow}
-            index="06"
+            index={index}
             title={content.headline}
           />
           <div className="lg:col-span-6 lg:col-start-7">
