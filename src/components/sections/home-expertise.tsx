@@ -39,9 +39,18 @@ export function HomeExpertise({ services }: { services: readonly Service[] }) {
 
         <div
           aria-label="42 service expertise"
-          className="mt-12 flex flex-col overflow-hidden border border-[var(--colour-border)] xl:min-h-[43rem] xl:flex-row"
+          className="home-expertise-grid mt-12 flex flex-col overflow-hidden border border-[var(--colour-border)] xl:grid xl:min-h-[43rem]"
           data-testid="home-expertise"
           role="group"
+          style={{
+            gridTemplateColumns: services
+              .map((_, index) =>
+                index === activeIndex
+                  ? "minmax(0, 8fr)"
+                  : "minmax(4.75rem, 1fr)",
+              )
+              .join(" "),
+          }}
         >
           {services.map((service, index) => {
             const active = index === activeIndex;
@@ -51,10 +60,10 @@ export function HomeExpertise({ services }: { services: readonly Service[] }) {
             return (
               <article
                 className={cn(
-                  "group relative min-w-0 border-b border-[var(--colour-border)] bg-[var(--colour-surface)] transition-[flex-grow,background-color] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] last:border-b-0 motion-reduce:transition-none xl:border-r xl:border-b-0 xl:last:border-r-0",
+                  "home-expertise-panel group relative min-w-0 border-b border-[var(--colour-border)] bg-[var(--colour-surface)] transition-colors duration-500 last:border-b-0 motion-reduce:transition-none xl:flex xl:flex-col xl:overflow-hidden xl:border-r xl:border-b-0 xl:last:border-r-0",
                   active
-                    ? "bg-[var(--colour-surface)] xl:flex xl:flex-[7] xl:flex-col"
-                    : "bg-[var(--colour-surface-subtle)] xl:flex-[1]",
+                    ? "bg-[var(--colour-surface)]"
+                    : "bg-[var(--colour-surface-subtle)]",
                 )}
                 data-active={active ? "true" : "false"}
                 data-testid={`expertise-service-${service.slug}`}
@@ -103,7 +112,7 @@ export function HomeExpertise({ services }: { services: readonly Service[] }) {
                   </span>
                   <span
                     className={cn(
-                      "max-w-[20ch] flex-1 text-lg leading-tight font-semibold tracking-[-0.035em]",
+                      "home-expertise-button-title max-w-[20ch] min-w-0 flex-1 text-lg leading-tight font-semibold tracking-[-0.035em] whitespace-normal",
                       !active &&
                         "xl:mt-auto xl:mb-10 xl:max-w-none xl:flex-none xl:rotate-180 xl:text-2xl xl:[writing-mode:vertical-rl]",
                     )}
@@ -123,28 +132,33 @@ export function HomeExpertise({ services }: { services: readonly Service[] }) {
                 </button>
 
                 <div
+                  aria-hidden={!active}
                   aria-labelledby={tabId}
-                  className="p-5 sm:p-7 xl:flex xl:min-w-[39rem] xl:flex-1 xl:flex-col xl:p-7 xl:pt-0"
-                  hidden={!active}
+                  className={cn(
+                    "home-expertise-content min-w-0 xl:flex-1",
+                    !active &&
+                      "pointer-events-none xl:absolute xl:inset-x-0 xl:top-20",
+                  )}
                   id={panelId}
+                  inert={!active}
                   role="region"
-                  tabIndex={0}
+                  tabIndex={active ? 0 : -1}
                 >
-                  {active ? (
-                    <>
-                      <div className="flex items-center justify-between gap-4 border-b border-[var(--colour-border)] pb-4 font-mono text-[0.625rem] tracking-[0.12em] text-[var(--colour-text-muted)] uppercase">
+                  <div className="home-expertise-content__inner min-h-0 min-w-0 overflow-hidden">
+                    <div className="flex min-h-full min-w-0 flex-col p-5 sm:p-7 xl:p-7 xl:pt-0">
+                      <div className="home-expertise-content__meta flex items-center justify-between gap-4 border-b border-[var(--colour-border)] pb-4 font-mono text-[0.625rem] tracking-[0.12em] text-[var(--colour-text-muted)] uppercase">
                         <span>Service</span>
                         <span>({String(index + 1).padStart(2, "0")})</span>
                       </div>
 
-                      <div className="mt-5 grid flex-1 gap-7 xl:grid-rows-[minmax(16rem,1fr)_auto]">
-                        <div className="relative min-h-56 overflow-hidden rounded-md bg-[var(--colour-surface-subtle)]">
+                      <div className="mt-5 grid min-w-0 flex-1 gap-7 xl:grid-rows-[minmax(16rem,1fr)_auto]">
+                        <div className="home-expertise-content__image relative min-h-56 overflow-hidden rounded-md bg-[var(--colour-surface-subtle)]">
                           <Image
                             alt=""
                             aria-hidden="true"
                             className="object-cover transition-transform duration-700 group-hover:scale-[1.015] motion-reduce:transition-none"
                             fill
-                            sizes="(max-width: 1279px) 100vw, 620px"
+                            sizes="(max-width: 1279px) 100vw, 720px"
                             src={service.image}
                           />
                           <div
@@ -153,22 +167,22 @@ export function HomeExpertise({ services }: { services: readonly Service[] }) {
                           />
                         </div>
 
-                        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(15rem,0.75fr)]">
-                          <div>
-                            <h3 className="max-w-[18ch] font-serif text-[clamp(2.25rem,4vw,4rem)] leading-[0.95] tracking-[-0.05em] text-pretty">
+                        <div className="home-expertise-detail grid min-w-0 gap-6">
+                          <div className="home-expertise-content__copy min-w-0">
+                            <h3 className="max-w-[18ch] min-w-0 font-serif text-[clamp(2.25rem,4vw,4rem)] leading-[0.95] tracking-[-0.05em] text-pretty whitespace-normal">
                               {service.name}
                             </h3>
                             <p className="mt-4 max-w-[54ch] text-sm leading-6 text-[var(--colour-text-muted)] sm:text-base sm:leading-7">
                               {service.summary}
                             </p>
                             <TextLink
-                              className="mt-6"
+                              className="home-expertise-content__cta mt-6"
                               href={`/services/${service.slug}`}
                             >
                               Explore this service
                             </TextLink>
                           </div>
-                          <div className="flex flex-wrap content-start gap-2 lg:border-l lg:border-[var(--colour-border)] lg:pl-6">
+                          <div className="home-expertise-content__tags flex min-w-0 flex-wrap content-start gap-2">
                             {service.capabilities
                               .slice(0, 5)
                               .map((capability) => (
@@ -179,8 +193,8 @@ export function HomeExpertise({ services }: { services: readonly Service[] }) {
                           </div>
                         </div>
                       </div>
-                    </>
-                  ) : null}
+                    </div>
+                  </div>
                 </div>
               </article>
             );

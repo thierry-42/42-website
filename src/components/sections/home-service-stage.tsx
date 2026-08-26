@@ -14,12 +14,38 @@ export function HomeServiceStage({ services }: HomeServiceStageProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const tabListId = useId();
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const gestureStartX = useRef<number | null>(null);
   const activeService = services[activeIndex];
 
-  function selectAndFocus(index: number) {
+  function activateService(index: number, focusTab = false) {
     const nextIndex = (index + services.length) % services.length;
     setActiveIndex(nextIndex);
-    tabRefs.current[nextIndex]?.focus();
+
+    window.requestAnimationFrame(() => {
+      const tab = tabRefs.current[nextIndex];
+      tab?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+        block: "nearest",
+        inline: "center",
+      });
+      if (focusTab) tab?.focus();
+    });
+  }
+
+  function selectAndFocus(index: number) {
+    activateService(index, true);
+  }
+
+  function finishGesture(clientX: number) {
+    const startX = gestureStartX.current;
+    gestureStartX.current = null;
+    if (startX === null) return;
+
+    const distance = clientX - startX;
+    if (Math.abs(distance) < 44) return;
+    activateService(activeIndex + (distance < 0 ? 1 : -1));
   }
 
   return (
@@ -29,7 +55,17 @@ export function HomeServiceStage({ services }: HomeServiceStageProps) {
       data-testid="home-service-stage"
       data-surface="dark"
     >
-      <div className="relative min-h-[29rem] sm:min-h-[36rem] lg:min-h-[42rem]">
+      <div
+        className="relative min-h-[29rem] touch-pan-y sm:min-h-[36rem] lg:min-h-[42rem]"
+        data-testid="home-service-visual"
+        onPointerCancel={() => {
+          gestureStartX.current = null;
+        }}
+        onPointerDown={(event) => {
+          gestureStartX.current = event.clientX;
+        }}
+        onPointerUp={(event) => finishGesture(event.clientX)}
+      >
         <Image
           alt=""
           aria-hidden="true"
@@ -51,19 +87,41 @@ export function HomeServiceStage({ services }: HomeServiceStageProps) {
         />
 
         <div className="relative z-10 flex min-h-[29rem] flex-col justify-between p-5 pb-32 sm:min-h-[36rem] sm:p-8 sm:pb-36 lg:min-h-[42rem] lg:p-12 lg:pb-40">
-          <div className="flex items-center justify-between gap-4 border-b border-[var(--colour-border-inverse)] pb-4 font-mono text-[0.625rem] tracking-[0.13em] text-[var(--colour-text-inverse-muted)] uppercase">
+          <div className="flex items-start justify-between gap-4 border-b border-[var(--colour-border-inverse)] pb-4 font-mono text-[0.625rem] tracking-[0.13em] text-[var(--colour-text-inverse-muted)] uppercase">
             <span>Answer system / service architecture</span>
-            <span>
-              {String(activeIndex + 1).padStart(2, "0")} /{" "}
-              {String(services.length).padStart(2, "0")}
-            </span>
+            <div
+              className="flex shrink-0 items-center gap-2"
+              data-testid="hero-service-navigation"
+            >
+              <button
+                aria-label="Previous service"
+                className="grid size-9 place-items-center rounded-full border border-[var(--colour-border-inverse)] text-base text-[var(--colour-text-inverse)] transition-colors hover:border-[var(--colour-border-inverse-strong)] hover:bg-[var(--colour-surface-inverse-subtle)] motion-reduce:transition-none"
+                onClick={() => activateService(activeIndex - 1)}
+                type="button"
+              >
+                <span aria-hidden="true">←</span>
+              </button>
+              <span aria-live="polite" className="min-w-[4.5rem] text-center">
+                {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                {String(services.length).padStart(2, "0")}
+              </span>
+              <button
+                aria-label="Next service"
+                className="grid size-9 place-items-center rounded-full border border-[var(--colour-border-inverse)] text-base text-[var(--colour-text-inverse)] transition-colors hover:border-[var(--colour-border-inverse-strong)] hover:bg-[var(--colour-surface-inverse-subtle)] motion-reduce:transition-none"
+                onClick={() => activateService(activeIndex + 1)}
+                type="button"
+              >
+                <span aria-hidden="true">→</span>
+              </button>
+            </div>
           </div>
 
           <div
             aria-live="polite"
             aria-labelledby={`${tabListId}-tab-${activeIndex}`}
-            className="max-w-[41rem]"
-            id={`${tabListId}-panel`}
+            className="home-service-stage-copy max-w-[41rem]"
+            id={`${tabListId}-stage`}
+            key={activeService.slug}
             role="tabpanel"
           >
             <p className="font-mono text-[0.6875rem] tracking-[0.14em] text-[var(--colour-action)] uppercase">
@@ -81,14 +139,15 @@ export function HomeServiceStage({ services }: HomeServiceStageProps) {
 
       <div
         aria-label="Choose a HubSpot service"
-        className="home-service-tabs hide-scrollbar absolute inset-x-0 bottom-0 z-20 flex snap-x snap-mandatory gap-px overflow-x-auto border-t border-[var(--colour-border-inverse)] bg-[color-mix(in_srgb,var(--colour-surface-inverse)_76%,transparent)] p-2 backdrop-blur-sm sm:p-3"
+        aria-orientation="horizontal"
+        className="home-service-tabs hide-scrollbar absolute inset-x-0 bottom-0 z-20 flex snap-x snap-mandatory scroll-px-2 gap-px overflow-x-auto border-t border-[var(--colour-border-inverse)] bg-[color-mix(in_srgb,var(--colour-surface-inverse)_76%,transparent)] p-2 pr-[18vw] backdrop-blur-sm sm:scroll-px-3 sm:p-3 sm:pr-[12vw]"
         role="tablist"
       >
         {services.map((service, index) => {
           const active = index === activeIndex;
           return (
             <button
-              aria-controls={`${tabListId}-panel`}
+              aria-controls={`${tabListId}-stage`}
               aria-selected={active}
               className={cn(
                 "group grid min-h-20 min-w-[13.5rem] snap-start grid-cols-[3.5rem_1fr] items-center gap-3 border px-3 py-2 text-left transition-[background-color,border-color,color] duration-200 motion-reduce:transition-none sm:min-w-[15rem]",
@@ -98,7 +157,7 @@ export function HomeServiceStage({ services }: HomeServiceStageProps) {
               )}
               id={`${tabListId}-tab-${index}`}
               key={service.slug}
-              onClick={() => setActiveIndex(index)}
+              onClick={() => activateService(index)}
               onFocus={() => setActiveIndex(index)}
               onKeyDown={(event) => {
                 if (event.key === "ArrowRight" || event.key === "ArrowDown") {

@@ -563,6 +563,19 @@ html[data-contrast-mode="high"] :is(button, input, select, textarea, summary) {
       both;
   }
 
+  .home-service-stage-copy {
+    animation: home-service-copy-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .home-expertise-grid {
+    transition: grid-template-columns 680ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .home-expertise-panel[data-active="true"] .home-expertise-button-title {
+    animation: home-expertise-title-enter 400ms cubic-bezier(0.22, 1, 0.36, 1)
+      140ms both;
+  }
+
   details[open] > [data-testid="services-menu"] {
     animation: mega-menu-enter 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
     transform-origin: top center;
@@ -629,6 +642,138 @@ html[data-contrast-mode="high"] :is(button, input, select, textarea, summary) {
   }
 }
 
+@keyframes home-service-copy-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes home-expertise-title-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-0.5rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.home-expertise-panel {
+  container-type: inline-size;
+}
+
+.home-expertise-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  min-width: 0;
+  opacity: 0;
+  transform: translateY(0.875rem);
+  visibility: hidden;
+  transition:
+    grid-template-rows 520ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 220ms ease,
+    transform 320ms cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0s linear 360ms;
+}
+
+.home-expertise-panel[data-active="true"] .home-expertise-content {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+  transition-delay: 0s, 180ms, 180ms, 0s;
+}
+
+.home-expertise-content__image,
+.home-expertise-content__copy,
+.home-expertise-content__tags,
+.home-expertise-content__cta {
+  opacity: 0;
+  transform: translateY(0.625rem);
+  transition:
+    opacity 260ms ease,
+    transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.home-expertise-panel[data-active="true"] .home-expertise-content__image {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 220ms;
+}
+
+.home-expertise-panel[data-active="true"] .home-expertise-content__copy {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 290ms;
+}
+
+.home-expertise-panel[data-active="true"] .home-expertise-content__tags {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 350ms;
+}
+
+.home-expertise-panel[data-active="true"] .home-expertise-content__cta {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 410ms;
+}
+
+@container (min-width: 34rem) {
+  .home-expertise-detail {
+    grid-template-columns: minmax(0, 1.2fr) minmax(12rem, 0.8fr);
+  }
+
+  .home-expertise-content__tags {
+    border-left: 1px solid var(--colour-border);
+    padding-left: 1.5rem;
+  }
+}
+
+.home-engagement-stack-card + .home-engagement-stack-card {
+  margin-top: 1.5rem;
+}
+
+@media (min-width: 80rem) and (prefers-reduced-motion: no-preference) {
+  .home-process-grid {
+    --home-process-stagger: clamp(13rem, 22.5vw, 18rem);
+  }
+
+  .home-process-card {
+    position: sticky;
+    top: calc(var(--header-height) + 1rem);
+  }
+
+  .home-process-card[data-process-index="1"] {
+    margin-top: var(--home-process-stagger);
+  }
+
+  .home-process-card[data-process-index="2"] {
+    margin-top: calc(var(--home-process-stagger) * 2);
+  }
+
+  .home-process-card[data-process-index="3"] {
+    margin-top: calc(var(--home-process-stagger) * 3);
+  }
+
+  .home-engagement-stack-card {
+    position: sticky;
+    top: calc(var(--header-height) + 1rem);
+  }
+
+  .home-engagement-stack-card + .home-engagement-stack-card {
+    margin-top: clamp(1.5rem, 3vh, 2.5rem);
+  }
+}
+
 @media (min-width: 40rem) {
   .capability-flow-pulse {
     animation-name: capability-flow-horizontal;
@@ -637,6 +782,14 @@ html[data-contrast-mode="high"] :is(button, input, select, textarea, summary) {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .home-expertise-content,
+  .home-expertise-content__image,
+  .home-expertise-content__copy,
+  .home-expertise-content__tags,
+  .home-expertise-content__cta {
+    transition: none !important;
+  }
+
   .scroll-progress {
     display: none;
   }
