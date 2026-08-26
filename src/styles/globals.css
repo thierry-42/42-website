@@ -742,6 +742,12 @@ html[data-contrast-mode="high"] :is(button, input, select, textarea, summary) {
   margin-top: 1.5rem;
 }
 
+@media (min-width: 80rem) {
+  .home-expertise-grid {
+    height: clamp(53rem, calc(46.25rem + 7.5vw), 55.25rem);
+  }
+}
+
 @media (min-width: 80rem) and (prefers-reduced-motion: no-preference) {
   .home-process-grid {
     --home-process-stagger: clamp(13rem, 22.5vw, 18rem);

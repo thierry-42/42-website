@@ -142,6 +142,79 @@ test("expertise panels interpolate and every long title wraps without clipping",
   }
 });
 
+test("expertise stage height stays stable across every desktop service", async ({
+  page,
+}) => {
+  for (const viewport of [
+    { height: 900, width: 1440 },
+    { height: 1080, width: 1920 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+
+    const expertise = page.getByTestId("home-expertise");
+    const panels = expertise.locator('[data-testid^="expertise-service-"]');
+    const initialHeight = (await expertise.boundingBox())?.height ?? 0;
+
+    for (let index = 0; index < 8; index += 1) {
+      const panel = panels.nth(index);
+      await panel.getByRole("button").click();
+      await page.waitForTimeout(720);
+
+      const activePanel = expertise.locator('[data-active="true"]');
+      const activeContent = activePanel.locator(
+        ".home-expertise-content__inner > div",
+      );
+      const contentGeometry = await activeContent.evaluate((element) => {
+        const bounds = element.getBoundingClientRect();
+        const stageBounds = element
+          .closest('[data-testid="home-expertise"]')!
+          .getBoundingClientRect();
+        return {
+          bottom: bounds.bottom,
+          right: bounds.right,
+          scrollHeight: element.scrollHeight,
+          scrollWidth: element.scrollWidth,
+          stageBottom: stageBounds.bottom,
+          stageRight: stageBounds.right,
+        };
+      });
+
+      expect((await expertise.boundingBox())?.height ?? 0).toBeCloseTo(
+        initialHeight,
+        0,
+      );
+      expect(contentGeometry.bottom).toBeLessThanOrEqual(
+        contentGeometry.stageBottom + 1,
+      );
+      expect(contentGeometry.right).toBeLessThanOrEqual(
+        contentGeometry.stageRight + 1,
+      );
+      expect(contentGeometry.scrollHeight).toBeLessThanOrEqual(
+        Math.ceil((await activeContent.boundingBox())?.height ?? 0) + 1,
+      );
+      expect(contentGeometry.scrollWidth).toBeLessThanOrEqual(
+        Math.ceil((await activeContent.boundingBox())?.width ?? 0) + 1,
+      );
+      await expect(
+        activePanel.getByRole("link", { name: "Explore this service" }),
+      ).toBeVisible();
+
+      const capabilities = activePanel.locator(
+        ".home-expertise-content__tags > *",
+      );
+      await expect(capabilities).not.toHaveCount(0);
+      for (
+        let capability = 0;
+        capability < (await capabilities.count());
+        capability += 1
+      ) {
+        await expect(capabilities.nth(capability)).toBeVisible();
+      }
+    }
+  }
+});
+
 test("How We Work begins staggered, aligns through scroll, and reverses", async ({
   page,
 }) => {

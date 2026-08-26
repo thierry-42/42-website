@@ -39,7 +39,7 @@ export function HomeExpertise({ services }: { services: readonly Service[] }) {
 
         <div
           aria-label="42 service expertise"
-          className="home-expertise-grid mt-12 flex flex-col overflow-hidden border border-[var(--colour-border)] xl:grid xl:min-h-[43rem]"
+          className="home-expertise-grid mt-12 flex flex-col overflow-hidden border border-[var(--colour-border)] xl:grid"
           data-testid="home-expertise"
           role="group"
           style={{
