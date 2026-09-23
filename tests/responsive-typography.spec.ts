@@ -181,6 +181,75 @@ for (const viewport of viewports) {
   });
 }
 
+test("collapsed expertise labels remain fully visible on wide screens", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+
+  for (const viewport of [
+    { height: 900, width: 1280 },
+    { height: 900, width: 1440 },
+    { height: 1451, width: 2006 },
+  ]) {
+    await page.setViewportSize(viewport);
+    await page.goto("/");
+    await page.evaluate(() => document.fonts.ready);
+
+    const geometry = await page
+      .getByTestId("home-expertise")
+      .locator('[data-active="false"] .home-expertise-button-title')
+      .evaluateAll((elements) =>
+        elements.map((element) => {
+          const button = element.closest("button")!;
+          const buttonBounds = button.getBoundingClientRect();
+          const range = document.createRange();
+          range.selectNodeContents(element);
+          const textBounds = range.getBoundingClientRect();
+
+          return {
+            buttonDisplay: getComputedStyle(button).display,
+            buttonBounds: {
+              bottom: buttonBounds.bottom,
+              left: buttonBounds.left,
+              right: buttonBounds.right,
+              top: buttonBounds.top,
+            },
+            clientHeight: element.clientHeight,
+            clientWidth: element.clientWidth,
+            scrollHeight: element.scrollHeight,
+            scrollWidth: element.scrollWidth,
+            textBounds: {
+              bottom: textBounds.bottom,
+              left: textBounds.left,
+              right: textBounds.right,
+              top: textBounds.top,
+            },
+          };
+        }),
+      );
+
+    expect(geometry).toHaveLength(7);
+    for (const label of geometry) {
+      expect(label.buttonDisplay).toBe("flex");
+      expect(label.clientWidth).toBeGreaterThan(0);
+      expect(label.scrollWidth).toBeLessThanOrEqual(label.clientWidth + 1);
+      expect(label.scrollHeight).toBeLessThanOrEqual(label.clientHeight + 1);
+      expect(label.textBounds.top).toBeGreaterThanOrEqual(
+        label.buttonBounds.top - 1,
+      );
+      expect(label.textBounds.bottom).toBeLessThanOrEqual(
+        label.buttonBounds.bottom + 1,
+      );
+      expect(label.textBounds.left).toBeGreaterThanOrEqual(
+        label.buttonBounds.left - 1,
+      );
+      expect(label.textBounds.right).toBeLessThanOrEqual(
+        label.buttonBounds.right + 1,
+      );
+    }
+  }
+});
+
 for (const viewport of viewports) {
   test(`shared page typography and cards reflow at ${viewport.width}px`, async ({
     page,

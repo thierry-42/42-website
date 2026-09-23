@@ -83,7 +83,7 @@ export function HomeExpertise({ services }: { services: readonly Service[] }) {
                     "grid min-h-20 w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-4 text-left hover:bg-[var(--colour-surface-subtle-strong)]/45 sm:gap-5 sm:px-5",
                     active
                       ? "xl:relative xl:z-20 xl:min-h-20 xl:flex-row xl:px-7 xl:py-5"
-                      : "xl:absolute xl:inset-0 xl:z-20 xl:min-h-0 xl:flex-col xl:items-center xl:justify-start xl:px-4 xl:py-6",
+                      : "xl:absolute xl:inset-0 xl:z-20 xl:flex xl:min-h-0 xl:flex-col xl:items-center xl:justify-start xl:px-4 xl:py-6",
                   )}
                   id={tabId}
                   onClick={() => setActiveIndex(index)}
