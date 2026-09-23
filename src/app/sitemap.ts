@@ -16,6 +16,7 @@ const routes = [
   "/insights",
   "/hubspot-review",
   "/contact",
+  "/accessibility",
   "/privacy",
   "/terms",
 ];
