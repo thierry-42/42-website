@@ -60,8 +60,11 @@ together when provisioning a new database with:
 npm run db:prepare
 ```
 
-On Render, set the Web Service pre-deploy command to `npm run db:migrate`. Run
-`npm run db:seed` once when provisioning a new staging or production database.
+On Render, set the Web Service pre-deploy command to `npm run db:prepare`. Free
+Web Services do not provide pre-deploy commands, so include it in the build
+command instead: `npm ci && npm run db:prepare && npm run build`. Applied
+content seeds are skipped by the ledger, so this does not overwrite later
+editorial changes.
 
 Before a destructive migration, confirm a recent recoverable backup. Prefer
 expand-and-contract changes: add and backfill compatible columns first, deploy

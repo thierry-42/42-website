@@ -217,12 +217,13 @@ Render hosts separate staging and production Web Services. The staging service u
 
 - Project root: repository root
 - Node.js: 20.9 or newer
-- Build command: `npm run build`
-- Pre-deploy command: `npm run db:migrate`
+- Build command on a free Render Web Service: `npm ci && npm run db:prepare && npm run build`
+- Build command when pre-deploy commands are available: `npm ci && npm run build`
+- Pre-deploy command when available: `npm run db:prepare`
 - Next.js service start command: `npm run start`
 - Environment variables: configure in the hosting platform, never in Git
 
-Attach a separate Render PostgreSQL database to each Web Service and set that environment's private/internal connection URL as `DATABASE_URL`. Do not share staging and production databases. Run `npm run db:prepare` once to provision each new database. After provisioning, `npm run db:migrate` applies only pending schema migrations before a new application process starts, preserving editorial changes made directly in PostgreSQL.
+Attach a separate Render PostgreSQL database to each Web Service and set that environment's private/internal connection URL as `DATABASE_URL`. Do not share staging and production databases. `npm run db:prepare` applies pending schema migrations and any unapplied numbered content seeds. The content-seed ledger makes later runs no-ops, preserving editorial changes made directly in PostgreSQL.
 
 On the Render staging Web Service, configure:
 
