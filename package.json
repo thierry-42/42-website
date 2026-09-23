@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "description": "The public website for 42, a senior-led HubSpot consultancy.",
+  "overrides": {
+    "nanoid": "3.3.18"
+  },
   "engines": {
     "node": ">=20.9.0"
   },
@@ -30,7 +33,7 @@
   },
   "dependencies": {
     "motion": "12.42.2",
-    "next": "16.2.11",
+    "next": "16.3.6",
     "pg": "^8.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
@@ -47,12 +50,12 @@
     "@types/react": "19.2.17",
     "@types/react-dom": "19.2.3",
     "eslint": "9.39.5",
-    "eslint-config-next": "16.2.11",
+    "eslint-config-next": "16.3.6",
     "lighthouse": "12.8.2",
     "pg-mem": "^3.0.14",
     "prettier": "3.9.6",
     "prettier-plugin-tailwindcss": "0.8.1",
-    "sharp": "0.34.5",
+    "sharp": "0.35.4",
     "tailwindcss": "4.3.3",
     "typescript": "6.0.3"
   }
