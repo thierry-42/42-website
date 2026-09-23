@@ -135,7 +135,7 @@ export function SiteHeader({
 
         <nav
           aria-label="Primary navigation"
-          className="hidden items-center gap-1 lg:flex"
+          className="hidden shrink-0 items-center gap-1 lg:flex"
         >
           {navigation.map((item) => {
             if (item.href === "/services") {
@@ -149,7 +149,7 @@ export function SiteHeader({
                   <summary
                     aria-current={servicesActive ? "page" : undefined}
                     className={cn(
-                      "flex min-h-11 cursor-pointer list-none items-center rounded-sm px-3 text-sm font-semibold marker:hidden hover:bg-current/8",
+                      "flex min-h-11 cursor-pointer list-none items-center rounded-sm px-3 text-sm font-semibold whitespace-nowrap marker:hidden hover:bg-current/8",
                       servicesActive &&
                         "underline decoration-2 underline-offset-8",
                     )}
@@ -180,14 +180,14 @@ export function SiteHeader({
                               name={service.slug as SystemIconName}
                             />
                           </span>
-                          <span>
+                          <span className="min-w-0">
                             <span className="flex items-center gap-2 font-mono text-[0.625rem] text-slate-500">
                               {String(index + 1).padStart(2, "0")}
                             </span>
-                            <span className="mt-1 block text-sm font-semibold">
+                            <span className="mt-1 block text-sm font-semibold text-balance">
                               {service.label}
                             </span>
-                            <span className="mt-1 block text-xs leading-5 text-slate-500">
+                            <span className="mt-1 block text-xs leading-5 text-pretty text-slate-500">
                               {service.description}
                             </span>
                           </span>
@@ -195,7 +195,7 @@ export function SiteHeader({
                       ))}
                     </div>
                     <Link
-                      className="mt-2 flex min-h-11 items-center justify-between rounded-md bg-ink-950 px-4 text-sm font-semibold text-paper-50"
+                      className="mt-2 flex min-h-11 items-center justify-between gap-4 rounded-md bg-ink-950 px-4 text-sm font-semibold whitespace-nowrap text-paper-50"
                       href="/services"
                       onClick={() => setIsServicesOpen(false)}
                       prefetch={false}
@@ -212,7 +212,7 @@ export function SiteHeader({
               <Link
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "flex min-h-11 items-center rounded-sm px-3 text-sm font-semibold hover:bg-current/8",
+                  "flex min-h-11 items-center rounded-sm px-3 text-sm font-semibold whitespace-nowrap hover:bg-current/8",
                   active && "underline decoration-2 underline-offset-8",
                 )}
                 href={item.href}
@@ -225,7 +225,7 @@ export function SiteHeader({
           })}
         </nav>
 
-        <div className="hidden lg:block">
+        <div className="hidden shrink-0 lg:block">
           <Button href={consultationHref} showArrow>
             {consultationLabel}
           </Button>
@@ -270,14 +270,14 @@ export function SiteHeader({
               <li key={item.href}>
                 <Link
                   aria-current={pathname === item.href ? "page" : undefined}
-                  className="flex min-h-16 items-center justify-between py-3 text-xl font-semibold tracking-[-0.03em]"
+                  className="flex min-h-16 items-center justify-between gap-4 py-3 text-xl font-semibold tracking-[-0.03em]"
                   href={item.href}
                   onClick={() => setIsMenuOpen(false)}
                   prefetch={false}
                   tabIndex={isMenuOpen ? 0 : -1}
                 >
-                  {item.label}
-                  <span className="font-mono text-xs text-white/50">
+                  <span className="min-w-0 text-balance">{item.label}</span>
+                  <span className="shrink-0 font-mono text-xs text-white/50">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                 </Link>

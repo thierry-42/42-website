@@ -11,7 +11,7 @@ import { cn } from "@/lib/cn";
 export type ButtonVariant = "primary" | "secondary" | "quiet";
 
 const baseClasses =
-  "group inline-flex min-h-12 items-center justify-center gap-3 rounded-sm border px-5 py-3 text-sm font-semibold transition-[color,background-color,border-color,transform,box-shadow] duration-200 active:translate-y-px disabled:pointer-events-none disabled:opacity-45 aria-disabled:pointer-events-none aria-disabled:opacity-45";
+  "group inline-flex min-h-12 max-w-full items-center justify-center gap-3 rounded-sm border px-5 py-3 text-center text-sm leading-5 font-semibold whitespace-normal transition-[color,background-color,border-color,transform,box-shadow] duration-200 active:translate-y-px disabled:pointer-events-none disabled:opacity-45 aria-disabled:pointer-events-none aria-disabled:opacity-45";
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
@@ -48,9 +48,9 @@ export function Button(props: LinkButtonProps | NativeButtonProps) {
   const classes = cn(baseClasses, variantClasses[variant], className);
   const content = (
     <>
-      <span>{children}</span>
+      <span className="min-w-0 text-balance">{children}</span>
       {showArrow ? (
-        <ArrowRightIcon className="size-4 transition-transform duration-200 group-hover:translate-x-1" />
+        <ArrowRightIcon className="size-4 shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
       ) : null}
     </>
   );

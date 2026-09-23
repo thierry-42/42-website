@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const authorPath = "/insights/author/thierry-luc-denichaud";
-const articlePath = "/insights/signs-your-hubspot-portal-needs-an-audit";
+const articlePath = "/insights/prepare-for-hubspot-crm-implementation";
 const authorName = "Thierry-Luc Denichaud";
 const authorRole = "Founder & Senior HubSpot Consultant";
 const fullBiography =

@@ -88,7 +88,9 @@ export function HomeServiceStage({ services }: HomeServiceStageProps) {
 
         <div className="relative z-10 flex min-h-[29rem] flex-col justify-between p-5 pb-32 sm:min-h-[36rem] sm:p-8 sm:pb-36 lg:min-h-[42rem] lg:p-12 lg:pb-40">
           <div className="flex items-start justify-between gap-4 border-b border-[var(--colour-border-inverse)] pb-4 font-mono text-[0.625rem] tracking-[0.13em] text-[var(--colour-text-inverse-muted)] uppercase">
-            <span>Answer system / service architecture</span>
+            <span className="min-w-0 text-pretty">
+              Answer system / service architecture
+            </span>
             <div
               className="flex shrink-0 items-center gap-2"
               data-testid="hero-service-navigation"
@@ -127,7 +129,7 @@ export function HomeServiceStage({ services }: HomeServiceStageProps) {
             <p className="font-mono text-[0.6875rem] tracking-[0.14em] text-[var(--colour-action)] uppercase">
               Active service
             </p>
-            <h2 className="mt-4 max-w-[14ch] font-serif text-[clamp(2.65rem,6vw,5.75rem)] leading-[0.92] tracking-[-0.055em] text-pretty text-[var(--colour-text-inverse)]">
+            <h2 className="mt-4 max-w-[16ch] font-serif text-[clamp(2.65rem,6vw,5.75rem)] leading-[0.92] tracking-[-0.055em] text-balance text-[var(--colour-text-inverse)]">
               {activeService.shortName}
             </h2>
             <p className="mt-5 max-w-[46ch] text-base leading-7 text-[var(--colour-text-inverse-muted)] sm:text-lg">
@@ -198,7 +200,7 @@ export function HomeServiceStage({ services }: HomeServiceStageProps) {
                 <span className="block font-mono text-[0.625rem] tracking-[0.1em] opacity-70">
                   ({String(index + 1).padStart(2, "0")})
                 </span>
-                <span className="mt-1 block text-sm leading-5 font-semibold tracking-[-0.02em]">
+                <span className="mt-1 block text-sm leading-5 font-semibold tracking-[-0.02em] text-balance">
                   {service.shortName}
                 </span>
               </span>

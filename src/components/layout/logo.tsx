@@ -12,7 +12,7 @@ export function Logo({ className, inverse = false }: LogoProps) {
     <Link
       aria-label="42 HubSpot consultancy, home"
       className={cn(
-        "group inline-flex min-h-11 items-center gap-3 font-sans text-2xl leading-none font-extrabold tracking-[-0.08em]",
+        "group inline-flex min-h-11 shrink-0 items-center gap-3 font-sans text-2xl leading-none font-extrabold tracking-[-0.08em]",
         inverse ? "text-paper-50" : "text-ink-950",
         className,
       )}

@@ -1,21 +1,16 @@
 import { notFound } from "next/navigation";
 
 import { ServiceDetail } from "@/components/sections/service-detail";
-import {
-  getPublishedService,
-  publicContent,
-  type Service,
-} from "@/content/site-content";
+import { getPublishedService, type Service } from "@/content/site-content";
 import { siteConfig } from "@/lib/config";
+import { listPublishedInsightsByService } from "@/lib/insights/repository";
 import { createPageMetadata } from "@/lib/metadata";
+
+export const dynamic = "force-dynamic";
 
 type ServicePageProps = {
   params: Promise<{ slug: string }>;
 };
-
-export function generateStaticParams() {
-  return publicContent.services.map((service) => ({ slug: service.slug }));
-}
 
 export async function generateMetadata({ params }: ServicePageProps) {
   const { slug } = await params;
@@ -36,9 +31,14 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
   if (!service) notFound();
 
+  const relatedInsights = (
+    await listPublishedInsightsByService(service.slug)
+  ).slice(0, 3);
+
   return (
     <ServiceDetail
       consultationHref={siteConfig.bookingUrl ?? "/contact"}
+      relatedInsights={relatedInsights}
       service={service satisfies Service}
     />
   );

@@ -746,6 +746,10 @@ html[data-contrast-mode="high"] :is(button, input, select, textarea, summary) {
   .home-expertise-grid {
     height: clamp(53rem, calc(46.25rem + 7.5vw), 55.25rem);
   }
+
+  .home-expertise-panel[data-active="false"] .home-expertise-button-title {
+    white-space: nowrap;
+  }
 }
 
 @media (min-width: 80rem) and (prefers-reduced-motion: no-preference) {

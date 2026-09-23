@@ -11,6 +11,13 @@ import { TextLink } from "@/components/ui/text-link";
 import type { Service } from "@/content/site-content";
 import { cn } from "@/lib/cn";
 
+function keepTrailingWordsTogether(value: string) {
+  const finalSpace = value.lastIndexOf(" ");
+  return finalSpace > 0
+    ? `${value.slice(0, finalSpace)}\u00a0${value.slice(finalSpace + 1)}`
+    : value;
+}
+
 export function HomeExpertise({ services }: { services: readonly Service[] }) {
   const [activeIndex, setActiveIndex] = useState(0);
   const tabsId = useId();
@@ -73,7 +80,7 @@ export function HomeExpertise({ services }: { services: readonly Service[] }) {
                   aria-controls={panelId}
                   aria-expanded={active}
                   className={cn(
-                    "flex min-h-20 w-full items-center justify-between gap-5 px-5 py-4 text-left hover:bg-[var(--colour-surface-subtle-strong)]/45",
+                    "grid min-h-20 w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 py-4 text-left hover:bg-[var(--colour-surface-subtle-strong)]/45 sm:gap-5 sm:px-5",
                     active
                       ? "xl:relative xl:z-20 xl:min-h-20 xl:flex-row xl:px-7 xl:py-5"
                       : "xl:absolute xl:inset-0 xl:z-20 xl:min-h-0 xl:flex-col xl:items-center xl:justify-start xl:px-4 xl:py-6",
@@ -112,12 +119,13 @@ export function HomeExpertise({ services }: { services: readonly Service[] }) {
                   </span>
                   <span
                     className={cn(
-                      "home-expertise-button-title max-w-[20ch] min-w-0 flex-1 text-lg leading-tight font-semibold tracking-[-0.035em] whitespace-normal",
-                      !active &&
-                        "xl:mt-auto xl:mb-10 xl:max-w-none xl:flex-none xl:rotate-180 xl:text-2xl xl:[writing-mode:vertical-rl]",
+                      "home-expertise-button-title min-w-0 text-lg leading-tight font-semibold tracking-[-0.035em] text-balance",
+                      active
+                        ? "whitespace-normal"
+                        : "xl:mt-auto xl:mb-10 xl:max-w-none xl:flex-none xl:rotate-180 xl:text-2xl xl:[writing-mode:vertical-rl]",
                     )}
                   >
-                    {service.shortName}
+                    {keepTrailingWordsTogether(service.shortName)}
                   </span>
                   <span
                     aria-hidden="true"
@@ -169,7 +177,7 @@ export function HomeExpertise({ services }: { services: readonly Service[] }) {
 
                         <div className="home-expertise-detail grid min-w-0 gap-6">
                           <div className="home-expertise-content__copy min-w-0">
-                            <h3 className="max-w-[18ch] min-w-0 font-serif text-[clamp(2.25rem,4vw,4rem)] leading-[0.95] tracking-[-0.05em] text-pretty whitespace-normal">
+                            <h3 className="max-w-[18ch] min-w-0 font-serif text-[clamp(2.25rem,4vw,4rem)] leading-[0.95] tracking-[-0.05em] text-balance whitespace-normal xl:text-[clamp(2.25rem,7cqi,3rem)]">
                               {service.name}
                             </h3>
                             <p className="mt-4 max-w-[54ch] text-sm leading-6 text-[var(--colour-text-muted)] sm:text-base sm:leading-7">

@@ -6,8 +6,8 @@ import { Section } from "@/components/layout/section";
 import { Reveal } from "@/components/motion/reveal";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { TextLink } from "@/components/ui/text-link";
-import type { Insight } from "@/content/site-content";
-import { publicContent } from "@/content/site-content";
+import type { PublishedInsight } from "@/lib/insights/models";
+import { listPublishedInsights } from "@/lib/insights/repository";
 
 function formatDate(value: string | null) {
   if (!value) return null;
@@ -16,10 +16,10 @@ function formatDate(value: string | null) {
     month: "short",
     year: "numeric",
     timeZone: "UTC",
-  }).format(new Date(`${value}T00:00:00Z`));
+  }).format(new Date(value));
 }
 
-function InsightMeta({ insight }: { insight: Insight }) {
+function InsightMeta({ insight }: { insight: PublishedInsight }) {
   const publishedDate = formatDate(insight.publishedAt);
 
   return (
@@ -39,8 +39,8 @@ function InsightMeta({ insight }: { insight: Insight }) {
   );
 }
 
-export function SelectedInsights() {
-  const insights = publicContent.insights
+export async function SelectedInsights() {
+  const insights = (await listPublishedInsights())
     .filter((insight) => insight.featured)
     .slice(0, 3);
   if (insights.length === 0) return null;

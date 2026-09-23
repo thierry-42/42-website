@@ -12,7 +12,7 @@ export function StakeholderList({ ariaLabel, items }: StakeholderListProps) {
     >
       {items.map((item, index) => (
         <li
-          className="grid min-h-11 grid-cols-[2rem_minmax(0,1fr)] items-center rounded-md border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 text-sm leading-5 text-[var(--text-muted)] sm:min-h-8 sm:grid-cols-1 sm:rounded-full sm:px-3 sm:py-1 sm:font-mono sm:text-[0.6875rem] sm:tracking-[0.06em]"
+          className="grid min-h-11 max-w-full grid-cols-[2rem_minmax(0,1fr)] items-center rounded-md border border-[var(--border)] bg-[var(--surface)] px-3 py-2.5 text-sm leading-5 text-[var(--text-muted)] sm:min-h-8 sm:grid-cols-1 sm:rounded-full sm:px-3 sm:py-1 sm:text-center sm:font-mono sm:text-[0.6875rem] sm:tracking-[0.06em]"
           key={item}
         >
           <span
@@ -21,7 +21,9 @@ export function StakeholderList({ ariaLabel, items }: StakeholderListProps) {
           >
             {String(index + 1).padStart(2, "0")}
           </span>
-          <span>{item}</span>
+          <span className="min-w-0 text-balance [overflow-wrap:anywhere]">
+            {item}
+          </span>
         </li>
       ))}
     </ul>

@@ -1,0 +1,6 @@
+CREATE TABLE _content_seeds (
+  version TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  checksum TEXT NOT NULL,
+  applied_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

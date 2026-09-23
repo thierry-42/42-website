@@ -9,6 +9,7 @@ const primaryRoutes = [
   "/insights",
   "/hubspot-review",
   "/contact",
+  "/accessibility",
   "/privacy",
   "/terms",
 ];
@@ -42,8 +43,14 @@ const insightRoutes = [
   "/insights/what-managed-hubspot-support-should-include",
   "/insights/clean-up-duplicate-crm-properties",
   "/insights/hubspot-pricing-and-ai-credits-explained",
+  "/insights/what-to-decide-before-hubspot-configuration",
+  "/insights/the-pre-launch-checklist-your-website-team-is-probably-skipping",
+  "/insights/when-hubspot-native-integrations-stop-being-enough",
 ];
-const authorRoutes = ["/insights/author/thierry-luc-denichaud"];
+const authorRoutes = [
+  "/insights/author/thierry-luc-denichaud",
+  "/insights/author/emma-black",
+];
 
 const publicRoutes = [
   ...primaryRoutes,

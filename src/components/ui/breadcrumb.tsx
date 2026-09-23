@@ -30,25 +30,32 @@ export function Breadcrumb({
         />
       ) : null}
       <nav aria-label="Breadcrumb">
-        <ol className="flex flex-wrap items-center gap-2 font-mono text-xs text-[var(--text-muted)]">
+        <ol className="flex max-w-full flex-wrap items-center gap-2 font-mono text-xs text-[var(--text-muted)]">
           {items.map((item, index) => {
             const isCurrent = index === items.length - 1;
             return (
               <li
-                className="flex items-center gap-2"
+                className="flex max-w-full min-w-0 items-center gap-2"
                 key={`${item.label}-${index}`}
               >
-                {index > 0 ? <span aria-hidden="true">/</span> : null}
+                {index > 0 ? (
+                  <span aria-hidden="true" className="shrink-0">
+                    /
+                  </span>
+                ) : null}
                 {item.href && !isCurrent ? (
                   <Link
-                    className="rounded-xs hover:text-current"
+                    className="min-w-0 rounded-xs [overflow-wrap:anywhere] hover:text-current"
                     href={item.href}
                     prefetch={false}
                   >
                     {item.label}
                   </Link>
                 ) : (
-                  <span aria-current={isCurrent ? "page" : undefined}>
+                  <span
+                    aria-current={isCurrent ? "page" : undefined}
+                    className="min-w-0 text-pretty [overflow-wrap:anywhere]"
+                  >
                     {item.label}
                   </span>
                 )}

@@ -2,7 +2,14 @@ import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 
 const projectRoot = process.cwd();
-const roots = ["src/app", "src/components", "src/content", "src/lib", "public"];
+const roots = [
+  "database/seeds",
+  "src/app",
+  "src/components",
+  "src/content",
+  "src/lib",
+  "public",
+];
 const textExtensions = new Set([
   ".css",
   ".html",

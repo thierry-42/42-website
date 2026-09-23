@@ -14,7 +14,10 @@ export function GlobalCta({ href }: { href: string }) {
         <Eyebrow className="justify-center" index="42">
           {content.eyebrow}
         </Eyebrow>
-        <Heading className="mx-auto max-w-[18ch]" size="h2">
+        <Heading
+          className="mx-auto max-w-[22ch] !text-[clamp(1.9rem,4vw,4rem)] lg:max-w-[18ch]"
+          size="h2"
+        >
           {content.headline}
         </Heading>
         <p className="mx-auto mt-6 max-w-[62ch] text-base leading-7 text-signal-900/75 md:text-lg">

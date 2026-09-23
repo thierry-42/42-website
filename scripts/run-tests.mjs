@@ -24,6 +24,10 @@ const playwrightCli = path.join(
 process.env.PLAYWRIGHT_BROWSERS_PATH ??= browserPath;
 process.env.PLAYWRIGHT_BASE_URL = baseUrl;
 process.env.SITE_ENVIRONMENT ??= "production";
+process.env.DATABASE_TEST_MODE = "pg-mem";
+process.env.DATABASE_TEST_RUN = "local-e2e";
+delete process.env.DATABASE_URL;
+delete process.env.DATABASE_MIGRATION_URL;
 
 async function isServerReady() {
   try {

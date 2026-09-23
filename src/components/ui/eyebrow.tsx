@@ -16,18 +16,18 @@ export function Eyebrow({
   return (
     <p
       className={cn(
-        "mb-5 inline-flex items-center gap-3 font-mono text-[0.6875rem] leading-none font-semibold tracking-[0.16em] text-current uppercase",
+        "mb-5 inline-flex max-w-full items-center gap-3 font-mono text-[0.6875rem] font-semibold tracking-[0.16em] text-current uppercase",
         className,
       )}
       {...props}
     >
       <span
         aria-hidden="true"
-        className="inline-grid h-6 min-w-6 place-items-center rounded-xs bg-signal-400 px-1.5 tracking-[-0.04em] text-signal-900"
+        className="inline-grid h-6 min-w-6 shrink-0 place-items-center rounded-xs bg-signal-400 px-1.5 leading-none tracking-[-0.04em] text-signal-900"
       >
         {index}
       </span>
-      {children}
+      <span className="min-w-0 leading-4 text-balance">{children}</span>
     </p>
   );
 }

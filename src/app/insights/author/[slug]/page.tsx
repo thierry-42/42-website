@@ -10,34 +10,33 @@ import { StructuredData } from "@/components/seo/structured-data";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { InsightCard } from "@/components/ui/cards";
 import { Surface } from "@/components/ui/surface";
-import {
-  getPublishedAuthor,
-  publicAuthors,
-  publicContent,
-} from "@/content/site-content";
 import { siteConfig } from "@/lib/config";
+import {
+  getPublishedInsightAuthor,
+  listPublishedInsightsByAuthor,
+} from "@/lib/insights/repository";
 import { createPageMetadata } from "@/lib/metadata";
 import { createPersonStructuredData } from "@/lib/structured-data";
+
+export const dynamic = "force-dynamic";
 
 type AuthorPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return publicAuthors.map((author) => ({ slug: author.slug }));
-}
-
 export async function generateMetadata({
   params,
 }: AuthorPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const author = getPublishedAuthor(slug);
-  if (!author || author.bioApprovalStatus !== "approved") return {};
+  const author = await getPublishedInsightAuthor(slug);
+  if (!author) return {};
+  const approvedImage =
+    author.portraitApprovalStatus === "approved" ? author.image : undefined;
 
   return createPageMetadata({
     description: author.shortBiography,
-    image: author.image,
-    imageAlt: author.imageAlt,
+    image: approvedImage,
+    imageAlt: approvedImage ? author.imageAlt : undefined,
     imageHeight: 1280,
     imageWidth: 1024,
     path: `/insights/author/${author.slug}`,
@@ -47,13 +46,12 @@ export async function generateMetadata({
 
 export default async function AuthorPage({ params }: AuthorPageProps) {
   const { slug } = await params;
-  const author = getPublishedAuthor(slug);
+  const [author, insights] = await Promise.all([
+    getPublishedInsightAuthor(slug),
+    listPublishedInsightsByAuthor(slug),
+  ]);
 
-  if (!author || author.bioApprovalStatus !== "approved") notFound();
-
-  const insights = publicContent.insights.filter(
-    (insight) => insight.authorSlug === author.slug,
-  );
+  if (!author) notFound();
   const showPortrait =
     author.portraitApprovalStatus === "approved" ||
     siteConfig.usesDevelopmentPortraits;

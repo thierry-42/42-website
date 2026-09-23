@@ -10,21 +10,21 @@ import { Surface } from "@/components/ui/surface";
 import { TextLink } from "@/components/ui/text-link";
 import { serviceNarratives } from "@/content/page-content";
 import { publicContent, type Service } from "@/content/site-content";
+import type { PublishedInsight } from "@/lib/insights/models";
 import { createServiceStructuredData } from "@/lib/structured-data";
 
 export function ServiceDetail({
   consultationHref,
+  relatedInsights,
   service,
 }: {
   consultationHref: string;
+  relatedInsights: PublishedInsight[];
   service: Service;
 }) {
   const related = service.related
     .map((slug) => publicContent.services.find((item) => item.slug === slug))
     .filter((item): item is Service => item !== undefined);
-  const relatedInsights = publicContent.insights
-    .filter((insight) => insight.serviceSlugs.includes(service.slug))
-    .slice(0, 3);
   const narrative =
     serviceNarratives[service.slug as keyof typeof serviceNarratives];
 
@@ -110,7 +110,7 @@ export function ServiceDetail({
                 <span className="font-mono text-xs text-[var(--text-muted)]">
                   D/{String(index + 1).padStart(2, "0")}
                 </span>
-                <h3 className="mt-5 text-[clamp(1.125rem,5vw,1.25rem)] leading-snug font-semibold tracking-[-0.03em] sm:mt-10 sm:text-lg">
+                <h3 className="mt-5 text-[clamp(1.125rem,5vw,1.25rem)] leading-snug font-semibold tracking-[-0.03em] text-balance sm:mt-10 sm:text-lg">
                   {capability}
                 </h3>
               </Surface>

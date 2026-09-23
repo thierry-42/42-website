@@ -3,9 +3,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import {
+  getMarkdownHeadings,
+  MarkdownArticle,
+} from "@/components/insights/markdown-article";
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
-import { Reveal } from "@/components/motion/reveal";
 import { GlobalCta } from "@/components/sections/global-cta";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { StructuredData } from "@/components/seo/structured-data";
@@ -14,15 +17,16 @@ import { InsightCard, ServiceCard } from "@/components/ui/cards";
 import { Eyebrow } from "@/components/ui/eyebrow";
 import { Surface } from "@/components/ui/surface";
 import { Heading } from "@/components/ui/typography";
-import { getInsightBody } from "@/content/insights";
+import { getPublishedService } from "@/content/site-content";
+import { isSearchIndexable, siteConfig } from "@/lib/config";
 import {
   getPublishedInsight,
-  getPublishedAuthor,
-  getPublishedService,
-  publicContent,
-} from "@/content/site-content";
-import { isSearchIndexable, siteConfig } from "@/lib/config";
+  getPublishedInsightAuthor,
+  getPublishedInsightsBySlugs,
+} from "@/lib/insights/repository";
 import { createArticleStructuredData } from "@/lib/structured-data";
+
+export const dynamic = "force-dynamic";
 
 type InsightPageProps = {
   params: Promise<{ slug: string }>;
@@ -36,55 +40,53 @@ const dateFormatter = new Intl.DateTimeFormat("en-GB", {
 });
 
 function formatDate(value: string | null) {
-  return value
-    ? dateFormatter.format(new Date(`${value}T00:00:00Z`))
-    : "Date pending";
-}
-
-export function generateStaticParams() {
-  return publicContent.insights.map((insight) => ({ slug: insight.slug }));
+  if (!value) return "Date pending";
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(value)
+    ? new Date(`${value}T00:00:00Z`)
+    : new Date(value);
+  return dateFormatter.format(date);
 }
 
 export async function generateMetadata({
   params,
 }: InsightPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const insight = getPublishedInsight(slug);
+  const insight = await getPublishedInsight(slug);
 
   if (!insight) return {};
 
   if (!isSearchIndexable) {
     return {
       authors: [{ name: insight.author }],
-      description: insight.summary,
-      title: insight.title,
+      description: insight.seoDescription,
+      title: insight.seoTitle,
     };
   }
 
   const canonical = new URL(`/insights/${insight.slug}`, siteConfig.siteUrl);
-  const image = new URL(insight.image, siteConfig.siteUrl).toString();
+  const image = new URL(insight.ogImage, siteConfig.siteUrl).toString();
 
   return {
-    title: insight.title,
-    description: insight.summary,
+    title: insight.seoTitle,
+    description: insight.seoDescription,
     authors: [{ name: insight.author }],
     alternates: { canonical },
     openGraph: {
-      description: insight.summary,
+      description: insight.seoDescription,
       locale: "en_GB",
       images: [{ alt: insight.imageAlt, height: 960, url: image, width: 1440 }],
       authors: [insight.author],
       modifiedTime: insight.updatedAt ?? undefined,
       publishedTime: insight.publishedAt ?? undefined,
       siteName: "42",
-      title: insight.title,
+      title: insight.seoTitle,
       type: "article",
       url: canonical,
     },
     twitter: {
       card: "summary_large_image",
-      title: insight.title,
-      description: insight.summary,
+      title: insight.seoTitle,
+      description: insight.seoDescription,
       images: [image],
     },
   };
@@ -92,18 +94,20 @@ export async function generateMetadata({
 
 export default async function InsightPage({ params }: InsightPageProps) {
   const { slug } = await params;
-  const insight = getPublishedInsight(slug);
-  const body = getInsightBody(slug);
+  const insight = await getPublishedInsight(slug);
 
-  if (!insight || !body) notFound();
+  if (!insight) notFound();
 
   const relatedServices = insight.serviceSlugs
     .map((serviceSlug) => getPublishedService(serviceSlug))
     .filter((service) => service !== undefined);
-  const relatedInsights = insight.relatedInsightSlugs
-    .map((relatedSlug) => getPublishedInsight(relatedSlug))
-    .filter((related) => related !== undefined);
-  const author = getPublishedAuthor(insight.authorSlug);
+  const [relatedInsights, author] = await Promise.all([
+    getPublishedInsightsBySlugs(insight.relatedInsightSlugs),
+    getPublishedInsightAuthor(insight.authorSlug),
+  ]);
+  const headings = getMarkdownHeadings(insight.bodyMarkdown).filter(
+    (heading) => heading.depth === 2,
+  );
   return (
     <>
       <StructuredData data={createArticleStructuredData(insight, author)} />
@@ -188,16 +192,16 @@ export default async function InsightPage({ params }: InsightPageProps) {
                 </p>
                 <nav aria-label="Article contents" className="mt-5">
                   <ol className="space-y-1 border-l border-[var(--border)]">
-                    {body.sections.map((section, index) => (
-                      <li key={section.id}>
+                    {headings.map((heading, index) => (
+                      <li key={heading.id}>
                         <a
                           className="grid grid-cols-[1.5rem_1fr] gap-2 border-l border-transparent py-2 pl-4 text-sm leading-5 text-[var(--text-muted)] transition-colors hover:border-orbit-600 hover:text-current"
-                          href={`#${section.id}`}
+                          href={`#${heading.id}`}
                         >
                           <span className="font-mono text-[0.625rem]">
                             {String(index + 1).padStart(2, "0")}
                           </span>
-                          <span>{section.title.replace(/^\d+\.\s*/, "")}</span>
+                          <span>{heading.title}</span>
                         </a>
                       </li>
                     ))}
@@ -214,87 +218,12 @@ export default async function InsightPage({ params }: InsightPageProps) {
                     The short answer
                   </p>
                   <p className="mt-4 text-lg leading-8 font-medium md:text-xl md:leading-9">
-                    {body.quickAnswer}
+                    {insight.quickAnswer}
                   </p>
                 </Surface>
 
-                <div className="mt-10 space-y-6 text-lg leading-8 text-ink-800">
-                  {body.introduction.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
-                </div>
-
-                <div className="mt-16 space-y-16">
-                  {body.sections.map((section) => (
-                    <Reveal key={section.id}>
-                      <section
-                        aria-labelledby={`${section.id}-heading`}
-                        className="scroll-mt-32"
-                        id={section.id}
-                      >
-                        <h2
-                          className="max-w-[22ch] font-serif text-[clamp(2rem,3.5vw,3rem)] leading-[1.02] tracking-[-0.035em]"
-                          id={`${section.id}-heading`}
-                        >
-                          {section.title}
-                        </h2>
-                        <div className="mt-7 space-y-5 text-lg leading-8 text-ink-800">
-                          {section.paragraphs.map((paragraph) => (
-                            <p key={paragraph}>{paragraph}</p>
-                          ))}
-                        </div>
-                        {section.bullets ? (
-                          <ul className="mt-7 grid gap-3">
-                            {section.bullets.map((bullet) => (
-                              <li
-                                className="grid grid-cols-[0.75rem_1fr] gap-3 text-base leading-7 text-ink-800"
-                                key={bullet}
-                              >
-                                <span
-                                  aria-hidden="true"
-                                  className="mt-[0.65rem] size-1.5 rounded-full bg-signal-500"
-                                />
-                                <span>{bullet}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        ) : null}
-                        {section.steps ? (
-                          <ol className="mt-8 grid gap-3 sm:grid-cols-2">
-                            {section.steps.map((step, index) => (
-                              <li key={step.title}>
-                                <Surface className="h-full p-5" tone="muted">
-                                  <span className="text-orbit-700 font-mono text-[0.6875rem]">
-                                    {String(index + 1).padStart(2, "0")}
-                                  </span>
-                                  <h3 className="mt-5 text-base font-semibold tracking-[-0.025em]">
-                                    {step.title}
-                                  </h3>
-                                  <p className="mt-2 text-sm leading-6 text-[var(--text-muted)]">
-                                    {step.body}
-                                  </p>
-                                </Surface>
-                              </li>
-                            ))}
-                          </ol>
-                        ) : null}
-                        {section.note ? (
-                          <aside className="mt-8 border-l-4 border-signal-500 bg-signal-400/12 px-6 py-5 text-base leading-7 text-ink-800">
-                            <strong className="font-semibold">
-                              Keep in mind:{" "}
-                            </strong>
-                            {section.note}
-                          </aside>
-                        ) : null}
-                      </section>
-                    </Reveal>
-                  ))}
-                </div>
-
-                <div className="mt-16 border-t border-[var(--border)] pt-10">
-                  <p className="font-serif text-3xl leading-tight tracking-[-0.03em]">
-                    {body.conclusion}
-                  </p>
+                <div className="mt-12">
+                  <MarkdownArticle markdown={insight.bodyMarkdown} />
                 </div>
 
                 {author ? (
@@ -321,33 +250,38 @@ export default async function InsightPage({ params }: InsightPageProps) {
                   </Surface>
                 ) : null}
 
-                <div className="mt-14 border-t border-[var(--border)] pt-10">
-                  <h2 className="text-xl font-semibold tracking-[-0.035em]">
-                    Sources and further reading
-                  </h2>
-                  <p className="mt-3 text-sm leading-6 text-[var(--text-muted)]">
-                    Product behaviour and pricing can change. These primary
-                    sources were reviewed on 22 July 2026.
-                  </p>
-                  <ul className="mt-6 space-y-3">
-                    {body.sources.map((source) => (
-                      <li key={source.url}>
-                        <a
-                          className="group inline-flex items-start gap-3 text-sm font-semibold underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-current"
-                          href={source.url}
-                          rel="noreferrer"
-                          target="_blank"
-                        >
-                          <span className="font-mono text-[0.625rem] text-[var(--text-muted)]">
-                            {source.publisher}
-                          </span>
-                          <span>{source.title}</span>
-                          <span aria-hidden="true">↗</span>
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {insight.sources.length ? (
+                  <div className="mt-14 border-t border-[var(--border)] pt-10">
+                    <h2 className="text-xl font-semibold tracking-[-0.035em]">
+                      Sources and further reading
+                    </h2>
+                    <p className="mt-3 text-sm leading-6 text-[var(--text-muted)]">
+                      Product behaviour and pricing can change. These primary
+                      sources
+                      {insight.sourcesReviewedAt
+                        ? ` were reviewed on ${formatDate(insight.sourcesReviewedAt)}.`
+                        : " should be checked before making a current product decision."}
+                    </p>
+                    <ul className="mt-6 space-y-3">
+                      {insight.sources.map((source) => (
+                        <li key={source.url}>
+                          <a
+                            className="group inline-flex items-start gap-3 text-sm font-semibold underline decoration-[var(--border-strong)] underline-offset-4 hover:decoration-current"
+                            href={source.url}
+                            rel="noreferrer"
+                            target="_blank"
+                          >
+                            <span className="font-mono text-[0.625rem] text-[var(--text-muted)]">
+                              {source.publisher}
+                            </span>
+                            <span>{source.title}</span>
+                            <span aria-hidden="true">↗</span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
               </div>
             </div>
           </Container>

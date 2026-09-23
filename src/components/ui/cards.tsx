@@ -1,12 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import type {
-  CaseStudy,
-  Insight,
-  Service,
-  TeamMember,
-} from "@/content/site-content";
+import type { CaseStudy, Service, TeamMember } from "@/content/site-content";
 import { CapabilityTag } from "@/components/ui/capability-tag";
 import { ArrowRightIcon } from "@/components/ui/icons";
 import { ImagePlaceholder } from "@/components/ui/image-placeholder";
@@ -15,6 +10,7 @@ import { SystemIcon, type SystemIconName } from "@/components/ui/system-icons";
 import { TextLink } from "@/components/ui/text-link";
 import { cn } from "@/lib/cn";
 import { siteConfig } from "@/lib/config";
+import type { PublishedInsight } from "@/lib/insights/models";
 import { isPublicRecord } from "@/lib/proof";
 
 type ServiceCardProps = {
@@ -52,7 +48,7 @@ export function ServiceCard({ index = 0, service }: ServiceCardProps) {
           </div>
           <ArrowRightIcon className="size-5 transition-transform duration-200 group-hover:translate-x-1" />
         </div>
-        <h3 className="max-w-[18ch] text-2xl leading-tight font-semibold tracking-[-0.04em]">
+        <h3 className="max-w-[22ch] text-2xl leading-tight font-semibold tracking-[-0.04em] text-balance [overflow-wrap:break-word]">
           {service.shortName}
         </h3>
         <p className="mt-4 max-w-[48ch] text-sm leading-6 text-[var(--text-muted)]">
@@ -98,7 +94,7 @@ export function ProblemCard({ index = 0, title }: ProblemCardProps) {
           name={icons[index % icons.length]}
         />
       </div>
-      <h3 className="mt-6 max-w-[24ch] text-xl leading-snug font-semibold tracking-[-0.035em] sm:mt-10">
+      <h3 className="mt-6 max-w-[24ch] text-xl leading-snug font-semibold tracking-[-0.035em] text-balance sm:mt-10">
         {title}
       </h3>
     </Surface>
@@ -140,16 +136,25 @@ export function CaseStudyCard({ caseStudy }: { caseStudy: CaseStudy }) {
 }
 
 type InsightCardProps = {
-  insight: Insight;
+  insight: PublishedInsight;
   variant?: "default" | "featured" | "compact";
 };
+
+const insightDateFormatter = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  timeZone: "UTC",
+  year: "numeric",
+});
+
+function formatInsightDate(value: string) {
+  return insightDateFormatter.format(new Date(value));
+}
 
 export function InsightCard({
   insight,
   variant = "default",
 }: InsightCardProps) {
-  if (!isPublicRecord(insight)) return null;
-
   if (variant === "compact") {
     return (
       <article className="group border-b border-[var(--border)] last:border-b-0">
@@ -174,6 +179,12 @@ export function InsightCard({
             <h3 className="group-hover:text-orbit-700 mt-3 text-lg leading-snug font-semibold tracking-[-0.035em] transition-colors sm:text-xl">
               {insight.title}
             </h3>
+            <p className="mt-3 text-xs leading-5 text-[var(--text-muted)]">
+              By {insight.author} ·{" "}
+              <time dateTime={insight.publishedAt}>
+                {formatInsightDate(insight.publishedAt)}
+              </time>
+            </p>
           </div>
         </Link>
       </article>
@@ -223,6 +234,12 @@ export function InsightCard({
           </h3>
           <p className="mt-4 max-w-[62ch] text-sm leading-6 text-[var(--text-muted)]">
             {insight.summary}
+          </p>
+          <p className="mt-5 text-xs leading-5 text-[var(--text-muted)]">
+            By {insight.author} ·{" "}
+            <time dateTime={insight.publishedAt}>
+              {formatInsightDate(insight.publishedAt)}
+            </time>
           </p>
           <TextLink
             className="mt-auto self-start pt-8"

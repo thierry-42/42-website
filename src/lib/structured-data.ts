@@ -1,6 +1,10 @@
-import type { Author, Insight, Service } from "@/content/site-content";
+import type { Service } from "@/content/site-content";
 import { siteContent } from "@/content/site-content";
 import { siteConfig } from "@/lib/config";
+import type {
+  PublishedInsight,
+  PublishedInsightAuthor,
+} from "@/lib/insights/models";
 
 const organizationId = `${siteConfig.siteUrl}/#organization`;
 const websiteId = `${siteConfig.siteUrl}/#website`;
@@ -55,7 +59,10 @@ export function createServiceStructuredData(service: Service) {
   };
 }
 
-export function createArticleStructuredData(insight: Insight, author?: Author) {
+export function createArticleStructuredData(
+  insight: PublishedInsight,
+  author?: PublishedInsightAuthor,
+) {
   const url = new URL(
     `/insights/${insight.slug}`,
     siteConfig.siteUrl,
@@ -63,6 +70,10 @@ export function createArticleStructuredData(insight: Insight, author?: Author) {
   const authorUrl = author
     ? new URL(`/insights/author/${author.slug}`, siteConfig.siteUrl).toString()
     : undefined;
+  const approvedAuthorImage =
+    author?.portraitApprovalStatus === "approved"
+      ? new URL(author.image, siteConfig.siteUrl).toString()
+      : undefined;
 
   return {
     "@context": "https://schema.org",
@@ -71,7 +82,7 @@ export function createArticleStructuredData(insight: Insight, author?: Author) {
       ? {
           "@type": "Person",
           description: author.biography,
-          image: new URL(author.image, siteConfig.siteUrl).toString(),
+          ...(approvedAuthorImage ? { image: approvedAuthorImage } : {}),
           jobTitle: author.role,
           name: author.name,
           url: authorUrl,
@@ -82,7 +93,7 @@ export function createArticleStructuredData(insight: Insight, author?: Author) {
     datePublished: insight.publishedAt ?? undefined,
     description: insight.summary,
     headline: insight.title,
-    image: new URL(insight.image, siteConfig.siteUrl).toString(),
+    image: new URL(insight.ogImage, siteConfig.siteUrl).toString(),
     inLanguage: "en-GB",
     mainEntityOfPage: url,
     publisher: { "@id": organizationId },
@@ -90,17 +101,21 @@ export function createArticleStructuredData(insight: Insight, author?: Author) {
   };
 }
 
-export function createPersonStructuredData(author: Author) {
+export function createPersonStructuredData(author: PublishedInsightAuthor) {
   const url = new URL(
     `/insights/author/${author.slug}`,
     siteConfig.siteUrl,
   ).toString();
+  const approvedImage =
+    author.portraitApprovalStatus === "approved"
+      ? new URL(author.image, siteConfig.siteUrl).toString()
+      : undefined;
 
   return {
     "@context": "https://schema.org",
     "@type": "Person",
     description: author.biography,
-    image: new URL(author.image, siteConfig.siteUrl).toString(),
+    ...(approvedImage ? { image: approvedImage } : {}),
     jobTitle: author.role,
     name: author.name,
     url,

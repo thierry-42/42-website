@@ -104,46 +104,6 @@ const caseStudySchema = z.object({
   approvalStatus: z.string(),
 });
 
-const insightSchema = z.object({
-  slug: z.string(),
-  title: z.string(),
-  summary: z.string(),
-  category: z.string(),
-  categorySlug: z.string(),
-  author: z.string(),
-  authorSlug: z.string(),
-  image: z.string().min(1),
-  imageAlt: z.string(),
-  readingTime: z.string().min(1),
-  featured: z.boolean(),
-  serviceSlugs: z.array(z.string()),
-  relatedInsightSlugs: z.array(z.string()),
-  publishedAt: z.string().nullable(),
-  updatedAt: z.string().nullable(),
-  isPlaceholder: z.boolean(),
-  isPublished: z.boolean(),
-});
-
-const insightCategorySchema = z.object({
-  slug: z.string(),
-  name: z.string(),
-  introduction: z.string(),
-  isPublished: z.boolean(),
-});
-
-const authorSchema = z.object({
-  slug: z.string(),
-  name: z.string(),
-  role: z.string(),
-  biography: z.string(),
-  shortBiography: z.string(),
-  image: z.string(),
-  imageAlt: z.string(),
-  bioApprovalStatus: z.enum(["approved", "owner-review-required"]),
-  portraitApprovalStatus: z.enum(["approved", "development-only"]),
-  isPublished: z.boolean(),
-});
-
 export const siteContentSchema = z.object({
   meta: z.object({
     brand: z.string(),
@@ -195,9 +155,6 @@ export const siteContentSchema = z.object({
   services: z.array(serviceSchema),
   team: z.array(teamMemberSchema),
   caseStudies: z.array(caseStudySchema),
-  insightCategories: z.array(insightCategorySchema),
-  authors: z.array(authorSchema),
-  insights: z.array(insightSchema),
   faqs: z.array(
     z.object({
       question: z.string(),
@@ -215,9 +172,6 @@ export type SiteContent = z.infer<typeof siteContentSchema>;
 export type Service = z.infer<typeof serviceSchema>;
 export type TeamMember = z.infer<typeof teamMemberSchema>;
 export type CaseStudy = z.infer<typeof caseStudySchema>;
-export type Insight = z.infer<typeof insightSchema>;
-export type InsightCategory = z.infer<typeof insightCategorySchema>;
-export type Author = z.infer<typeof authorSchema>;
 
 export const siteContent = siteContentSchema.parse(rawSiteContent);
 
@@ -226,7 +180,6 @@ export const publicContent = {
   services: publicRecords(siteContent.services),
   team: publicRecords(siteContent.team),
   caseStudies: publicRecords(siteContent.caseStudies),
-  insights: publicRecords(siteContent.insights),
 } as const;
 
 const publicationByRoute = {
@@ -246,43 +199,10 @@ export const publicPrimaryNavigation = siteContent.navigation.primary.filter(
 export const publicFooterNavigation = siteContent.navigation.footer.filter(
   (item) => isRoutePublished(item.href),
 );
-export const publicInsightCategories = siteContent.insightCategories.filter(
-  (category) =>
-    category.isPublished &&
-    publicContent.insights.some(
-      (insight) => insight.categorySlug === category.slug,
-    ),
-);
-export const publicAuthors = siteContent.authors.filter(
-  (author) =>
-    author.isPublished &&
-    publicContent.insights.some(
-      (insight) => insight.authorSlug === author.slug,
-    ),
-);
-
 export function getPublishedService(slug: string): Service | undefined {
   return publicContent.services.find((service) => service.slug === slug);
 }
 
 export function getPublishedCaseStudy(slug: string): CaseStudy | undefined {
   return publicContent.caseStudies.find((caseStudy) => caseStudy.slug === slug);
-}
-
-export function getPublishedInsight(slug: string): Insight | undefined {
-  return publicContent.insights.find((insight) => insight.slug === slug);
-}
-
-export function getPublishedInsightCategory(
-  slug: string,
-): InsightCategory | undefined {
-  return publicInsightCategories.find((category) => category.slug === slug);
-}
-
-export function getAuthor(slug: string): Author | undefined {
-  return siteContent.authors.find((author) => author.slug === slug);
-}
-
-export function getPublishedAuthor(slug: string): Author | undefined {
-  return publicAuthors.find((author) => author.slug === slug);
 }

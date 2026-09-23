@@ -1,12 +1,14 @@
 import type { MetadataRoute } from "next";
 
-import {
-  isRoutePublished,
-  publicAuthors,
-  publicContent,
-  publicInsightCategories,
-} from "@/content/site-content";
+import { isRoutePublished, publicContent } from "@/content/site-content";
 import { getSiteOrigin, isSearchIndexable } from "@/lib/config";
+import {
+  listPublishedInsightAuthors,
+  listPublishedInsightCategories,
+  listPublishedInsights,
+} from "@/lib/insights/repository";
+
+export const dynamic = "force-dynamic";
 
 const routes = [
   "",
@@ -21,20 +23,23 @@ const routes = [
   "/terms",
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!isSearchIndexable) return [];
 
   const origin = getSiteOrigin();
+  const [insights, categories, authors] = await Promise.all([
+    listPublishedInsights(),
+    listPublishedInsightCategories(),
+    listPublishedInsightAuthors(),
+  ]);
   const serviceRoutes = publicContent.services.map(
     (service) => `/services/${service.slug}`,
   );
-  const insightRoutes = publicContent.insights.map(
-    (insight) => `/insights/${insight.slug}`,
-  );
-  const categoryRoutes = publicInsightCategories.map(
+  const insightRoutes = insights.map((insight) => `/insights/${insight.slug}`);
+  const categoryRoutes = categories.map(
     (category) => `/insights/category/${category.slug}`,
   );
-  const authorRoutes = publicAuthors.map(
+  const authorRoutes = authors.map(
     (author) => `/insights/author/${author.slug}`,
   );
 
@@ -47,9 +52,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   return publishedRoutes.map((path) => {
-    const insight = publicContent.insights.find(
-      (item) => path === `/insights/${item.slug}`,
-    );
+    const insight = insights.find((item) => path === `/insights/${item.slug}`);
 
     return {
       changeFrequency: path === "" ? ("weekly" as const) : ("monthly" as const),

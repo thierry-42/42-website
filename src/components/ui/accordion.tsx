@@ -40,7 +40,7 @@ export function Accordion({ items }: { items: AccordionItem[] }) {
                 onClick={() => toggleItem(index)}
                 type="button"
               >
-                <span>{item.question}</span>
+                <span className="min-w-0 text-balance">{item.question}</span>
                 <span className="grid size-9 shrink-0 place-items-center rounded-full border border-[var(--border)] transition-[background-color,border-color,color] duration-300 group-hover:border-signal-400 group-hover:bg-signal-400 group-hover:text-ink-950">
                   <PlusIcon
                     className={`size-4 transition-transform duration-300 ${open ? "rotate-45" : ""}`}

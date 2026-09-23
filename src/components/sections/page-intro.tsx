@@ -57,7 +57,7 @@ export function PageIntro({
         <div className="grid items-center gap-12 lg:grid-cols-12">
           <div className={visual ? "lg:col-span-7" : "lg:col-span-8"}>
             <Eyebrow>{eyebrow}</Eyebrow>
-            <Heading as="h1" className="max-w-[13ch]" size="h1">
+            <Heading as="h1" className="max-w-[18ch] lg:max-w-[13ch]" size="h1">
               {title}
             </Heading>
             {visual ? (

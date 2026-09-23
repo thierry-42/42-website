@@ -16,6 +16,8 @@ import { publicContent, siteContent } from "@/content/site-content";
 import { siteConfig } from "@/lib/config";
 import { createPageMetadata } from "@/lib/metadata";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   ...createPageMetadata({
     description: siteContent.meta.defaultDescription,

@@ -12,14 +12,14 @@ Production foundation for the public website of **42**, the public-facing brand 
 - `/approach`: the Understand, Architect, Build, Enable process
 - `/insights`: editorial index
 - `/insights/category/[slug]`: four populated launch categories
-- `/insights/[slug]`: ten published, sourced articles
+- `/insights/[slug]`: thirteen published, sourced articles
 - `/hubspot-review`: genuine portal-review service and conversion page
 - `/contact`: environment-aware HubSpot form and email fallback
-- `/privacy` and `/terms`: complete Batch 3 drafts, visibly marked for owner and legal review before production publication
+- `/privacy` and `/terms`: published legal information using the confirmed operator identity
 
 `/audience`, `/industries`, `/work`, and `/work/[slug]` remain in source but are unpublished for Version 1. They are omitted from public navigation and sitemap output and return 404 while their feature flags are disabled.
 
-`/insights/author/[slug]` is implemented as author-page architecture. The draft Thierry-Luc record remains unlinked, is excluded from the sitemap, and returns 404 in production until its biography and portrait are approved.
+`/insights/author/[slug]` is database-backed. Thierry-Luc Denichaud and Emma Black have reusable published author records and public author pages.
 
 ## Source of truth
 
@@ -31,7 +31,7 @@ Read these files before broad design, content, navigation, or architecture chang
 4. `docs/WORKFLOW_FIGMA_CODEX_GITHUB_DEPLOYMENT.md`
 5. `src/content/site-content.json`
 
-The PRD is the product source of truth. Structured JSON is the canonical reusable content source; `src/content/site-content.ts` validates it and exposes publication-safe projections.
+The PRD is the product source of truth. Structured JSON remains canonical for shared website content; `src/content/site-content.ts` validates it and exposes publication-safe projections. PostgreSQL is the sole runtime source for Insights articles, categories, authors, sources, and relationships.
 
 ## Requirements and local setup
 
@@ -41,10 +41,18 @@ The PRD is the product source of truth. Structured JSON is the canonical reusabl
 ```bash
 npm install
 copy .env.example .env.local
+npm run db:prepare
 npm run dev
 ```
 
-Open `http://localhost:3000`. In development only, `/dev/design-system` provides component specimens.
+Set `DATABASE_URL` in `.env.local` before running `db:prepare`; Insights routes
+fail closed when no database is configured. Open `http://localhost:3000`. In
+development only, `/dev/design-system` provides component specimens.
+
+For a disposable seeded local database, set `SITE_ENVIRONMENT=development` and
+`DATABASE_TEST_MODE=pg-mem`, leave `DATABASE_URL` empty, skip `db:prepare`, and
+run `npm run dev`. This in-memory mode is rejected by Render staging and
+production.
 
 ## Scripts
 
@@ -55,6 +63,10 @@ Open `http://localhost:3000`. In development only, `/dev/design-system` provides
 | `npm run start`                   | Serve a completed production build                   |
 | `npm run lint`                    | Run ESLint with zero warnings allowed                |
 | `npm run typecheck`               | Run strict TypeScript checks without emitting files  |
+| `npm run db:migrate`              | Apply pending PostgreSQL schema migrations           |
+| `npm run db:seed`                 | Apply the idempotent approved Insights seed          |
+| `npm run db:prepare`              | Run migrations and then seed data                    |
+| `npm run db:test`                 | Verify migrations, seed data, and publication gates  |
 | `npm run format`                  | Format source and configuration files                |
 | `npm run format:check`            | Verify formatting without changing files             |
 | `npm run test:install`            | Install Chromium for smoke tests                     |
@@ -78,8 +90,8 @@ src/
 │   ├── motion/           Reduced-motion-aware interaction utilities
 │   ├── sections/         Shared page-level compositions
 │   └── ui/               Type, actions, cards, tags, panels, and accordion
-├── content/              Canonical JSON, validation, articles, and route copy
-├── lib/                  Environment, metadata, proof, and class utilities
+├── content/              Canonical shared-site JSON, validation, and route copy
+├── lib/                  Database, Insights queries, metadata, proof, and utilities
 └── styles/               Global styles and semantic design tokens
 public/
 ├── icons/                Approved icon asset location
@@ -90,6 +102,7 @@ public/
     ├── team/             Stable portrait replacement paths
     └── work/             Unpublished case-study visuals
 scripts/                  Asset and Playwright helpers
+database/                 Versioned PostgreSQL migrations and idempotent seeds
 tests/                    Critical route and interaction smoke tests
 ```
 
@@ -101,22 +114,21 @@ Public records pass through the central gate in `src/lib/proof.ts`:
 - `isPlaceholder` must not be `true`;
 - `isVerified` must be `true` when present.
 
-Do not bypass this projection for public proof. Team names and roles are approved, while biographies and specialism wording remain marked `owner-review-required`.
+Do not bypass this projection for public proof. The published team biographies, roles, specialisms, and portraits for Thierry-Luc, Emma, and Zane are approved. Luca remains absent from public data and rendering.
 
-Every published Insight has one governed `categorySlug`, one `authorSlug`, explicit related-Insight links, and one or more related services. The four category records include original introductions. Empty categories are automatically excluded.
+Every published Insight is read from PostgreSQL and has one governed category, one reusable author, ordered sources, explicit related-Insight links, and one or more related services. Public queries require a published, non-placeholder article with a current publication date plus a published, approved author and category. Empty categories are automatically excluded.
 
-Confirmed legal-operator facts are stored under `legal` in `site-content.json`. The Privacy Policy and Terms of Use drafts use those facts and are clearly marked for owner and legal review. They must not be treated as approved production policies until every inline review note is resolved.
+Confirmed legal-operator facts are stored under `legal` in `site-content.json`. The published Privacy Policy and Terms of Use use those facts; internal launch-review notes remain in repository documentation rather than public page copy.
 
 ## Portrait and image replacement
 
-The current team portraits are AI-assisted development assets:
+The following portraits are approved for public production use:
 
 - `public/images/team/thierry-luc.webp`
-- `public/images/team/luca-codevilla.webp`
 - `public/images/team/zane-smith.webp`
 - `public/images/team/emma-black.webp`
 
-They are labelled in development/staging and are not rendered when `SITE_ENVIRONMENT=production`. Replace files in place using the existing 4:5 aspect ratio, then update approved alt text and set `portraitApprovalStatus` to `approved` and `imageIsPlaceholder` to `false`.
+They render through `next/image` with stable dimensions and approved alt text. Any unapproved future portrait remains subject to the existing production portrait gate. Unused Luca development assets may remain in the repository but are not imported or rendered publicly.
 
 Service and Insight illustrations use stable local paths. Unpublished case-study placeholders remain under `public/images/work/`.
 
@@ -135,6 +147,12 @@ Copy `.env.example` to `.env.local` and set only approved values:
 | `HUBSPOT_PRODUCTION_REGION`              | Approved production form; provide all three production values   |
 | `HUBSPOT_PRODUCTION_PORTAL_ID`           | Approved production form; provide all three production values   |
 | `HUBSPOT_PRODUCTION_FORM_ID`             | Approved production form; provide all three production values   |
+| `DATABASE_URL`                           | Server-only PostgreSQL application connection                   |
+| `DATABASE_MIGRATION_URL`                 | Optional DDL-capable migration and initial seed connection      |
+| `DATABASE_POOL_MAX`                      | Maximum pool connections per Web Service instance               |
+| `DATABASE_CONNECTION_TIMEOUT_MS`         | PostgreSQL connection timeout                                   |
+| `DATABASE_IDLE_TIMEOUT_MS`               | PostgreSQL idle-client timeout                                  |
+| `DATABASE_TEST_MODE`                     | Tests only; never configure on staging or production            |
 
 The production canonical is always `https://company42.co`; staging and local hosts are never emitted as canonical URLs. `SITE_ENVIRONMENT=production` is the only indexable mode. Staging and development emit `noindex, nofollow`, disallow crawling in `robots.txt`, return an empty sitemap, and omit canonical, Open Graph, and structured-data output. If `SITE_ENVIRONMENT` is omitted from a non-development build, the safe default is staging.
 
@@ -145,6 +163,8 @@ Visual preferences are enabled when `NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED=true
 The staging form loads only when all three staging variables are present and `SITE_ENVIRONMENT` is not `production`. Production uses only the three production variables and never falls back to staging values. The visible `hello@company42.co` fallback remains available in every environment.
 
 The form embed has resilient loading, success, validation, and script-failure states. The fallback email remains outside the cross-origin form frame and is usable even if HubSpot or JavaScript is unavailable. No analytics, HubSpot website tracking code, marketing pixel, or newsletter tracking integration is active.
+
+Staging and production use separate PostgreSQL databases and credentials. Database connections are server-only, migrations and the one-time launch seed are versioned, and the in-memory test adapter is rejected outside an explicit development test process. See [Database operations](docs/DATABASE_OPERATIONS.md) for setup, migration, seed, pooling, and release guidance.
 
 ## Figma workflow
 
@@ -164,6 +184,7 @@ Install the supported Playwright browsers once, then run:
 npm run format:check
 npm run lint
 npm run typecheck
+npm run db:test
 npm run test:install
 npm test
 npm run test:cross-browser
@@ -197,8 +218,11 @@ Render hosts separate staging and production Web Services. The staging service u
 - Project root: repository root
 - Node.js: 20.9 or newer
 - Build command: `npm run build`
+- Pre-deploy command: `npm run db:migrate`
 - Next.js service start command: `npm run start`
 - Environment variables: configure in the hosting platform, never in Git
+
+Attach a separate Render PostgreSQL database to each Web Service and set that environment's private/internal connection URL as `DATABASE_URL`. Do not share staging and production databases. Run `npm run db:prepare` once to provision each new database. After provisioning, `npm run db:migrate` applies only pending schema migrations before a new application process starts, preserving editorial changes made directly in PostgreSQL.
 
 On the Render staging Web Service, configure:
 

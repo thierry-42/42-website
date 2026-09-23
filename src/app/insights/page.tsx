@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { Container } from "@/components/layout/container";
 import { Section } from "@/components/layout/section";
 import { CardEntrance, Stagger } from "@/components/motion/reveal";
@@ -5,9 +7,14 @@ import { GlobalCta } from "@/components/sections/global-cta";
 import { PageIntro } from "@/components/sections/page-intro";
 import { SectionHeading } from "@/components/sections/section-heading";
 import { InsightCard } from "@/components/ui/cards";
-import { publicContent, publicInsightCategories } from "@/content/site-content";
 import { siteConfig } from "@/lib/config";
+import {
+  listPublishedInsightCategories,
+  listPublishedInsights,
+} from "@/lib/insights/repository";
 import { createPageMetadata } from "@/lib/metadata";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = createPageMetadata({
   description:
@@ -16,11 +23,23 @@ export const metadata = createPageMetadata({
   title: "Insights",
 });
 
-export default function InsightsPage() {
-  const insights = publicContent.insights;
-  const featured = insights[0];
-  const supporting = insights.slice(1, 4);
-  const remaining = insights.slice(4);
+export default async function InsightsPage() {
+  const [insights, categories] = await Promise.all([
+    listPublishedInsights(),
+    listPublishedInsightCategories(),
+  ]);
+  const featured = insights.find((insight) => insight.featured) ?? insights[0];
+  const supporting = insights
+    .filter((insight) => insight.slug !== featured?.slug)
+    .slice(0, 3);
+  const promotedSlugs = new Set(
+    [featured, ...supporting]
+      .filter((insight) => insight !== undefined)
+      .map((insight) => insight.slug),
+  );
+  const remaining = insights.filter(
+    (insight) => !promotedSlugs.has(insight.slug),
+  );
 
   return (
     <>
@@ -67,7 +86,7 @@ export default function InsightsPage() {
               title="Browse every practical guide."
             />
             <div className="flex max-w-2xl flex-wrap gap-2 lg:justify-end">
-              {publicInsightCategories.map((category) => (
+              {categories.map((category) => (
                 <Link
                   className="rounded-full border border-[var(--border)] bg-white px-4 py-2 font-mono text-[0.6875rem] tracking-[0.08em] transition-colors hover:border-ink-950 hover:bg-ink-950 hover:text-paper-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal-500"
                   href={`/insights/category/${category.slug}`}
@@ -93,4 +112,3 @@ export default function InsightsPage() {
     </>
   );
 }
-import Link from "next/link";

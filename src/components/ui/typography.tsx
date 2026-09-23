@@ -28,7 +28,7 @@ export function Heading({
   return (
     <Component
       className={cn(
-        "font-serif font-normal text-pretty [overflow-wrap:break-word]",
+        "font-serif font-normal text-balance [overflow-wrap:break-word]",
         headingSizes[size],
         className,
       )}

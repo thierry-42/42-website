@@ -21,7 +21,7 @@ export function SectionHeading({
   return (
     <Reveal className={cn("max-w-3xl", className)}>
       <Eyebrow index={index}>{eyebrow}</Eyebrow>
-      <Heading className="max-w-[16ch]" size="h2">
+      <Heading className="max-w-[20ch] lg:max-w-[18ch]" size="h2">
         {title}
       </Heading>
       {body ? (

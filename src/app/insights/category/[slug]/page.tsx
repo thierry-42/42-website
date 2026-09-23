@@ -10,25 +10,22 @@ import { SectionHeading } from "@/components/sections/section-heading";
 import { InsightCard } from "@/components/ui/cards";
 import {
   getPublishedInsightCategory,
-  publicContent,
-  publicInsightCategories,
-} from "@/content/site-content";
+  listPublishedInsightsByCategory,
+} from "@/lib/insights/repository";
 import { siteConfig } from "@/lib/config";
 import { createPageMetadata } from "@/lib/metadata";
+
+export const dynamic = "force-dynamic";
 
 type CategoryPageProps = {
   params: Promise<{ slug: string }>;
 };
 
-export function generateStaticParams() {
-  return publicInsightCategories.map((category) => ({ slug: category.slug }));
-}
-
 export async function generateMetadata({
   params,
 }: CategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const category = getPublishedInsightCategory(slug);
+  const category = await getPublishedInsightCategory(slug);
   if (!category) return {};
 
   return createPageMetadata({
@@ -42,12 +39,11 @@ export default async function InsightCategoryPage({
   params,
 }: CategoryPageProps) {
   const { slug } = await params;
-  const category = getPublishedInsightCategory(slug);
+  const [category, insights] = await Promise.all([
+    getPublishedInsightCategory(slug),
+    listPublishedInsightsByCategory(slug),
+  ]);
   if (!category) notFound();
-
-  const insights = publicContent.insights.filter(
-    (insight) => insight.categorySlug === category.slug,
-  );
   if (insights.length === 0) notFound();
 
   return (
