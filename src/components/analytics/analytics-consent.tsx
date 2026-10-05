@@ -9,9 +9,11 @@ import {
   analyticsPreferencesEventName,
   createSafePageLocation,
   createSafePageReferrer,
+  createValidatedCampaignParameters,
   googleTagScriptId,
   isAllowedAnalyticsHostname,
   type AnalyticsConsent,
+  type ValidatedCampaignParameters,
 } from "@/lib/analytics";
 
 declare global {
@@ -80,7 +82,10 @@ function ensureGoogleTagQueue() {
   return window.gtag;
 }
 
-function loadGoogleAnalytics(measurementId: string) {
+function loadGoogleAnalytics(
+  measurementId: string,
+  campaignParameters: ValidatedCampaignParameters,
+) {
   if (
     !isAllowedAnalyticsHostname(window.location.hostname) ||
     document.getElementById(googleTagScriptId)
@@ -95,6 +100,7 @@ function loadGoogleAnalytics(measurementId: string) {
   gtag("config", measurementId, {
     allow_ad_personalization_signals: false,
     allow_google_signals: false,
+    ...campaignParameters,
     page_location: createSafePageLocation(
       window.location.origin,
       window.location.pathname,
@@ -142,6 +148,8 @@ export function AnalyticsConsentManager({
 }) {
   const panelRef = useRef<HTMLElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
+  const landingCampaignParametersRef =
+    useRef<ValidatedCampaignParameters | null>(null);
   const [preferencesAreOpen, setPreferencesAreOpen] = useState(false);
   const hostIsAllowed = useSyncExternalStore(
     subscribeToStaticHostname,
@@ -161,8 +169,14 @@ export function AnalyticsConsentManager({
     hostIsAllowed && (consentSnapshot === "unset" || preferencesAreOpen);
 
   useEffect(() => {
-    if (hostIsAllowed && consent === "granted") {
-      loadGoogleAnalytics(measurementId);
+    if (!hostIsAllowed) return;
+
+    landingCampaignParametersRef.current ??= createValidatedCampaignParameters(
+      window.location.search,
+    );
+
+    if (consent === "granted") {
+      loadGoogleAnalytics(measurementId, landingCampaignParametersRef.current);
     }
   }, [consent, hostIsAllowed, measurementId]);
 
@@ -190,9 +204,12 @@ export function AnalyticsConsentManager({
   }, [isOpen]);
 
   function allowAnalytics() {
+    landingCampaignParametersRef.current ??= createValidatedCampaignParameters(
+      window.location.search,
+    );
     storeConsent("granted");
     closePreferences();
-    loadGoogleAnalytics(measurementId);
+    loadGoogleAnalytics(measurementId, landingCampaignParametersRef.current);
   }
 
   function declineAnalytics() {

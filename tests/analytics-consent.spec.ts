@@ -2,6 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 import {
   analyticsConsentStorageKey,
+  createValidatedCampaignParameters,
   isAllowedAnalyticsHostname,
 } from "../src/lib/analytics";
 
@@ -48,6 +49,80 @@ test("analytics host allowlist excludes non-production hosts", () => {
   ]) {
     expect(isAllowedAnalyticsHostname(hostname), hostname).toBe(false);
   }
+});
+
+test("campaign metadata is strictly allowlisted and validated", () => {
+  expect(
+    createValidatedCampaignParameters(
+      "?utm_source=linkedin&utm_medium=social&utm_campaign=42_launch",
+    ),
+  ).toEqual({
+    campaign_medium: "social",
+    campaign_name: "42_launch",
+    campaign_source: "linkedin",
+  });
+
+  expect(
+    createValidatedCampaignParameters(
+      "?utm_source=first&utm_source=second&utm_medium=jane%40example.com" +
+        "&utm_campaign=27821234567&email=private%40example.com&utm_term=name",
+    ),
+  ).toEqual({});
+
+  expect(
+    createValidatedCampaignParameters(
+      `?utm_source=${"a".repeat(101)}&utm_medium=https%3A%2F%2Fexample.com`,
+    ),
+  ).toEqual({});
+});
+
+test("consented campaign visit preserves safe GA4 attribution without its query", async ({
+  page,
+}) => {
+  await proxyProductionOrigin(page);
+  let googleTagRequests = 0;
+
+  await page.route(
+    "https://www.googletagmanager.com/gtag/js**",
+    async (route) => {
+      googleTagRequests += 1;
+      await route.fulfill({
+        body: "window.__company42GoogleTagMockLoaded = true;",
+        contentType: "application/javascript",
+        status: 200,
+      });
+    },
+  );
+
+  await page.goto(
+    `${productionOrigin}/?utm_source=linkedin&utm_medium=social` +
+      "&utm_campaign=42_launch&email=not-sent-to-analytics#private",
+  );
+  expect(googleTagRequests).toBe(0);
+
+  await page.getByRole("button", { name: "Allow analytics" }).click();
+  await expect.poll(() => googleTagRequests).toBe(1);
+
+  const commands = await page.evaluate(() => window.dataLayer ?? []);
+  const configCommands = commands.filter((command) => command[0] === "config");
+  const manualPageViews = commands.filter(
+    (command) => command[0] === "event" && command[1] === "page_view",
+  );
+
+  expect(configCommands).toHaveLength(1);
+  expect(configCommands[0]?.[1]).toBe(measurementId);
+  expect(configCommands[0]?.[2]).toMatchObject({
+    campaign_medium: "social",
+    campaign_name: "42_launch",
+    campaign_source: "linkedin",
+    page_location: `${productionOrigin}/`,
+    page_path: "/",
+    page_referrer: "",
+  });
+  expect(JSON.stringify(configCommands)).not.toContain("utm_");
+  expect(JSON.stringify(configCommands)).not.toContain("not-sent-to-analytics");
+  expect(JSON.stringify(configCommands)).not.toContain("#private");
+  expect(manualPageViews).toHaveLength(0);
 });
 
 test("Google tag stays blocked before consent and after rejection", async ({
