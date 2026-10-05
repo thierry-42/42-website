@@ -203,6 +203,13 @@ test("consent loads GA4 once with advertising denied and supports withdrawal", a
   await expect.poll(() => googleTagRequests).toBe(1);
 
   const commands = await page.evaluate(() => window.dataLayer ?? []);
+  const commandsUseGoogleTagArgumentsQueue = await page.evaluate(() =>
+    (window.dataLayer ?? [])
+      .filter((command) =>
+        ["consent", "js", "config"].includes(String(command[0])),
+      )
+      .every((command) => !Array.isArray(command)),
+  );
   const defaultConsent = commands.find(
     (command) => command[0] === "consent" && command[1] === "default",
   );
@@ -226,6 +233,7 @@ test("consent loads GA4 once with advertising denied and supports withdrawal", a
     ad_user_data: "denied",
     analytics_storage: "granted",
   });
+  expect(commandsUseGoogleTagArgumentsQueue).toBe(true);
   expect(configCommands).toHaveLength(1);
   expect(configCommands[0]?.[1]).toBe(measurementId);
   expect(configCommands[0]?.[2]).toMatchObject({

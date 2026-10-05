@@ -18,7 +18,7 @@ import {
 
 declare global {
   interface Window {
-    dataLayer?: unknown[][];
+    dataLayer?: (IArguments | unknown[])[];
     gtag?: (...args: unknown[]) => void;
   }
 }
@@ -75,8 +75,10 @@ function storeConsent(consent: AnalyticsConsent) {
 
 function ensureGoogleTagQueue() {
   window.dataLayer ??= [];
-  window.gtag ??= (...args: unknown[]) => {
-    window.dataLayer?.push(args);
+  window.gtag ??= function gtag() {
+    // gtag.js requires the function's Arguments object, not a rest-parameter Array.
+    // eslint-disable-next-line prefer-rest-params
+    window.dataLayer?.push(arguments);
   };
 
   return window.gtag;
