@@ -6,11 +6,11 @@ const contentSecurityPolicy = [
   "object-src 'none'",
   "frame-ancestors 'none'",
   "form-action 'self' https://*.hsforms.com",
-  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} https://*.hsforms.net`,
+  `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} https://*.hsforms.net https://www.googletagmanager.com`,
   "style-src 'self' 'unsafe-inline'",
-  "img-src 'self' data: blob: https://*.hubspot.com https://*.hsforms.com https://*.hsforms.net https://*.hsappstatic.net",
+  "img-src 'self' data: blob: https://*.hubspot.com https://*.hsforms.com https://*.hsforms.net https://*.hsappstatic.net https://www.google-analytics.com https://*.google-analytics.com",
   "font-src 'self' data:",
-  `connect-src 'self'${process.env.NODE_ENV === "development" ? " ws: wss:" : ""} https://*.hubspot.com https://*.hsforms.com https://*.hsforms.net https://*.hsappstatic.net`,
+  `connect-src 'self'${process.env.NODE_ENV === "development" ? " ws: wss:" : ""} https://*.hubspot.com https://*.hsforms.com https://*.hsforms.net https://*.hsappstatic.net https://www.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com`,
   "frame-src https://*.hubspot.com https://*.hsforms.com https://*.hsforms.net",
 ].join("; ");
 

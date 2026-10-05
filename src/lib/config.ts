@@ -24,11 +24,20 @@ const optionalHubspotFormId = z.preprocess(
   emptyToUndefined,
   z.string().trim().uuid().optional(),
 );
+const optionalGaMeasurementId = z.preprocess(
+  emptyToUndefined,
+  z
+    .string()
+    .trim()
+    .regex(/^G-[A-Z0-9]+$/u)
+    .optional(),
+);
 
 const environmentSchema = z.object({
   SITE_ENVIRONMENT: z.enum(["development", "staging", "production"]).optional(),
   NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED: optionalBooleanString,
   NEXT_PUBLIC_LINKEDIN_URL: optionalUrl,
+  NEXT_PUBLIC_GA_MEASUREMENT_ID: optionalGaMeasurementId,
   HUBSPOT_STAGING_REGION: optionalHubspotRegion,
   HUBSPOT_STAGING_PORTAL_ID: optionalHubspotPortalId,
   HUBSPOT_STAGING_FORM_ID: optionalHubspotFormId,
@@ -96,11 +105,16 @@ const productionForm = resolveHubspotForm("PRODUCTION", {
 });
 const visualPreferencesEnabled =
   environment.NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED === "true";
+const analyticsMeasurementId =
+  deploymentEnvironment === "production"
+    ? environment.NEXT_PUBLIC_GA_MEASUREMENT_ID
+    : undefined;
 
 export const siteConfig = {
   siteUrl: productionSiteUrl,
   bookingUrl: null,
   contactEmail: "hello@company42.co",
+  analyticsMeasurementId,
   linkedinUrl: environment.NEXT_PUBLIC_LINKEDIN_URL,
   deploymentEnvironment,
   hubspotForm:

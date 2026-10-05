@@ -141,6 +141,7 @@ Copy `.env.example` to `.env.local` and set only approved values:
 | `SITE_ENVIRONMENT`                       | `development`, `staging`, or `production`                       |
 | `NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED` | Enables the approved visual-preferences controls                |
 | `NEXT_PUBLIC_LINKEDIN_URL`               | Optional approved public profile                                |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID`          | Production GA4 ID; leave unset outside the live domain          |
 | `HUBSPOT_STAGING_REGION`                 | Approved staging/testing form; provide all three staging values |
 | `HUBSPOT_STAGING_PORTAL_ID`              | Approved staging/testing form; provide all three staging values |
 | `HUBSPOT_STAGING_FORM_ID`                | Approved staging/testing form; provide all three staging values |
@@ -162,7 +163,11 @@ Visual preferences are enabled when `NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED=true
 
 The staging form loads only when all three staging variables are present and `SITE_ENVIRONMENT` is not `production`. Production uses only the three production variables and never falls back to staging values. The visible `hello@company42.co` fallback remains available in every environment.
 
-The form embed has resilient loading, success, validation, and script-failure states. The fallback email remains outside the cross-origin form frame and is usable even if HubSpot or JavaScript is unavailable. No analytics, HubSpot website tracking code, marketing pixel, or newsletter tracking integration is active.
+The form embed has resilient loading, success, validation, and script-failure states. The fallback email remains outside the cross-origin form frame and is usable even if HubSpot or JavaScript is unavailable. The HubSpot website tracking code, marketing pixels, and newsletter tracking are not active.
+
+Google Analytics 4 is optional and production-only. Configure `NEXT_PUBLIC_GA_MEASUREMENT_ID` only on the production service. The client also requires the hostname to be exactly `company42.co` or `www.company42.co`, so localhost, staging, previews, and Render subdomains cannot send production analytics. The Google tag is not requested until the visitor grants analytics consent. The choice is stored under `company42.analyticsConsent.v1`, can be changed through Cookie preferences in the footer, and keeps all advertising consent states denied. GA4 Enhanced Measurement handles initial and App Router history page views; the website does not send a second custom page-view event.
+
+For the `Company42 Website` GA4 stream, keep Enhanced Measurement Page views and `Page changes based on browser history events` enabled. Disable Enhanced Measurement Outbound clicks while the website exposes `mailto:` links, and verify that email data redaction is enabled. As defence in depth, configure query-parameter redaction for `email`, `email_address`, `first_name`, `firstname`, `last_name`, `lastname`, `name`, `phone`, and `telephone`. The integration overrides the initial page location and referrer with query-free values, and the application does not put enquiry form values into its routes.
 
 Staging and production use separate PostgreSQL databases and credentials. Database connections are server-only, migrations and the one-time launch seed are versioned, and the in-memory test adapter is rejected outside an explicit development test process. See [Database operations](docs/DATABASE_OPERATIONS.md) for setup, migration, seed, pooling, and release guidance.
 
@@ -202,14 +207,17 @@ Both Lighthouse commands write ignored JSON reports to `.lighthouse/`. They appl
 
 ## Security headers
 
-Every route receives a restrictive Content Security Policy, `DENY` framing protection, MIME sniffing protection, strict-origin referrer handling, a limited permissions policy, and HSTS. HTTPS redirection remains the responsibility of the deployment platform so local HTTP development stays functional across browsers. The CSP permits the application's own assets plus the HubSpot form hosts required for scripts, frames, submissions, images, and form requests:
+Every route receives a restrictive Content Security Policy, `DENY` framing protection, MIME sniffing protection, strict-origin referrer handling, a limited permissions policy, and HSTS. HTTPS redirection remains the responsibility of the deployment platform so local HTTP development stays functional across browsers. The CSP permits the application's own assets, the HubSpot form hosts required for scripts, frames, submissions, images, and form requests, and the narrowly scoped Google hosts required by the consent-gated GA4 integration:
 
 - `*.hsforms.net`
 - `*.hsforms.com`
 - `*.hubspot.com`
 - `*.hsappstatic.net`
+- `www.googletagmanager.com`
+- `*.google-analytics.com`
+- `*.analytics.google.com`
 
-The HubSpot allowances are intentionally limited to the Contact form. No analytics, advertising, session-replay, social-pixel, or generic third-party script origin is permitted.
+The HubSpot allowances are intentionally limited to the Contact form. Google hosts are permitted by policy but are contacted only after analytics consent on an approved production hostname. No advertising, session-replay, social-pixel, or generic third-party script origin is permitted.
 
 ## Deployment
 
@@ -235,4 +243,4 @@ HUBSPOT_STAGING_PORTAL_ID=148811132
 HUBSPOT_STAGING_FORM_ID=da5e2637-3fc8-4ab0-96b1-4764ecd0f16e
 ```
 
-Do not configure the production form variables on staging. On the production Web Service, set `SITE_ENVIRONMENT=production`, `NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED=true`, and all three approved `HUBSPOT_PRODUCTION_*` values. Production never falls back to the staging form configuration.
+Do not configure the production form or GA4 variables on staging. On the production Web Service, set `SITE_ENVIRONMENT=production`, `NEXT_PUBLIC_VISUAL_PREFERENCES_ENABLED=true`, `NEXT_PUBLIC_GA_MEASUREMENT_ID=G-FD2J9VL4D5`, and all three approved `HUBSPOT_PRODUCTION_*` values. Production never falls back to the staging form configuration. Because `NEXT_PUBLIC_GA_MEASUREMENT_ID` is embedded during `next build`, adding or changing it requires a new production build and deployment.

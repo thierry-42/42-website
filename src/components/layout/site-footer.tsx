@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { AnalyticsSettingsButton } from "@/components/analytics/analytics-settings-button";
 import { Container } from "@/components/layout/container";
 import { Logo } from "@/components/layout/logo";
 import {
@@ -66,6 +67,9 @@ export function SiteFooter() {
               ))}
               {siteConfig.visualPreferencesEnabled ? (
                 <FooterLink href="/accessibility">Accessibility</FooterLink>
+              ) : null}
+              {siteConfig.analyticsMeasurementId ? (
+                <AnalyticsSettingsButton />
               ) : null}
               {contactLinks.map((item) => (
                 <FooterLink href={item.href} key={item.href}>

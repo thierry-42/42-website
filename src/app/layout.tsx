@@ -3,6 +3,7 @@ import { Geist_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import type { ReactNode } from "react";
 
+import { AnalyticsConsentManager } from "@/components/analytics/analytics-consent";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { CustomCursor } from "@/components/motion/custom-cursor";
@@ -139,6 +140,11 @@ export default function RootLayout({
         <ScrollProgress />
         <main id="main-content">{children}</main>
         <SiteFooter />
+        {siteConfig.analyticsMeasurementId ? (
+          <AnalyticsConsentManager
+            measurementId={siteConfig.analyticsMeasurementId}
+          />
+        ) : null}
         {siteConfig.visualPreferencesEnabled ? <VisualPreferences /> : null}
         <ScrollToTop />
         <CustomCursor />

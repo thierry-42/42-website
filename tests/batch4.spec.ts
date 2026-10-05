@@ -421,7 +421,7 @@ test("representative pages reflow without horizontal overflow at 200 percent", a
   }
 });
 
-test("security headers apply without blocking the approved HubSpot origins", async ({
+test("security headers allow only the approved form and analytics origins", async ({
   page,
 }) => {
   const response = await page.request.get("/contact");
@@ -441,4 +441,9 @@ test("security headers apply without blocking the approved HubSpot origins", asy
   expect(policy).toContain("https://*.hsforms.net");
   expect(policy).toContain("https://*.hsforms.com");
   expect(policy).toContain("https://*.hubspot.com");
+  expect(policy).toContain("script-src 'self'");
+  expect(policy).toContain("https://www.googletagmanager.com");
+  expect(policy).toContain("https://*.google-analytics.com");
+  expect(policy).toContain("https://*.analytics.google.com");
+  expect(policy).not.toContain("doubleclick.net");
 });

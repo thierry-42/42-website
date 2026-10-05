@@ -68,7 +68,12 @@ test("legal pages preserve confirmed disclosures", async ({ page }) => {
     page.getByRole("heading", { name: "Cookies and browser storage" }),
   ).toBeVisible();
   await expect(page.getByText(/__cf_bm/)).toBeVisible();
-  await expect(page.getByText(/localStorage or sessionStorage/)).toBeVisible();
+  await expect(page.getByText(/company42.analyticsConsent.v1/)).toBeVisible();
+  await expect(
+    page.getByText(
+      /Advertising storage, user-data, and personalisation consent remain denied/,
+    ),
+  ).toBeVisible();
 
   await page.goto("/terms");
   await expect(
