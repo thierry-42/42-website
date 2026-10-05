@@ -118,11 +118,20 @@ test("consented campaign visit preserves safe GA4 attribution without its query"
     page_location: `${productionOrigin}/`,
     page_path: "/",
     page_referrer: "",
+    send_page_view: false,
   });
   expect(JSON.stringify(configCommands)).not.toContain("utm_");
   expect(JSON.stringify(configCommands)).not.toContain("not-sent-to-analytics");
   expect(JSON.stringify(configCommands)).not.toContain("#private");
-  expect(manualPageViews).toHaveLength(0);
+  expect(manualPageViews).toHaveLength(1);
+  expect(manualPageViews[0]?.[2]).toMatchObject({
+    campaign_medium: "social",
+    campaign_name: "42_launch",
+    campaign_source: "linkedin",
+    page_location: `${productionOrigin}/`,
+    page_path: "/",
+    page_referrer: "",
+  });
 });
 
 test("Google tag stays blocked before consent and after rejection", async ({
@@ -206,7 +215,7 @@ test("consent loads GA4 once with advertising denied and supports withdrawal", a
   const commandsUseGoogleTagArgumentsQueue = await page.evaluate(() =>
     (window.dataLayer ?? [])
       .filter((command) =>
-        ["consent", "js", "config"].includes(String(command[0])),
+        ["consent", "js", "config", "event"].includes(String(command[0])),
       )
       .every((command) => !Array.isArray(command)),
   );
@@ -242,9 +251,10 @@ test("consent loads GA4 once with advertising denied and supports withdrawal", a
     page_location: `${productionOrigin}/`,
     page_path: "/",
     page_referrer: "",
+    send_page_view: false,
   });
   expect(JSON.stringify(configCommands)).not.toContain("not-sent-to-analytics");
-  expect(manualPageViews).toHaveLength(0);
+  expect(manualPageViews).toHaveLength(1);
 
   await page
     .getByRole("link", { exact: true, name: "Services" })
@@ -261,7 +271,16 @@ test("consent loads GA4 once with advertising denied and supports withdrawal", a
     commandsAfterNavigation.filter(
       (command) => command[0] === "event" && command[1] === "page_view",
     ),
-  ).toHaveLength(0);
+  ).toHaveLength(2);
+  expect(
+    commandsAfterNavigation.filter(
+      (command) => command[0] === "event" && command[1] === "page_view",
+    )[1]?.[2],
+  ).toMatchObject({
+    page_location: `${productionOrigin}/services`,
+    page_path: "/services",
+    page_referrer: `${productionOrigin}/`,
+  });
 
   await page.evaluate(() => {
     document.cookie = "_ga=consent-test; Path=/; SameSite=Lax";

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 
 import {
@@ -84,6 +85,20 @@ function ensureGoogleTagQueue() {
   return window.gtag;
 }
 
+function sendGooglePageView(
+  gtag: (...args: unknown[]) => void,
+  pathname: string,
+  pageReferrer: string,
+  campaignParameters: ValidatedCampaignParameters = {},
+) {
+  gtag("event", "page_view", {
+    ...campaignParameters,
+    page_location: createSafePageLocation(window.location.origin, pathname),
+    page_path: pathname,
+    page_referrer: pageReferrer,
+  });
+}
+
 function loadGoogleAnalytics(
   measurementId: string,
   campaignParameters: ValidatedCampaignParameters,
@@ -92,7 +107,7 @@ function loadGoogleAnalytics(
     !isAllowedAnalyticsHostname(window.location.hostname) ||
     document.getElementById(googleTagScriptId)
   ) {
-    return;
+    return false;
   }
 
   const gtag = ensureGoogleTagQueue();
@@ -109,13 +124,22 @@ function loadGoogleAnalytics(
     ),
     page_path: window.location.pathname,
     page_referrer: createSafePageReferrer(document.referrer),
+    send_page_view: false,
   });
+  sendGooglePageView(
+    gtag,
+    window.location.pathname,
+    createSafePageReferrer(document.referrer),
+    campaignParameters,
+  );
 
   const script = document.createElement("script");
   script.async = true;
   script.id = googleTagScriptId;
   script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
   document.head.appendChild(script);
+
+  return true;
 }
 
 function removeGoogleAnalyticsCookies() {
@@ -148,10 +172,12 @@ export function AnalyticsConsentManager({
 }: {
   measurementId: string;
 }) {
+  const pathname = usePathname();
   const panelRef = useRef<HTMLElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
   const landingCampaignParametersRef =
     useRef<ValidatedCampaignParameters | null>(null);
+  const lastTrackedPathnameRef = useRef<string | null>(null);
   const [preferencesAreOpen, setPreferencesAreOpen] = useState(false);
   const hostIsAllowed = useSyncExternalStore(
     subscribeToStaticHostname,
@@ -178,9 +204,30 @@ export function AnalyticsConsentManager({
     );
 
     if (consent === "granted") {
-      loadGoogleAnalytics(measurementId, landingCampaignParametersRef.current);
+      const didLoad = loadGoogleAnalytics(
+        measurementId,
+        landingCampaignParametersRef.current,
+      );
+
+      if (didLoad) {
+        lastTrackedPathnameRef.current = pathname;
+      } else if (
+        lastTrackedPathnameRef.current !== null &&
+        lastTrackedPathnameRef.current !== pathname &&
+        window.gtag
+      ) {
+        sendGooglePageView(
+          window.gtag,
+          pathname,
+          createSafePageLocation(
+            window.location.origin,
+            lastTrackedPathnameRef.current,
+          ),
+        );
+        lastTrackedPathnameRef.current = pathname;
+      }
     }
-  }, [consent, hostIsAllowed, measurementId]);
+  }, [consent, hostIsAllowed, measurementId, pathname]);
 
   useEffect(() => {
     const openPreferences = () => {
@@ -211,7 +258,11 @@ export function AnalyticsConsentManager({
     );
     storeConsent("granted");
     closePreferences();
-    loadGoogleAnalytics(measurementId, landingCampaignParametersRef.current);
+    if (
+      loadGoogleAnalytics(measurementId, landingCampaignParametersRef.current)
+    ) {
+      lastTrackedPathnameRef.current = window.location.pathname;
+    }
   }
 
   function declineAnalytics() {
