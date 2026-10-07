@@ -241,8 +241,8 @@ test("structured data is accurate and route-specific", async ({ page }) => {
     expect(geographicRecords.length).toBeGreaterThan(0);
     for (const record of geographicRecords) {
       expect(record.areaServed).toEqual([
-        { "@type": "Place", name: "United States" },
-        { "@type": "Place", name: "New Zealand" },
+        { "@type": "Country", name: "United States" },
+        { "@type": "Country", name: "New Zealand" },
       ]);
     }
 

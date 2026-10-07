@@ -17,7 +17,7 @@ export function createGlobalStructuredData() {
       "@type": ["Organization", "ProfessionalService"],
       alternateName: siteContent.meta.tradingName,
       areaServed: siteContent.meta.serviceAreas.map((name) => ({
-        "@type": "Place",
+        "@type": "Country",
         name,
       })),
       description: siteContent.meta.defaultDescription,
@@ -48,7 +48,7 @@ export function createServiceStructuredData(service: Service) {
     "@context": "https://schema.org",
     "@type": "Service",
     areaServed: siteContent.meta.serviceAreas.map((name) => ({
-      "@type": "Place",
+      "@type": "Country",
       name,
     })),
     description: service.summary,
