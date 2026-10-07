@@ -2,7 +2,7 @@
 
 Production foundation for the public website of **42**, the public-facing brand of Company42. The application uses Next.js App Router, React, strict TypeScript, Tailwind CSS, Motion for React, and a bespoke component system.
 
-42 is positioned as a senior-led HubSpot consultancy for mid-market organisations across North America and EMEA.
+42 is positioned as a senior-led HubSpot consultancy for mid-market organisations in the United States and New Zealand.
 
 ## Public routes
 

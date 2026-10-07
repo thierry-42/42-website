@@ -57,7 +57,7 @@ export default function ServicesPage() {
         <Container>
           <div className="grid gap-12 lg:grid-cols-12">
             <SectionHeading
-              body="42 works with mid-market organisations across North America and EMEA when customer processes, teams, data, and systems need a clearer operating model."
+              body="42 works with mid-market organisations in the United States and New Zealand when customer processes, teams, data, and systems need a clearer operating model."
               className="lg:col-span-5"
               eyebrow="Who the services are for"
               index="05"

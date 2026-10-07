@@ -50,8 +50,8 @@ export default function ContactPage() {
                 >
                   {siteConfig.contactEmail}
                 </a>
-                . 42 works with mid-market organisations across North America
-                and EMEA.
+                . 42 works with mid-market organisations in the United States
+                and New Zealand.
               </p>
             </div>
             <div className="lg:col-span-7 lg:col-start-6">

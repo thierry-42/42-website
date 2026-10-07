@@ -120,7 +120,7 @@ export const privacyPolicy: LegalDocumentContent = {
       id: "international",
       title: "International processing",
       paragraphs: [
-        "42 serves organisations across North America and EMEA. HubSpot, Render, and Google may process information in countries other than the country in which a visitor is located.",
+        "42 serves organisations in the United States and New Zealand. HubSpot, Render, and Google may process information in countries other than the country in which a visitor is located.",
       ],
     },
     {

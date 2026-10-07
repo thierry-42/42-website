@@ -234,9 +234,20 @@ test("structured data is accurate and route-specific", async ({ page }) => {
       expect(types).toContain("Article");
     }
     if (route !== "/") expect(types).toContain("BreadcrumbList");
+
+    const geographicRecords = records.filter(
+      (record) => record.areaServed !== undefined,
+    );
+    expect(geographicRecords.length).toBeGreaterThan(0);
+    for (const record of geographicRecords) {
+      expect(record.areaServed).toEqual([
+        { "@type": "Place", name: "United States" },
+        { "@type": "Place", name: "New Zealand" },
+      ]);
+    }
+
     expect(serialized).toContain("Madeyoulookagency LLC");
-    expect(serialized).toContain("North America");
-    expect(serialized).toContain("EMEA");
+    expect(serialized).not.toMatch(/North America|EMEA/);
     expect(serialized).not.toMatch(
       /postalCode|streetAddress|telephone|aggregateRating|sameAs|onrender|localhost|\u2014/,
     );

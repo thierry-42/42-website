@@ -5,20 +5,17 @@
     "descriptor": "HubSpot consultancy",
     "tagline": "Your HubSpot Answer",
     "defaultTitle": "HubSpot Consultancy, CRM & Integrations | 42",
-    "defaultDescription": "Senior-led HubSpot consultancy for mid-market organisations across North America and EMEA, covering CRM architecture, implementation, automation, integrations, websites, Service Hub, and managed support.",
+    "defaultDescription": "Senior-led HubSpot consultancy for mid-market organisations in the United States and New Zealand, covering CRM architecture, implementation, automation, integrations, websites, Service Hub, and managed support.",
     "siteUrl": "https://company42.co",
     "bookingUrl": "",
     "contactEmail": "hello@company42.co",
     "linkedinUrl": "",
     "primaryAudience": "Mid-market organisations",
-    "serviceAreas": [
-      "North America",
-      "EMEA"
-    ],
+    "serviceAreas": ["United States", "New Zealand"],
     "lastReviewedAt": null
   },
   "brand": {
-    "positioning": "A senior-led HubSpot consultancy helping mid-market organisations across North America and EMEA design, build, connect, and improve the systems behind their customer journey.",
+    "positioning": "A senior-led HubSpot consultancy helping mid-market organisations in the United States and New Zealand design, build, connect, and improve the systems behind their customer journey.",
     "promise": "Clear answers for complex HubSpot problems.",
     "principles": [
       "Understand before configuring",
@@ -96,7 +93,7 @@
     "hero": {
       "eyebrow": "Senior-led HubSpot consultancy",
       "headline": "Your HubSpot Answer",
-      "body": "HubSpot should make your business clearer, not more complicated. 42 helps mid-market organisations across North America and EMEA design, build, connect, and improve HubSpot around the way they actually work.",
+      "body": "HubSpot should make your business clearer, not more complicated. 42 helps mid-market organisations in the United States and New Zealand design, build, connect, and improve HubSpot around the way they actually work.",
       "primaryCta": {
         "label": "Book a consultation",
         "href": "/contact"

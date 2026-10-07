@@ -9,9 +9,9 @@
 **Product owner:** Thierry-Luc Denichaud  
 **Primary implementation agent:** Codex  
 **Initial hosting state:** Next.js application currently deployed to Render for staging and testing  
-**Primary audience:** Mid-market organisations across North America and EMEA  
+**Primary audience:** Mid-market organisations in the United States and New Zealand
 **Language standard:** UK English  
-**Last updated:** 23 July 2026  
+**Last updated:** 7 October 2026
 
 ---
 
@@ -68,7 +68,7 @@ The tagline is intentionally concise and distinctive. It must always be supporte
 
 Use the following as the approved master description, adapting length where necessary without changing the meaning:
 
-> **42 is a senior-led HubSpot consultancy helping mid-market organisations simplify complex CRM challenges. We combine CRM strategy, technical implementation, automation, integrations, website delivery, and ongoing optimisation to make HubSpot fit the way each business actually operates. We work with teams across North America and EMEA to create clear, maintainable systems that people can use and leaders can trust.**
+> **42 is a senior-led HubSpot consultancy helping mid-market organisations simplify complex CRM challenges. We combine CRM strategy, technical implementation, automation, integrations, website delivery, and ongoing optimisation to make HubSpot fit the way each business actually operates. We work with teams in the United States and New Zealand to create clear, maintainable systems that people can use and leaders can trust.**
 
 ## 1.5 Version 1 launch intent
 
@@ -494,14 +494,14 @@ The best-fit organisation typically has several of the following characteristics
 
 Approved public service areas:
 
-- **North America**
-- **EMEA**
+- **United States**
+- **New Zealand**
 
 ### Geographic-positioning requirements
 
 #### PRD-GEO-001
 
-The website **SHALL** communicate that 42 serves clients across North America and EMEA.
+The website **SHALL** communicate that 42 serves clients in the United States and New Zealand.
 
 #### PRD-GEO-002
 
@@ -1575,7 +1575,7 @@ This map is directional. Copy must remain natural.
 
 ## 12.3 Geographic search
 
-Do not create North America, US, UK, South Africa, or EMEA landing pages at launch unless each page can provide genuinely differentiated information.
+Do not create United States or New Zealand landing pages at launch unless each page can provide genuinely differentiated information.
 
 Do not clone pages and replace place names.
 
@@ -1587,7 +1587,7 @@ The website must consistently identify:
 - trading name: Company42;
 - production URL: `https://company42.co`;
 - contact email: `hello@company42.co`;
-- service areas: North America and EMEA;
+- service areas: United States and New Zealand;
 - category: HubSpot consultancy;
 - core services;
 - real people associated with the organisation.
@@ -1943,7 +1943,7 @@ The following must not be publicly visible unless completed:
 - [ ] Tagline is “Your HubSpot Answer”.
 - [ ] The first viewport explains that 42 is a HubSpot consultancy.
 - [ ] Mid-market focus is evident.
-- [ ] North America and EMEA service areas are stated accurately.
+- [ ] United States and New Zealand service areas are stated accurately.
 - [ ] No false office location is shown.
 
 ### Content
@@ -2017,7 +2017,7 @@ Supplied information:
 - Contracting entity for Terms: MadeYourLookAgency
 - Privacy country supplied: South Africa
 - Terms country supplied: “America”
-- Service areas: North America and EMEA
+- Service areas: United States and New Zealand
 
 ### Decision required before final legal publication
 
@@ -2035,7 +2035,7 @@ Until confirmed, use explicit TODO markers in non-production legal drafts. Do no
 
 No street address should be published.
 
-The public site may state that 42 serves North America and EMEA.
+The public site may state that 42 serves the United States and New Zealand.
 
 Do not state Palm Springs as a physical office unless a genuine office exists and is approved.
 
@@ -2302,8 +2302,8 @@ brand:
 positioning:
   audience: "Mid-market organisations"
   service_areas:
-    - "North America"
-    - "EMEA"
+    - "United States"
+    - "New Zealand"
   category: "Senior-led HubSpot consultancy"
 
 homepage:
@@ -2337,7 +2337,7 @@ public_routes_v1:
 
 ## Full
 
-> 42 is a senior-led HubSpot consultancy helping mid-market organisations simplify complex CRM challenges. We combine CRM strategy, technical implementation, automation, integrations, website delivery, and ongoing optimisation to make HubSpot fit the way each business actually operates. We work with teams across North America and EMEA to create clear, maintainable systems that people can use and leaders can trust.
+> 42 is a senior-led HubSpot consultancy helping mid-market organisations simplify complex CRM challenges. We combine CRM strategy, technical implementation, automation, integrations, website delivery, and ongoing optimisation to make HubSpot fit the way each business actually operates. We work with teams in the United States and New Zealand to create clear, maintainable systems that people can use and leaders can trust.
 
 ## Medium
 
@@ -2349,7 +2349,7 @@ public_routes_v1:
 
 ## Footer
 
-> 42 is a senior-led HubSpot consultancy serving mid-market organisations across North America and EMEA.
+> 42 is a senior-led HubSpot consultancy serving mid-market organisations in the United States and New Zealand.
 
 ---
 

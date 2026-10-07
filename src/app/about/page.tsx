@@ -94,7 +94,7 @@ export default function AboutPage() {
             </div>
           </div>
           <p className="mt-8 max-w-[58ch] text-sm leading-6 text-[var(--text-muted)]">
-            Public service areas: North America and EMEA.
+            Public service areas: United States and New Zealand.
           </p>
           <TextLink className="mt-8" href="/services">
             Explore HubSpot services
