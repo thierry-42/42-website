@@ -1,6 +1,13 @@
 import { expect, test } from "@playwright/test";
 
-const positioningRoutes = ["/", "/services", "/about", "/contact", "/privacy"];
+const positioningRoutes = [
+  "/",
+  "/services",
+  "/about",
+  "/hubspot-review",
+  "/contact",
+  "/privacy",
+];
 
 test("public positioning names only the approved service areas", async ({
   page,

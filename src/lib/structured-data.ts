@@ -59,6 +59,23 @@ export function createServiceStructuredData(service: Service) {
   };
 }
 
+export function createHubSpotReviewStructuredData() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    areaServed: siteContent.meta.serviceAreas.map((name) => ({
+      "@type": "Country",
+      name,
+    })),
+    description:
+      "A senior HubSpot audit and portal review covering CRM structure, data, automation, reporting, integrations, adoption, and governance.",
+    name: "HubSpot audit and portal review",
+    provider: { "@id": organizationId },
+    serviceType: "HubSpot audit and portal review",
+    url: new URL("/hubspot-review", siteConfig.siteUrl).toString(),
+  };
+}
+
 export function createArticleStructuredData(
   insight: PublishedInsight,
   author?: PublishedInsightAuthor,

@@ -33,6 +33,16 @@ export function HomeEngagementShowcase() {
             const service =
               publicContent.services[engagementServiceIndexes[index]];
             if (!service) return null;
+            const destination =
+              index === 0
+                ? {
+                    href: "/hubspot-review",
+                    label: "Explore the HubSpot review",
+                  }
+                : {
+                    href: `/services/${service.slug}`,
+                    label: "Explore the relevant service",
+                  };
 
             return (
               <article
@@ -79,9 +89,9 @@ export function HomeEngagementShowcase() {
                       </div>
                       <TextLink
                         className="mt-8 lg:mt-auto"
-                        href={`/services/${service.slug}`}
+                        href={destination.href}
                       >
-                        Explore the relevant service
+                        {destination.label}
                       </TextLink>
                     </div>
                   </div>

@@ -102,6 +102,62 @@ export const reviewAreas = [
   "Website and forms",
 ] as const;
 
+export const reviewSignals = [
+  "Reports need explanation before leaders can trust them.",
+  "Lifecycle stages, pipelines, properties, or ownership rules no longer describe the business clearly.",
+  "Workflows have accumulated without clear purpose, documentation, or a safe way to change them.",
+  "Teams rely on spreadsheets, manual checks, or workarounds to compensate for gaps in HubSpot.",
+] as const;
+
+export const reviewProcess = [
+  {
+    number: "01",
+    title: "Context and discovery",
+    body: "Start with the business questions, known concerns, recent changes, and decisions the review needs to support.",
+  },
+  {
+    number: "02",
+    title: "Structured portal review",
+    body: "Examine the agreed parts of the HubSpot setup and how configuration, data, automation, reporting, and connected systems work together.",
+  },
+  {
+    number: "03",
+    title: "Findings and priorities",
+    body: "Separate symptoms from underlying causes, record dependencies, and order improvements by importance.",
+  },
+  {
+    number: "04",
+    title: "Next-step discussion",
+    body: "Review the findings and decide which improvements need attention first, without forcing every issue into one project.",
+  },
+] as const;
+
+export const reviewOutcomes = [
+  [
+    "Evidence-based findings",
+    "A clearer view of what is working, what is not, and where assumptions need validation.",
+  ],
+  [
+    "Risks and dependencies",
+    "The connections that could affect sequencing, reliability, or the safety of future changes.",
+  ],
+  [
+    "Prioritised improvements",
+    "A practical order for addressing the issues that matter most to the business and the teams using HubSpot.",
+  ],
+  [
+    "A practical next-step roadmap",
+    "A grounded basis for deciding what to repair, redesign, document, or investigate next.",
+  ],
+] as const;
+
+export const reviewPreparation = [
+  "the business questions the review needs to answer",
+  "the teams, processes, and systems involved",
+  "known concerns about data, reporting, adoption, or automation",
+  "recent changes or decisions that are currently blocked",
+] as const;
+
 export const approachSteps = [
   {
     number: "01",

@@ -210,6 +210,7 @@ test("structured data is accurate and route-specific", async ({ page }) => {
   for (const route of [
     "/",
     serviceRoutes[0],
+    "/hubspot-review",
     insightRoutes[0],
     categoryRoutes[0],
   ]) {
@@ -229,7 +230,9 @@ test("structured data is accurate and route-specific", async ({ page }) => {
     expect(types).toContain("Organization");
     expect(types).toContain("ProfessionalService");
     expect(types).toContain("WebSite");
-    if (route.startsWith("/services/")) expect(types).toContain("Service");
+    if (route.startsWith("/services/") || route === "/hubspot-review") {
+      expect(types).toContain("Service");
+    }
     if (route.startsWith("/insights/") && !route.includes("/category/")) {
       expect(types).toContain("Article");
     }

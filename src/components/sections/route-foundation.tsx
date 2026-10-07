@@ -6,6 +6,7 @@ import type { RouteFoundationKey } from "@/content/page-content";
 import { routeFoundations } from "@/content/page-content";
 
 type RouteFoundationProps = {
+  actions?: ReactNode;
   children?: ReactNode;
   consultationHref: string;
   route: RouteFoundationKey;
@@ -20,7 +21,12 @@ const routeVisuals: Partial<Record<RouteFoundationKey, string>> = {
   review: "/images/editorial/portal-review-diagnostic-v2.webp",
 };
 
+const routeBreadcrumbs: Partial<Record<RouteFoundationKey, string>> = {
+  review: "HubSpot audit and portal review",
+};
+
 export function RouteFoundation({
+  actions,
   children,
   consultationHref,
   route,
@@ -32,8 +38,9 @@ export function RouteFoundation({
   return (
     <>
       <PageIntro
+        actions={actions}
         body={content.description}
-        breadcrumb={content.title}
+        breadcrumb={routeBreadcrumbs[route] ?? content.title}
         eyebrow={content.eyebrow}
         imageSrc={imageSrc}
         path={content.path}
