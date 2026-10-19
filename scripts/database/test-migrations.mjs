@@ -68,7 +68,7 @@ try {
   };
 
   const firstSeed = await runContentSeeds({ isTestDatabase, pool });
-  assert.deepEqual(firstSeed.appliedVersions, ["001", "002"]);
+  assert.deepEqual(firstSeed.appliedVersions, ["001", "002", "003"]);
   const firstSeedCounts = await readSeedCounts();
   assert.equal(firstSeedCounts.authors, 2);
   assert.equal(firstSeedCounts.categories, 4);
@@ -84,6 +84,10 @@ try {
     {
       name: "optimize_hubspot_crm_implementation_guide",
       version: "002",
+    },
+    {
+      name: "update_hubspot_implementation_meta_description",
+      version: "003",
     },
   ]);
 
@@ -127,7 +131,7 @@ try {
       published_at: "2026-07-22T00:00:00.000Z",
       reading_time_minutes: 15,
       seo_description:
-        "Use this practical HubSpot CRM implementation guide to plan your process, CRM architecture, data migration, integrations, testing, training and timeline.",
+        "Plan your HubSpot CRM implementation with a practical checklist for CRM architecture, data migration, integrations, testing, training and go-live.",
       seo_title: "HubSpot CRM Implementation Guide: Checklist, Plan & Timeline",
       slug: "prepare-for-hubspot-crm-implementation",
       source_count: 6,

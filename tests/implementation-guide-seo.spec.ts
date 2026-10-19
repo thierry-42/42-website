@@ -7,7 +7,7 @@ const articleTitle = "How to Prepare for a HubSpot CRM Implementation";
 const seoTitle =
   "HubSpot CRM Implementation Guide: Checklist, Plan & Timeline | 42";
 const seoDescription =
-  "Use this practical HubSpot CRM implementation guide to plan your process, CRM architecture, data migration, integrations, testing, training and timeline.";
+  "Plan your HubSpot CRM implementation with a practical checklist for CRM architecture, data migration, integrations, testing, training and go-live.";
 
 async function structuredData(page: Page) {
   return (
