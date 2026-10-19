@@ -10,6 +10,13 @@ import ts from "typescript";
 const require = createRequire(import.meta.url);
 const root = process.cwd();
 
+function normaliseSqlForPgMem(sql) {
+  return sql.replace(
+    /\$([a-z_][a-z0-9_]*)\$([\s\S]*?)\$\1\$/giu,
+    (_match, _tag, value) => `'${value.replaceAll("'", "''")}'`,
+  );
+}
+
 async function loadTypeScriptModule(relativePath, mocks = {}) {
   const filename = path.join(root, relativePath);
   const source = await fs.readFile(filename, "utf8");
@@ -45,12 +52,15 @@ try {
     path.join(root, "database/migrations/0001_create_insights_schema.sql"),
     "utf8",
   );
-  const seed = await fs.readFile(
-    path.join(root, "database/seeds/001_initial_insights.sql"),
-    "utf8",
-  );
+  const seedDirectory = path.join(root, "database/seeds");
+  const seedFiles = (await fs.readdir(seedDirectory))
+    .filter((filename) => /^\d{3,}_[a-z0-9_]+\.sql$/u.test(filename))
+    .sort((left, right) => left.localeCompare(right, "en"));
   await pool.query(migration);
-  await pool.query(seed);
+  for (const filename of seedFiles) {
+    const sql = await fs.readFile(path.join(seedDirectory, filename), "utf8");
+    await pool.query(normaliseSqlForPgMem(sql));
+  }
 
   const models = await loadTypeScriptModule("src/lib/insights/models.ts");
   const repository = await loadTypeScriptModule(
@@ -74,6 +84,22 @@ try {
   assert.ok(article);
   assert.ok(article.bodyMarkdown.length > 100);
   assert.ok(article.sources.length > 0);
+
+  const implementationGuide = await repository.getPublishedInsight(
+    "prepare-for-hubspot-crm-implementation",
+  );
+  assert.equal(
+    implementationGuide?.title,
+    "How to Prepare for a HubSpot CRM Implementation",
+  );
+  assert.equal(
+    implementationGuide?.seoTitle,
+    "HubSpot CRM Implementation Guide: Checklist, Plan & Timeline",
+  );
+  assert.match(
+    implementationGuide?.bodyMarkdown ?? "",
+    /## HubSpot CRM implementation checklist/u,
+  );
 
   const categories = await repository.listPublishedInsightCategories();
   assert.equal(categories.length, 4);

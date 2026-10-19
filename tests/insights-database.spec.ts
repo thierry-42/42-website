@@ -16,7 +16,7 @@ const seededArticles = [
   },
   {
     slug: "prepare-for-hubspot-crm-implementation",
-    title: "How to prepare for a HubSpot CRM implementation",
+    title: "How to Prepare for a HubSpot CRM Implementation",
   },
   {
     slug: "before-connecting-your-website-to-hubspot",

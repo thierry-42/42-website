@@ -11,17 +11,25 @@ declare global {
   var company42DatabasePool: Promise<Pool> | undefined;
 }
 
+function normaliseSqlForPgMem(sql: string): string {
+  return sql.replace(
+    /\$([a-z_][a-z0-9_]*)\$([\s\S]*?)\$\1\$/giu,
+    (_match, _tag, value: string) => `'${value.replaceAll("'", "''")}'`,
+  );
+}
+
 async function createDatabasePool(): Promise<Pool> {
   assertDatabaseConfigured();
 
   if (databaseEnvironment.testMode === "pg-mem") {
-    const { readFile } = await import("node:fs/promises");
+    const { readdir, readFile } = await import("node:fs/promises");
     const path = await import("node:path");
     const { newDb } = await import("pg-mem");
     const memoryDatabase = newDb({ autoCreateForeignKeyIndices: true });
     const adapter = memoryDatabase.adapters.createPg();
     const pool = new adapter.Pool() as unknown as Pool;
-    const [migrationSql, seedSql] = await Promise.all([
+    const seedDirectory = path.resolve(process.cwd(), "database", "seeds");
+    const [migrationSql, seedFiles] = await Promise.all([
       readFile(
         path.resolve(
           process.cwd(),
@@ -31,19 +39,19 @@ async function createDatabasePool(): Promise<Pool> {
         ),
         "utf8",
       ),
-      readFile(
-        path.resolve(
-          process.cwd(),
-          "database",
-          "seeds",
-          "001_initial_insights.sql",
-        ),
-        "utf8",
-      ),
+      readdir(seedDirectory),
     ]);
+    const seedSql = await Promise.all(
+      seedFiles
+        .filter((filename) => /^\d{3,}_[a-z0-9_]+\.sql$/u.test(filename))
+        .sort((left, right) => left.localeCompare(right, "en"))
+        .map((filename) =>
+          readFile(path.join(seedDirectory, filename), "utf8"),
+        ),
+    );
 
     await pool.query(migrationSql);
-    await pool.query(seedSql);
+    for (const sql of seedSql) await pool.query(normaliseSqlForPgMem(sql));
 
     return pool;
   }

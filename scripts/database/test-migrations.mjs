@@ -8,7 +8,7 @@ delete process.env.DATABASE_MIGRATION_URL;
 
 const { createConfiguredMigrationPool, runMigrations } =
   await import("./migrate.mjs");
-const { runInitialInsightsSeed } = await import("./seed.mjs");
+const { runContentSeeds } = await import("./seed.mjs");
 
 const { isTestDatabase, pool } = await createConfiguredMigrationPool();
 
@@ -67,8 +67,8 @@ try {
     );
   };
 
-  const firstSeed = await runInitialInsightsSeed({ isTestDatabase, pool });
-  assert.equal(firstSeed.applied, true);
+  const firstSeed = await runContentSeeds({ isTestDatabase, pool });
+  assert.deepEqual(firstSeed.appliedVersions, ["001", "002"]);
   const firstSeedCounts = await readSeedCounts();
   assert.equal(firstSeedCounts.authors, 2);
   assert.equal(firstSeedCounts.categories, 4);
@@ -76,14 +76,75 @@ try {
   assert.equal(firstSeedCounts.emma_articles, 4);
   assert.ok(firstSeedCounts.relations > 0, "article relations should exist");
 
+  const contentSeedLedger = await pool.query(
+    "SELECT version, name FROM _content_seeds ORDER BY version",
+  );
+  assert.deepEqual(contentSeedLedger.rows, [
+    { name: "initial_insights", version: "001" },
+    {
+      name: "optimize_hubspot_crm_implementation_guide",
+      version: "002",
+    },
+  ]);
+
+  const implementationGuide = await pool.query(`
+    SELECT
+      article.slug,
+      article.title,
+      article.seo_title,
+      article.seo_description,
+      article.reading_time_minutes,
+      article.published_at,
+      article.updated_at,
+      article.sources_reviewed_at,
+      author.slug AS author_slug,
+      category.slug AS category_slug
+    FROM articles AS article
+    JOIN authors AS author ON author.id = article.author_id
+    JOIN insight_categories AS category ON category.id = article.category_id
+    WHERE article.slug = 'prepare-for-hubspot-crm-implementation'
+  `);
+  const implementationGuideSources = await pool.query(`
+    SELECT COUNT(*)::INTEGER AS source_count
+    FROM article_sources AS source
+    JOIN articles AS article ON article.id = source.article_id
+    WHERE article.slug = 'prepare-for-hubspot-crm-implementation'
+  `);
+  assert.deepEqual(
+    {
+      ...implementationGuide.rows[0],
+      published_at: new Date(
+        implementationGuide.rows[0].published_at,
+      ).toISOString(),
+      source_count: Number(implementationGuideSources.rows[0].source_count),
+      updated_at: new Date(
+        implementationGuide.rows[0].updated_at,
+      ).toISOString(),
+    },
+    {
+      author_slug: "thierry-luc-denichaud",
+      category_slug: "hubspot-strategy-implementation",
+      published_at: "2026-07-22T00:00:00.000Z",
+      reading_time_minutes: 15,
+      seo_description:
+        "Use this practical HubSpot CRM implementation guide to plan your process, CRM architecture, data migration, integrations, testing, training and timeline.",
+      seo_title: "HubSpot CRM Implementation Guide: Checklist, Plan & Timeline",
+      slug: "prepare-for-hubspot-crm-implementation",
+      source_count: 6,
+      sources_reviewed_at: new Date("2026-10-19T00:00:00.000Z"),
+      title: "How to Prepare for a HubSpot CRM Implementation",
+      updated_at: "2026-10-19T00:00:00.000Z",
+    },
+  );
+
   await pool.query(
     `UPDATE articles
      SET title = 'Editorial change preserved', status = 'archived'
      WHERE slug = 'signs-your-hubspot-portal-needs-an-audit'`,
   );
 
-  const secondSeed = await runInitialInsightsSeed({ isTestDatabase, pool });
-  assert.equal(secondSeed.applied, false);
+  const secondSeed = await runContentSeeds({ isTestDatabase, pool });
+  assert.deepEqual(secondSeed.appliedVersions, []);
   const preservedArticle = await pool.query(
     `SELECT title, status
      FROM articles
