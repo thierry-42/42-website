@@ -101,6 +101,30 @@ try {
     /## HubSpot CRM implementation checklist/u,
   );
 
+  const portalAuditGuide = await repository.getPublishedInsight(
+    "signs-your-hubspot-portal-needs-an-audit",
+  );
+  assert.equal(
+    portalAuditGuide?.title,
+    "Signs Your HubSpot Portal Needs an Audit",
+  );
+  assert.equal(
+    portalAuditGuide?.seoTitle,
+    "HubSpot Audit Guide: CRM, Portal & Data Checklist",
+  );
+  assert.match(
+    portalAuditGuide?.bodyMarkdown ?? "",
+    /## HubSpot audit checklist/u,
+  );
+  assert.match(
+    portalAuditGuide?.bodyMarkdown ?? "",
+    /A useful audit produces a prioritised roadmap, not just a long list of problems\./u,
+  );
+  assert.deepEqual(Array.from(portalAuditGuide?.serviceSlugs ?? []), [
+    "hubspot-strategy-consulting",
+    "crm-revops",
+  ]);
+
   const categories = await repository.listPublishedInsightCategories();
   assert.equal(categories.length, 4);
   assert.ok(categories.every((category) => category.articleCount > 0));

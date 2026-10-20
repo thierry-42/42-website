@@ -68,7 +68,7 @@ try {
   };
 
   const firstSeed = await runContentSeeds({ isTestDatabase, pool });
-  assert.deepEqual(firstSeed.appliedVersions, ["001", "002", "003"]);
+  assert.deepEqual(firstSeed.appliedVersions, ["001", "002", "003", "004"]);
   const firstSeedCounts = await readSeedCounts();
   assert.equal(firstSeedCounts.authors, 2);
   assert.equal(firstSeedCounts.categories, 4);
@@ -88,6 +88,10 @@ try {
     {
       name: "update_hubspot_implementation_meta_description",
       version: "003",
+    },
+    {
+      name: "optimize_hubspot_portal_audit_guide",
+      version: "004",
     },
   ]);
 
@@ -138,6 +142,62 @@ try {
       sources_reviewed_at: new Date("2026-10-19T00:00:00.000Z"),
       title: "How to Prepare for a HubSpot CRM Implementation",
       updated_at: "2026-10-19T00:00:00.000Z",
+    },
+  );
+
+  const portalAuditGuide = await pool.query(`
+    SELECT
+      article.slug,
+      article.title,
+      article.seo_title,
+      article.seo_description,
+      article.reading_time_minutes,
+      article.published_at,
+      article.updated_at,
+      article.sources_reviewed_at,
+      author.slug AS author_slug,
+      category.slug AS category_slug
+    FROM articles AS article
+    JOIN authors AS author ON author.id = article.author_id
+    JOIN insight_categories AS category ON category.id = article.category_id
+    WHERE article.slug = 'signs-your-hubspot-portal-needs-an-audit'
+  `);
+  const portalAuditGuideSources = await pool.query(`
+    SELECT COUNT(*)::INTEGER AS source_count
+    FROM article_sources AS source
+    JOIN articles AS article ON article.id = source.article_id
+    WHERE article.slug = 'signs-your-hubspot-portal-needs-an-audit'
+  `);
+  const portalAuditGuideServices = await pool.query(`
+    SELECT COUNT(*)::INTEGER AS service_count
+    FROM article_services AS service
+    JOIN articles AS article ON article.id = service.article_id
+    WHERE article.slug = 'signs-your-hubspot-portal-needs-an-audit'
+  `);
+  assert.deepEqual(
+    {
+      ...portalAuditGuide.rows[0],
+      published_at: new Date(
+        portalAuditGuide.rows[0].published_at,
+      ).toISOString(),
+      service_count: Number(portalAuditGuideServices.rows[0].service_count),
+      source_count: Number(portalAuditGuideSources.rows[0].source_count),
+      updated_at: new Date(portalAuditGuide.rows[0].updated_at).toISOString(),
+    },
+    {
+      author_slug: "emma-black",
+      category_slug: "crm-data-revops",
+      published_at: "2026-09-23T00:00:00.000Z",
+      reading_time_minutes: 15,
+      seo_description:
+        "Learn what a HubSpot audit should cover across CRM architecture, data, workflows, reporting, integrations and governance, with a practical checklist.",
+      seo_title: "HubSpot Audit Guide: CRM, Portal & Data Checklist",
+      service_count: 2,
+      slug: "signs-your-hubspot-portal-needs-an-audit",
+      source_count: 7,
+      sources_reviewed_at: new Date("2026-10-20T00:00:00.000Z"),
+      title: "Signs Your HubSpot Portal Needs an Audit",
+      updated_at: "2026-10-20T00:00:00.000Z",
     },
   );
 
